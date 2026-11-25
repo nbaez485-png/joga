@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101110">
+<title>JOGA</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="stage"><div class="app" id="app">
+<header class="top"><div class="logo" aria-label="JOGA"><img alt="JOGA" src="logo.png"></div><div class="loc" id="loc">JOGA</div></header>
+<main id="main">
+<section class="view on" id="v-home">
+<div class="hero" id="hero" aria-roledescription="carrusel" aria-label="Frases para seguir tus sueños">
+  <div id="phs"></div>
+  <div class="hi">
+   <div class="sub" id="sub"></div>
+   <h1 id="nm"></h1>
+   <p class="q" id="q"></p><div class="by" id="by"></div>
+   <div class="ctl"><div class="dots" id="dots"></div><span class="cr" id="cr"></span></div>
+  </div>
+ </div>
+ 
+ <div class="wc" id="wc"></div>
+ <div class="sec"><h2>Partidos</h2></div>
+ <p class="empty">Acá van a aparecer los partidos de tu zona. Se activan en el próximo módulo.</p>
+ <p class="foot">Módulo 1: cuentas y perfiles.</p>
+</section>
+<section class="view" id="v-other"><div class="soon"><h2 id="oT"></h2><p id="oP"></p><button class="btn" onclick="tab('home')">Volver al inicio</button></div></section>
+<section class="view" id="v-me"><form class="pf" id="pf" novalidate>
+ <div class="pfh"><div class="av" id="pav"></div><div><h2 id="ph2"></h2><span id="pchips"></span></div></div>
+ <button type="button" class="btn ghost" id="phbtn">Cambiar foto</button>
+ <input type="file" id="pfile" accept="image/jpeg,image/png,image/webp" hidden>
+ <small>JPG, PNG o WebP. Se recorta y se achica automáticamente.</small>
+ <label for="p-dn">Nombre visible</label><input id="p-dn" maxlength="40" autocomplete="name">
+ <label for="p-un">Usuario</label><input id="p-un" maxlength="20" autocapitalize="none" autocomplete="username"><small>De 3 a 20 caracteres: minúsculas, números o guion bajo. Se puede cambiar una vez cada 30 días.</small>
+ <label for="p-pos">Posición favorita</label><select id="p-pos"><option value="">Sin definir</option><option>Arquero</option><option>Defensor</option><option>Lateral</option><option>Mediocampista</option><option>Extremo</option><option>Delantero</option></select>
+ <label for="p-club">Club favorito</label><input id="p-club" maxlength="60">
+ <label for="p-bio">Sobre mí</label><textarea id="p-bio" maxlength="300"></textarea><small id="bioc"></small>
+ <label>Quién ve tu perfil</label><div class="seg" id="vis"><button type="button" data-v="public">Público</button><button type="button" data-v="private">Privado</button></div>
+ <small>Con perfil privado, los demás ven solo tu usuario, nombre y foto. Posición, club y sobre mí los ves solo vos. Tu fecha de nacimiento nunca se muestra.</small>
+ <label>Tu plan</label><div><span class="chip pl" id="plan"></span></div><small>El plan no se puede cambiar desde la app. Premium y Elite llegan más adelante.</small>
+ <p class="err" id="perr" role="alert"></p>
+ <button class="btn" type="submit" id="psave">Guardar cambios</button>
+ <button type="button" class="btn ghost" id="pout">Cerrar sesión</button>
+ <small id="pmail" style="text-align:center;margin-top:14px"></small>
+</form></section>
+</main>
+<nav class="dock" aria-label="Principal">
+ <button class="t on" data-t="home" onclick="tab('home')"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v10H3z"/></svg>Inicio</button>
+ <button class="t" data-t="play" onclick="tab('play')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m12 7 4 3-1.5 5h-5L8 10z"/></svg>Jugar</button>
+ <button class="t" data-t="street" onclick="tab('street')"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>Calle</button>
+ <button class="t" data-t="me" onclick="tab('me')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/></svg>Mi ID</button>
+</nav>
+<div class="auth on" id="auth"><div class="alog"><img alt="JOGA" id="alogo"></div>
+ <form class="af" id="f-login" novalidate><h2>Entrá a JOGA</h2><p class="s">Tu cuenta de jugador.</p>
+  <label for="l-em">Email</label><input id="l-em" type="email" autocomplete="email" inputmode="email">
+  <label for="l-pw">Contraseña</label><input id="l-pw" type="password" autocomplete="current-password">
+  <p class="err" role="alert"></p><button class="btn" type="submit">Entrar</button>
+  <span class="lnk"><a href="#" data-go="f-forgot">Olvidé mi contraseña</a></span><span class="lnk">¿No tenés cuenta? <a href="#" data-go="f-reg">Crear cuenta</a></span></form>
+ <form class="af" id="f-reg" novalidate><h2>Creá tu cuenta</h2><p class="s">Tenés que tener al menos 13 años. El mail de confirmación te llega de Supabase, nuestro servicio de cuentas.</p>
+  <label for="r-em">Email</label><input id="r-em" type="email" autocomplete="email" inputmode="email">
+  <label for="r-pw">Contraseña (mínimo 8 caracteres)</label><input id="r-pw" type="password" autocomplete="new-password">
+  <label for="r-un">Usuario</label><input id="r-un" maxlength="20" autocapitalize="none" autocomplete="username">
+  <label for="r-dn">Nombre visible</label><input id="r-dn" maxlength="40" autocomplete="name">
+  <label for="r-bd">Fecha de nacimiento (privada)</label><input id="r-bd" type="date">
+  <p class="err" role="alert"></p><button class="btn" type="submit">Crear cuenta</button>
+  <span class="lnk">¿Ya tenés cuenta? <a href="#" data-go="f-login">Entrar</a></span></form>
+ <form class="af" id="f-notice" novalidate><h2>Revisá tu mail</h2><p class="s" id="n-txt"></p>
+  <p class="err" role="alert"></p><button class="btn ghost" type="submit">Reenviar mail</button>
+  <span class="lnk"><a href="#" data-go="f-login">Volver a entrar</a></span></form>
+ <form class="af" id="f-forgot" novalidate><h2>Recuperá tu acceso</h2><p class="s">Te mandamos un link para elegir una contraseña nueva. El mail llega de Supabase, nuestro servicio de cuentas.</p>
+  <label for="f-em">Email</label><input id="f-em" type="email" autocomplete="email" inputmode="email">
+  <p class="err" role="alert"></p><button class="btn" type="submit">Enviar link</button>
+  <span class="lnk"><a href="#" data-go="f-login">Volver</a></span></form>
+ <form class="af" id="f-reset" novalidate><h2>Contraseña nueva</h2><p class="s">Elegí una contraseña de al menos 8 caracteres.</p>
+  <label for="x-pw">Contraseña nueva</label><input id="x-pw" type="password" autocomplete="new-password">
+  <label for="x-pw2">Repetila</label><input id="x-pw2" type="password" autocomplete="new-password">
+  <p class="err" role="alert"></p><button class="btn" type="submit">Guardar contraseña</button></form>
+</div>
+<div class="toast" id="toast" role="status"></div>
+</div></div>
+<script src="app.js"></script>
+</body>
+</html>
