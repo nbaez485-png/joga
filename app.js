@@ -44,7 +44,7 @@ $('alogo').src=document.querySelector('.logo img').src;
 const REDIR=location.origin+location.pathname;
 const sb=window.supabase?window.supabase.createClient(SB_URL,SB_KEY):null;
 let P=null,S=null,recovering=/type=recovery/.test(boot),entering=false;
-let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3200)}
+let tt;function toast(m,ms){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),ms||3200)}
 const msg=e=>{const m=(e&&(e.message||e.error_description))||'';
  if(/over_email_send_rate_limit|rate limit/i.test(m)||(e&&e.status===429))return 'Se enviaron demasiados mails. Probá de nuevo en un rato.';
  if(/Invalid login credentials/i.test(m))return 'Email o contraseña incorrectos.';
@@ -106,7 +106,7 @@ $('vis').addEventListener('click',e=>{if(e.target.dataset.v)setVis(e.target.data
 $('p-bio').addEventListener('input',()=>$('bioc').textContent=$('p-bio').value.length+' de 300');
 async function enter(session){if(P&&S&&S.user.id===session.user.id){S=session;return}if(entering)return;entering=true;S=session;
  try{await loadProfile();render();$('auth').classList.remove('on');tab('home');
-  if(/type=signup/.test(boot)){toast('Email confirmado. ¡Bienvenido a JOGA!');history.replaceState(null,'',location.pathname)}}
+  const ca=session.user.email_confirmed_at;if(/type=signup/.test(boot)||(ca&&Date.now()-new Date(ca)<300000&&/access_token|[?&]code=/.test(boot))){toast('Email confirmado. ¡Bienvenido a JOGA!',7000);history.replaceState(null,'',location.pathname)}}
  catch(e){toast('No pudimos cargar tu perfil. '+msg(e));openAuth('f-login')}
  entering=false}
 function leave(){P=null;S=null;document.querySelectorAll('.auth input').forEach(i=>i.value='');openAuth('f-login')}
