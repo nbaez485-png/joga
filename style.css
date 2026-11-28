@@ -325,3 +325,48 @@ body{font-size:14px;line-height:1.5;font-weight:500;letter-spacing:0;-webkit-fon
 .ring-art.ring-creator{animation:creatorArtwork 4s linear infinite,fireFlicker .3s ease-in-out infinite alternate;filter:drop-shadow(0 0 8px #ff183b)}
 .profile-avatar-wrap.ring-elite{box-shadow:0 0 12px #22df7666}
 .profile-avatar-wrap.ring-creator{box-shadow:0 0 16px #ff183b99}
+
+/* COSMETICS v4 — transparent standalone ring art, no tile backgrounds */
+.cosmetic-demo,.cosmetic-demo.ring-default{background:transparent!important;border:0!important;box-shadow:none!important}
+.cosmetic-demo:before,.cosmetic-demo:after,.profile-avatar-wrap:before,.profile-avatar-wrap:after{display:none!important}
+.cosmetic-demo{width:104px;height:104px;position:relative;overflow:visible;margin:8px auto 12px;isolation:isolate}
+.cosmetic-demo .cosmetic-avatar{inset:15px!important;position:absolute;z-index:2;border-radius:50%;background:#16181b;border:2px solid #070809;box-shadow:inset 0 0 10px #000,0 0 3px #000}
+.cosmetic-demo .ring-art{position:absolute;width:130px;height:130px;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1;overflow:visible}
+.profile-avatar-wrap{background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;position:relative}
+.profile-avatar-wrap .ring-art{width:150px;height:150px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1}
+.profile-avatar-wrap .av{z-index:2;position:relative;background:#17191c!important;border:2px solid #08090a!important}
+.ring-none{display:none!important}
+.ring-art.ring-bronze,.ring-art.ring-silver,.ring-art.ring-gold,.ring-art.ring-diamond{animation:none!important}
+.ring-art.ring-fire{animation:fireOrbit 5s linear infinite,firePulse .6s ease-in-out infinite alternate}
+.ring-art.ring-electric{animation:boltOrbit 3.8s linear infinite,electricPulse .22s steps(2,end) infinite}
+.ring-art.ring-rainbow{animation:rainbowOrbit 7s linear infinite,rainbowPulse 1.5s ease-in-out infinite alternate}
+.ring-art.ring-neon{animation:neonPulse 1.3s ease-in-out infinite alternate}
+.ring-art.ring-elite{animation:eliteOrbit 10s linear infinite,elitePulse 1.5s ease-in-out infinite alternate}
+.ring-art.ring-creator{animation:creatorOrbit 6s linear infinite,creatorPulse .3s ease-in-out infinite alternate}
+@keyframes fireOrbit{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes firePulse{to{filter:brightness(1.4) drop-shadow(0 0 14px #ff5a15)}}
+@keyframes boltOrbit{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes electricPulse{50%{filter:brightness(1.8) drop-shadow(0 0 14px #42dcff)}}
+@keyframes rainbowOrbit{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes rainbowPulse{to{filter:brightness(1.45) drop-shadow(0 0 14px #ff6cff)}}
+@keyframes neonPulse{to{filter:brightness(1.65) drop-shadow(0 0 18px #be50ff)}}
+@keyframes eliteOrbit{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes elitePulse{to{filter:brightness(1.35) drop-shadow(0 0 14px #1eff91)}}
+@keyframes creatorOrbit{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes creatorPulse{to{filter:brightness(1.65) drop-shadow(0 0 16px #ff1648)}}
+.cosmetic-preview[hidden]{display:none!important}
+.cosmetic-preview{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:18px}
+.cosmetic-preview-backdrop{position:absolute;inset:0;background:#000c;backdrop-filter:blur(8px)}
+.cosmetic-preview-panel{position:relative;width:min(100%,360px);border:1px solid #34383a;background:linear-gradient(160deg,#222629,#101112 65%);border-radius:22px;padding:24px 20px 22px;text-align:center;box-shadow:0 18px 55px #000b}
+.cosmetic-preview-close{position:absolute;right:14px;top:10px;border:0;background:#292d30;color:#ddd;border-radius:50%;width:36px;height:36px;font-size:24px}
+.preview-eyebrow{font-size:11px;letter-spacing:2px;color:#b4c76b}
+.preview-avatar{position:relative;width:178px;height:178px;margin:12px auto 16px;display:grid;place-items:center}
+.preview-avatar .ring-art{width:178px;height:178px;position:absolute;inset:0;object-fit:contain}
+.preview-avatar-inner{width:122px;height:122px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 25%,#292d31,#111);border:2px solid #050607;font-size:44px;font-weight:900;color:#ddd;z-index:2}
+.cosmetic-preview-panel h3{font-size:24px;margin:0 0 8px}
+.cosmetic-preview-panel p:not(.preview-eyebrow){color:#a7aaad;font-size:13px}
+.cosmetic-preview-panel .btn{width:100%;margin-top:14px}
+.cosmetic-card{background:transparent!important}
+.cosmetic-card.locked{opacity:.82}
+.cosmetic-card .cosmetic-status{font-size:11px}
+@media(prefers-reduced-motion:reduce){.ring-art{animation:none!important}}
