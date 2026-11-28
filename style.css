@@ -105,3 +105,28 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:112px;scrollbar-wid
 .wc{margin:18px 18px 0;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--s1);display:flex;gap:14px;align-items:center}
 .wc .av{width:58px;height:58px;font-size:24px}.wc b{font:700 24px/1 var(--disp)}.wc span.u{display:block;color:var(--mu);font-size:13px}
 .empty{margin:0 18px;padding:18px;border:1px dashed var(--line);border-radius:14px;color:var(--mu)}
+
+/* M2 matches — dev branch */
+.match-list{display:grid;gap:12px;padding:0 18px}
+.match-create{margin:14px 18px;width:calc(100% - 36px)}
+.match-card{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:15px}
+.match-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.match-head h3{font:700 24px/1 var(--disp);margin:0 0 4px}
+.match-meta{font-size:12px;color:var(--mu);margin:8px 0}
+.match-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.match-badge{font-size:10px;font-weight:800;border:1px solid var(--line);border-radius:30px;padding:4px 8px;color:var(--mu)}
+.match-badge.minor{border-color:#ffb347;color:#ffb347}
+.match-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.match-actions button{padding:9px 12px;border-radius:24px;background:var(--ac);color:#111;font-weight:800;font-size:12px}
+.match-actions button.secondary{background:transparent;border:1px solid var(--line);color:var(--tx)}
+.match-actions button:disabled{opacity:.55}
+.match-sheet{position:absolute;inset:0;z-index:55;background:#101110;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 26px) 18px calc(env(safe-area-inset-bottom,0px) + 24px);display:none}
+.match-sheet.on{display:block}
+.match-sheet h2{font:800 34px/.95 var(--disp);text-transform:uppercase;margin:10px 0}
+.match-sheet label{display:block;color:var(--mu);font-size:12px;font-weight:700;margin:13px 0 6px}
+.match-sheet input,.match-sheet select,.match-sheet textarea{width:100%;background:var(--s1);border:1px solid var(--line);color:var(--tx);border-radius:11px;padding:12px;font:inherit}
+.match-sheet textarea{min-height:82px;resize:vertical}
+.match-sheet .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match-sheet .btn{width:100%;margin-top:14px}
+.match-sheet .close{padding:8px 12px;border:1px solid var(--line);border-radius:24px;margin-bottom:10px}
+.match-sheet .info{font-size:12px;color:var(--mu);margin:8px 0}
