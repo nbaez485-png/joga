@@ -126,18 +126,20 @@ function openCosmeticPreview(item){
  const modal=$('cosmetic-preview');if(!modal)return;
  const owned=COS.creator||COS.inventory.includes(item.item_key);
  const art=$('preview-ring-art'),name=$('preview-cosmetic-name'),desc=$('preview-cosmetic-desc'),btn=$('preview-equip');
- art.src='assets/rings/'+item.item_key+'.svg';art.className='ring-art '+item.css_class;
+ const ringPreview=$('preview-avatar'),bannerPreview=$('preview-banner');
+ if(item.slot==='banner'){ringPreview.hidden=true;bannerPreview.hidden=false;bannerPreview.style.backgroundImage='url("assets/banners/'+item.item_key+'.svg")';}
+ else{ringPreview.hidden=false;bannerPreview.hidden=true;art.src='assets/rings/'+item.item_key+'.svg';art.className='ring-art '+item.css_class;}
  name.textContent=item.display_name;
- desc.textContent=item.animated?'Efecto animado · así se verá en tu perfil.':'Aro de rango · vista previa en el perfil.';
+ desc.textContent=item.slot==='banner'?'Así se verá el banner en tu perfil.':item.animated?'Efecto animado · así se verá en tu perfil.':'Aro de rango · vista previa en el perfil.';
  btn.textContent=COS.equipped.ring===item.item_key?'Ya está equipado':owned?'Equipar en mi perfil':'Todavía bloqueado';
- btn.disabled=!owned||COS.equipped.ring===item.item_key;
+ btn.disabled=!owned||(item.slot==='ring'?COS.equipped.ring===item.item_key:COS.equipped.banner===item.item_key);
  btn.onclick=()=>{equipCosmetic(item.item_key);modal.hidden=true};
  modal.hidden=false;
 }
 document.addEventListener('click',e=>{if(e.target.closest('[data-preview-close]'))$('cosmetic-preview').hidden=true});
 
 function renderCosmetics(){
- const rings=COS.catalog.filter(x=>x.slot==='ring');
+ const rings=COS.catalog.filter(x=>x.slot==='ring'&&x.item_key!=='starter_ring');
  const banners=COS.catalog.filter(x=>x.slot==='banner');
  const rankGrid=$('ring-ranks-grid'),effectGrid=$('ring-effects-grid'),exclusiveGrid=$('ring-exclusive-grid');
  if(!rankGrid||!effectGrid||!exclusiveGrid)return;
