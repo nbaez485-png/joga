@@ -641,3 +641,5 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 }
 
 .match-filter-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 18px 10px}.match-filter-row select{min-width:0;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--s1);color:var(--tx);font:inherit;font-size:12px;min-height:42px}
+
+.match-filter-clear{display:block;width:calc(100% - 36px);margin:0 18px 12px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--mu);font:inherit;font-size:12px}
