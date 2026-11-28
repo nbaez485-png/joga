@@ -43,7 +43,7 @@ h.addEventListener('touchend',e=>{if(x0===null)return;const d=e.changedTouches[0
 $('alogo').src=document.querySelector('.logo img').src;
 const REDIR=location.origin+location.pathname;
 const sb=window.supabase?window.supabase.createClient(SB_URL,SB_KEY):null;
-let P=null,S=null,recovering=/type=recovery/.test(boot),entering=false;
+let P=null,S=null,recovering=/type=recovery/.test(boot),entering=false,enteringUserId=null;
 let tt;function toast(m,ms){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),ms||3200)}
 const msg=e=>{const m=(e&&(e.message||e.error_description))||'';
  if(/over_email_send_rate_limit|rate limit/i.test(m)||(e&&e.status===429))return 'Se enviaron demasiados mails. Probá de nuevo en un rato.';
@@ -101,14 +101,63 @@ const initial=p=>(p.display_name||'?').trim().charAt(0).toUpperCase();
 const avUrl=p=>p.avatar_path?sb.storage.from('avatars').getPublicUrl(p.avatar_path).data.publicUrl+'?v='+encodeURIComponent(p.updated_at):'';
 const one=x=>Array.isArray(x)?x[0]:x;
 function setAv(el,p){const u=avUrl(p);el.style.backgroundImage=u?'url("'+u+'")':'';el.textContent=u?'':initial(p)}
+function withTimeout(task,ms,label){
+ return new Promise((resolve,reject)=>{
+  const timer=setTimeout(()=>reject(new Error((label||'La operación')+' tardó demasiado.')),ms);
+  Promise.resolve(task).then(value=>{clearTimeout(timer);resolve(value)},error=>{clearTimeout(timer);reject(error)});
+ });
+}
+function createFallbackProfile(session){
+ const user=session&&session.user?session.user:{},meta=user.user_metadata||{};
+ const email=String(user.email||''),emailName=(email.split('@')[0]||'').replace(/[^a-z0-9_]/gi,'').slice(0,20);
+ return {id:user.id,username:String(meta.username||emailName||'jugador').toLowerCase(),display_name:String(meta.display_name||emailName||'Jugador JOGA'),avatar_path:null,updated_at:null,visibility:'public',d:{},plan:'free',_profileFallback:true};
+}
+function setProfileStatus(message,retry=false){
+ const box=$('profile-load-state'),copy=$('profile-load-message'),button=$('profile-retry');
+ if(!box||!copy||!button)return;
+ copy.textContent=message||'';box.hidden=!message;button.hidden=!retry;
+}
 async function loadProfile(){
- const{data,error}=await sb.from('profiles').select('*, profile_details(*), profile_protected(plan)').eq('id',S.user.id).single();
- if(error)throw error;
- P=data;P.d=one(data.profile_details)||{};P.plan=(one(data.profile_protected)||{}).plan||'free';
- const results=await Promise.allSettled([loadCosmetics(),loadPlayerStats()]);
- if(results[0].status==='rejected'){console.error('cosmetics load',results[0].reason);COS={catalog:[],inventory:[],equipped:{},creator:false};}
- if(results[1].status==='rejected'){console.error('profile stats load',results[1].reason);['stat-created','stat-joined','stat-upcoming','home-stat-created','home-stat-joined','home-stat-upcoming'].forEach(id=>$(id).textContent='—');const nextEl=$('home-next-match-content');if(nextEl)nextEl.innerHTML='<h3>No pudimos cargar tu actividad.</h3><p>Revisá tu conexión e intentá de nuevo.</p><button class="home-next-match-btn" type="button" onclick="tab(\'play\')">Ir a jugar <span>→</span></button>';}
- 
+ if(!sb||!S||!S.user||!S.user.id)throw new Error('No hay una sesión activa.');
+ const userId=S.user.id;
+ const result=await withTimeout(sb.from('profiles').select('*').eq('id',userId).maybeSingle(),12000,'La carga de tu ficha');
+ if(result.error)throw result.error;
+ if(!result.data)throw new Error('No encontramos tu ficha de jugador.');
+ if(!S||S.user.id!==userId)throw new Error('La sesión cambió durante la carga.');
+ P={...result.data,d:{},plan:'free',_profileFallback:false};
+ return P;
+}
+async function loadProfileExtras(userId){
+ const isCurrent=()=>!!(S&&S.user&&S.user.id===userId&&P&&P.id===userId);
+ const [detailsResult,protectedResult]=await Promise.allSettled([
+  withTimeout(sb.from('profile_details').select('*').eq('id',userId).maybeSingle(),7000,'Los datos de jugador'),
+  withTimeout(sb.from('profile_protected').select('plan').eq('id',userId).maybeSingle(),7000,'El plan de cuenta')
+ ]);
+ if(!isCurrent())return;
+ if(detailsResult.status==='fulfilled'&&!detailsResult.value.error)P.d=detailsResult.value.data||{};
+ else console.warn('JOGA profile details unavailable',detailsResult.status==='rejected'?detailsResult.reason:detailsResult.value.error);
+ if(protectedResult.status==='fulfilled'&&!protectedResult.value.error)P.plan=(protectedResult.value.data||{}).plan||'free';
+ else console.warn('JOGA plan unavailable',protectedResult.status==='rejected'?protectedResult.reason:protectedResult.value.error);
+ if(!isCurrent())return;
+ try{render()}catch(error){console.error('JOGA profile refresh failed',error)}
+ const [cosmeticsResult,statsResult]=await Promise.allSettled([
+  withTimeout(loadCosmetics(userId),10000,'La personalización'),
+  withTimeout(loadPlayerStats(userId),10000,'Las estadísticas')
+ ]);
+ if(!isCurrent())return;
+ if(cosmeticsResult.status==='fulfilled'){
+  try{renderCosmetics()}catch(error){console.error('JOGA cosmetics render failed',error)}
+ }else{
+  console.warn('JOGA cosmetics unavailable',cosmeticsResult.reason);
+  COS={catalog:[],inventory:[],equipped:{},creator:false};
+  const note=$('cosmetic-note');if(note)note.textContent='La personalización no está disponible. Tu ficha sigue funcionando.';
+ }
+ if(statsResult.status==='rejected'){
+  console.warn('JOGA stats unavailable',statsResult.reason);
+  ['stat-created','stat-joined','stat-upcoming','home-stat-created','home-stat-joined','home-stat-upcoming'].forEach(id=>{const el=$(id);if(el)el.textContent='—'});
+  const nextEl=$('home-next-match-content');
+  if(nextEl)nextEl.innerHTML='<h3>Actividad no disponible.</h3><p>Tu ficha está lista, pero no pudimos actualizar las estadísticas.</p><button class="home-next-match-btn" type="button" onclick="tab(&quot;play&quot;)">Ir a jugar <span>→</span></button>';
+ }
 }
 let RANK_SPRITE_DATA='';const RING_FRAME_DATA={};function ringSrc(key){return RING_FRAME_DATA[key]||RANK_SPRITE_DATA;}
 async function buildRingFrames(){
@@ -130,12 +179,12 @@ async function buildRingFrames(){
  }
 }
  let COS={catalog:[],inventory:[],equipped:{},creator:false};
-async function loadCosmetics(){
+async function loadCosmetics(userId=S&&S.user&&S.user.id){
  const [cat,inv,equ,cre,sprite1,sprite2,sprite3,sprite4]=await Promise.all([
  sb.from('cosmetic_catalog').select('item_key,slot,display_name,rarity,animated,css_class,active').eq('active',true),
- sb.from('cosmetic_inventory').select('item_key').eq('user_id',S.user.id),
- sb.from('cosmetic_equipped').select('slot,item_key').eq('user_id',S.user.id),
- sb.from('creator_entitlements').select('entitlement').eq('user_id',S.user.id).eq('entitlement','creator'),
+ sb.from('cosmetic_inventory').select('item_key').eq('user_id',userId),
+ sb.from('cosmetic_equipped').select('slot,item_key').eq('user_id',userId),
+ sb.from('creator_entitlements').select('entitlement').eq('user_id',userId).eq('entitlement','creator'),
  fetch('assets/rings/rank_atlas_part1.b64?v=20261128-8').then(r=>{if(!r.ok)throw new Error('Rank atlas 1 missing '+r.status);return r.text()}),
  fetch('assets/rings/rank_atlas_part2.b64?v=20261128-8').then(r=>{if(!r.ok)throw new Error('Rank atlas 2 missing '+r.status);return r.text()}),
  fetch('assets/rings/rank_atlas_part3.b64?v=20261128-8').then(r=>{if(!r.ok)throw new Error('Rank atlas 3 missing '+r.status);return r.text()}),
@@ -144,14 +193,14 @@ async function loadCosmetics(){
  for(const r of [cat,inv,equ,cre])if(r.error)throw r.error;
  RANK_SPRITE_DATA='data:image/png;base64,'+[sprite1,sprite2,sprite3,sprite4].join('').trim();
  await buildRingFrames();
- COS.catalog=cat.data||[];COS.inventory=(inv.data||[]).map(x=>x.item_key);COS.equipped=Object.fromEntries((equ.data||[]).map(x=>[x.slot,x.item_key]));COS.creator=(cre.data||[]).length>0;
+ if(!S||S.user.id!==userId)return;COS.catalog=cat.data||[];COS.inventory=(inv.data||[]).map(x=>x.item_key);COS.equipped=Object.fromEntries((equ.data||[]).map(x=>[x.slot,x.item_key]));COS.creator=(cre.data||[]).length>0;
 }
-async function loadPlayerStats(){
+async function loadPlayerStats(userId=S&&S.user&&S.user.id){
  const parts=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Argentina/Buenos_Aires',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).reduce((o,p)=>(o[p.type]=p.value,o),{});
  const now=parts(),today=now.year+'-'+now.month+'-'+now.day,nowTime=now.hour+':'+now.minute;
  const [created,participations]=await Promise.all([
-  sb.from('matches').select('id',{count:'exact',head:true}).eq('organizer_id',S.user.id).neq('status','cancelled'),
-  sb.from('match_participants').select('match_id,participant_status').eq('user_id',S.user.id).in('participant_status',['joined','organizer'])
+  sb.from('matches').select('id',{count:'exact',head:true}).eq('organizer_id',userId).neq('status','cancelled'),
+  sb.from('match_participants').select('match_id,participant_status').eq('user_id',userId).in('participant_status',['joined','organizer'])
  ]);
  if(created.error)throw created.error;if(participations.error)throw participations.error;
  const ids=[...new Set((participations.data||[]).map(x=>x.match_id))];
@@ -162,6 +211,7 @@ async function loadPlayerStats(){
   const future=(data||[]).filter(m=>m.match_date>today||(m.match_date===today&&(m.start_time||'').slice(0,5)>nowTime));
   upcoming=future.length;next=future[0]||null;
  }
+ if(!S||S.user.id!==userId)return;
  const nextEl=$('home-next-match-content');
  if(nextEl){nextEl.innerHTML=next?'<h3>'+safeText(next.title||'Partido')+'</h3><p>'+safeText(next.area||'')+' · '+safeText(homeDate(next.match_date))+' · '+safeText(String(next.start_time||'').slice(0,5))+'</p><button class="home-next-match-btn" type="button" onclick="tab(\'play\')">Ver partidos <span>→</span></button>':'<h3>Sin partidos por ahora.</h3><p>La próxima pichanga que te anotes aparece acá.</p><button class="home-next-match-btn" type="button" onclick="tab(\'play\')">Buscar partido <span>→</span></button>'}
 
@@ -266,24 +316,82 @@ async function equipCosmetic(key){
 }
 
 const PLAN={free:'Free',elite:'Elite',premium:'Elite'};
-function render(){if(!P)return;
- $('loc').textContent='@'+P.username;
- $('profile-home-name').textContent=P.display_name;$('profile-home-user').textContent='@'+P.username;$('profile-home-code').textContent='JOGA / @'+P.username;$('profile-home-position').textContent=P.d.favorite_position||'Sin definir';$('profile-home-club').textContent=P.d.favorite_club||'Sin definir';$('profile-home-bio').textContent=P.d.bio||'Todavía no agregaste una presentación. Editá tu perfil para contar cómo jugás.';$('profile-home-plan').textContent='Plan '+PLAN[P.plan];setAv($('profile-home-av'),P);$('settings-email').textContent=S.user.email;
- setAv($('pav'),P);$('ph2').textContent=P.display_name;
- $('pchips').innerHTML='<span class="chip"></span>';$('pchips').firstChild.textContent='@'+P.username;
- $('p-dn').value=P.display_name;$('p-un').value=P.username;$('p-pos').value=P.d.favorite_position||'';$('p-club').value=P.d.favorite_club||'';$('p-bio').value=P.d.bio||'';
+function render(){
+ if(!P)return;
+ const displayName=P.display_name||'Jugador JOGA',username=P.username||'jugador',details=P.d||{},planName=PLAN[P.plan]||'Free';
+ $('loc').textContent='@'+username;
+ $('profile-home-name').textContent=displayName;
+ $('profile-home-user').textContent='@'+username;
+ $('profile-home-code').textContent='JOGA / @'+username;
+ $('profile-home-position').textContent=details.favorite_position||'Sin definir';
+ $('profile-home-club').textContent=details.favorite_club||'Sin definir';
+ $('profile-home-bio').textContent=details.bio||'Todavía no agregaste una presentación. Editá tu perfil para contar cómo jugás.';
+ $('profile-home-plan').textContent='Plan '+planName;
+ setAv($('profile-home-av'),P);
+ $('settings-email').textContent=(S&&S.user&&S.user.email)||'';
+ setAv($('pav'),P);
+ $('ph2').textContent=displayName;
+ $('pchips').innerHTML='<span class="chip"></span>';
+ $('pchips').firstChild.textContent='@'+username;
+ $('p-dn').value=displayName;
+ $('p-un').value=username;
+ $('p-pos').value=details.favorite_position||'';
+ $('p-club').value=details.favorite_club||'';
+ $('p-bio').value=details.bio||'';
  $('bioc').textContent=$('p-bio').value.length+' de 300';
- setVis(P.visibility);$('plan').textContent='Plan '+PLAN[P.plan];$('pmail').textContent='Sesión iniciada con '+S.user.email;
- const sel=$('p-pos');if(P.d.favorite_position&&![...sel.options].some(o=>o.value===P.d.favorite_position)){sel.add(new Option(P.d.favorite_position,P.d.favorite_position));sel.value=P.d.favorite_position}try{renderCosmetics()}catch(cosmeticError){console.error('JOGA cosmetics render failed; profile kept available',cosmeticError);const note=$('cosmetic-note');if(note)note.textContent='La personalización no pudo cargarse, pero tu perfil sigue disponible.'}}
+ setVis(P.visibility||'public');
+ $('plan').textContent='Plan '+planName;
+ $('pmail').textContent='Sesión iniciada con '+((S&&S.user&&S.user.email)||'');
+ const sel=$('p-pos');
+ if(details.favorite_position&&![...sel.options].some(o=>o.value===details.favorite_position)){
+  sel.add(new Option(details.favorite_position,details.favorite_position));sel.value=details.favorite_position;
+ }
+}
+async function retryProfile(){
+ if(!S||!S.user)return openAuth('f-login');
+ const userId=S.user.id,button=$('profile-retry');if(button)button.disabled=true;
+ setProfileStatus('Actualizando tu ficha…',false);
+ try{
+  await loadProfile();if(!S||S.user.id!==userId)return;
+  render();setProfileStatus('');
+  void loadProfileExtras(userId).catch(error=>console.error('JOGA profile retry extras',error));
+ }catch(error){
+  console.error('JOGA profile retry failed',error);
+  setProfileStatus('Todavía no pudimos cargar tu ficha. Revisá tu conexión y probá otra vez.',true);
+ }finally{if(button)button.disabled=false}
+}
+$('profile-retry').addEventListener('click',retryProfile);
+window.jogaRetryProfile=retryProfile;
 let vis='public';function setVis(v){vis=v;document.querySelectorAll('#vis button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
 $('vis').addEventListener('click',e=>{if(e.target.dataset.v)setVis(e.target.dataset.v)});
 $('p-bio').addEventListener('input',()=>$('bioc').textContent=$('p-bio').value.length+' de 300');
-async function enter(session){if(P&&S&&S.user.id===session.user.id){S=session;return}if(entering)return;entering=true;S=session;
- try{await loadProfile();render();$('auth').classList.remove('on');tab('home');
-  const ca=session.user.email_confirmed_at;if(/type=signup/.test(boot)||(ca&&Date.now()-new Date(ca)<300000&&/access_token|[?&]code=/.test(boot))){toast('Email confirmado. ¡Bienvenido a JOGA!',7000);history.replaceState(null,'',location.pathname)}}
- catch(e){toast('No pudimos cargar tu perfil. '+msg(e));openAuth('f-login')}
- entering=false}
-function leave(){stopCommunityChat();P=null;S=null;document.querySelectorAll('.auth input').forEach(i=>i.value='');openAuth('f-login')}
+async function enter(session){
+ if(!session||!session.user||!session.user.id)return;
+ const userId=session.user.id;
+ if(entering&&enteringUserId===userId)return;
+ if(P&&S&&S.user&&S.user.id===userId&&!P._profileFallback){S=session;return}
+ entering=true;enteringUserId=userId;S=session;P=createFallbackProfile(session);
+ setProfileStatus('Cargando tu ficha de jugador…',false);
+ try{render();$('auth').classList.remove('on');tab('home')}
+ catch(initialError){console.error('JOGA initial profile render',initialError)}
+ try{
+  await loadProfile();
+  if(!S||S.user.id!==userId)return;
+  render();setProfileStatus('');
+  void loadProfileExtras(userId).catch(error=>console.error('JOGA profile extras',error));
+  const ca=session.user.email_confirmed_at;
+  if(/type=signup/.test(boot)||(ca&&Date.now()-new Date(ca)<300000&&/access_token|[?&]code=/.test(boot))){
+   toast('Email confirmado. ¡Bienvenido a JOGA!',7000);history.replaceState(null,'',location.pathname);
+  }
+ }catch(error){
+  console.error('JOGA profile load failed',error);
+  if(S&&S.user.id===userId){
+   setProfileStatus('No pudimos actualizar tu ficha desde el servidor. Mostramos los datos básicos de tu cuenta. Podés volver a intentar.',true);
+   try{render();$('auth').classList.remove('on');tab('home')}catch(renderError){console.error('JOGA fallback render',renderError)}
+  }
+ }finally{if(enteringUserId===userId){entering=false;enteringUserId=null}}
+}
+function leave(){stopCommunityChat();P=null;S=null;entering=false;enteringUserId=null;setProfileStatus('');document.querySelectorAll('.auth input').forEach(i=>i.value='');openAuth('f-login')}
 
 /* Community chat — public room for signed-in JOGA players */
 let communityChatChannel=null,communityChatMessages=[],communityChatSending=false,lastCommunityMessageAt=0;
@@ -422,7 +530,7 @@ $('pfile').addEventListener('change',async ev=>{const f=ev.target.files[0];if(!f
  finally{$('phbtn').disabled=false;ev.target.value=''}});
 function tab(t){if(t==='edit'&&P)setAv($('pav'),P);document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
  ['home','play','explore','academy','community','players','me','edit','customize','settings'].forEach(v=>{const el=$('v-'+v);if(el)el.classList.toggle('on',t===v)});
- if(t==='me'&&P){try{render()}catch(profileRenderError){console.error('JOGA Mi ID render',profileRenderError);const heading=$('profile-home-name');if(heading&&!heading.textContent)heading.textContent=P.display_name||'Jugador';const code=$('profile-home-code');if(code)code.textContent='JOGA / @'+(P.username||'jugador');}}
+ if(t==='me'){if(P){try{render()}catch(profileRenderError){console.error('JOGA Mi ID render',profileRenderError);setProfileStatus('No pudimos mostrar todos los datos de tu ficha. Probá actualizarla.',true)}}else if(S)setProfileStatus('Estamos cargando tu ficha de jugador…',false)}
  if(t==='players'&&window.jogaPlayersRefresh)window.jogaPlayersRefresh();
  if(t==='play'&&window.jogaMatchesRefresh)window.jogaMatchesRefresh();
  if(t==='community'&&window.jogaCommunityRefresh)window.jogaCommunityRefresh();
@@ -433,6 +541,6 @@ if(/error_description=/.test(boot)){const m=decodeURIComponent((boot.match(/erro
 if(sb){sb.auth.onAuthStateChange((ev,session)=>{setTimeout(()=>{
   if(ev==='PASSWORD_RECOVERY'){recovering=true;openAuth('f-reset');return}
   if(session&&!recovering)enter(session);else if(!session&&ev==='SIGNED_OUT')leave()},0)});
- sb.auth.getSession().then(({data})=>{if(!data.session&&!/error_description=|type=recovery/.test(boot))openAuth('f-login')})}
+ sb.auth.getSession().then(({data})=>{if(data.session)enter(data.session);else if(!/error_description=|type=recovery/.test(boot))openAuth('f-login')}).catch(error=>{console.error('JOGA session restore failed',error);openAuth('f-login');setErr($('f-login'),'No pudimos recuperar tu sesión. Volvé a entrar.')})}
 else{openAuth('f-login');setErr($('f-login'),'No se pudo cargar la conexión. Revisá tu internet y recargá.')}
 if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
