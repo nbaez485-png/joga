@@ -54,6 +54,7 @@ function createForm(){
   e.preventDefault();const f=e.currentTarget,fd=new FormData(f),err=s.querySelector('#merr'),submit=f.querySelector('button[type=submit]');submit.disabled=true;err.textContent='';
   const v=k=>String(fd.get(k)||'').trim(),min=v('min_age')?Number(v('min_age')):null,max=v('max_age')?Number(v('max_age')):null;
   if(min!==null&&max!==null&&min>max){err.textContent='La edad mínima no puede ser mayor a la máxima.';submit.disabled=false;return}
+  if(v('date')<today()||(v('date')===today()&&v('time')<=nowArgentina())){err.textContent='Elegí una fecha y hora futuras. El partido no puede empezar en el pasado.';submit.disabled=false;return}
   try{
    const {data,error}=await sb.rpc('create_match',{p_title:v('title'),p_modality:v('modality'),p_custom_modality:v('custom')||null,p_match_date:v('date'),p_start_time:v('time'),p_area:v('city')+', '+v('province'),p_venue_name:v('venue')||null,p_venue_type:v('venue_type')||null,p_max_players:Number(v('max')),p_cost_per_player:Number(v('cost')||0),p_level_hint:null,p_description:v('desc'),p_is_private:false,p_allow_waitlist:fd.has('waitlist'),p_exact_address:v('address')||null,p_location_notes:v('notes')||null,p_min_age:min,p_max_age:max});
    if(error)throw error;closeSheet();notice('¡Partido publicado!');await loadMatches();await showDetails(data)
