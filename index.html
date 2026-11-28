@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js"></script>
-<link rel="stylesheet" href="style.css?v=20261128-22">
+<link rel="stylesheet" href="style.css?v=20261128-23">
 </head>
 <body>
 <div class="stage"><div class="app" id="app">
@@ -85,8 +85,8 @@
 <nav class="dock" aria-label="Principal">
  <button class="t on" data-t="home" onclick="tab('home')"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v10H3z"/></svg>Inicio</button>
  <button class="t" data-t="play" onclick="tab('play')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m12 7 4 3-1.5 5h-5L8 10z"/></svg>Jugar</button>
- <button class="t" data-t="explore" onclick="tab('explore')"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.8"/><path d="M2.5 20c.6-4.5 11.5-4.5 13 0M15 15c3.5-.9 6 1.2 6.5 4"/></svg>Explorar</button>
- <button class="t create-dock" type="button" aria-label="Crear pichanga" onclick="tab('play');setTimeout(()=>document.getElementById('match-create')?.click(),180)"><span>＋</span></button>
+ <button class="t create-dock" type="button" aria-label="Crear pichanga" onclick="tab('play');setTimeout(()=>document.getElementById('match-create')?.click(),180)"><span>＋</span></button> <button class="t" data-t="explore" onclick="tab('explore')"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.8"/><path d="M2.5 20c.6-4.5 11.5-4.5 13 0M15 15c3.5-.9 6 1.2 6.5 4"/></svg>Explorar</button>
+
  <button class="t" data-t="me" onclick="tab('me')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/></svg>Mi ID</button>
 </nav>
 <div class="auth on" id="auth"><div class="alog"><img alt="JOGA" id="alogo"></div>
@@ -117,7 +117,7 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 </div></div>
-<script src="app.js?v=20261128-22"></script>
+<script src="app.js?v=20261128-23"></script>
 <script src="matches.js"></script>
 </body>
 </html>
