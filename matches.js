@@ -3,7 +3,7 @@ const $m=id=>document.getElementById(id);
 const list=$m('match-list');
 let cached=[],sheet=null;
 const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const today=()=>new Date().toISOString().slice(0,10);
+const today=()=>{const d=new Date(),y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day};
 const dateFmt=d=>new Date(d+'T12:00:00').toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short'});
 const timeFmt=t=>(t||'').slice(0,5);
 const modName=m=>m.modality==='otro'?m.custom_modality:m.modality;
@@ -24,11 +24,11 @@ async function loadMatches(){
    sb.from('match_participants').select('match_id,user_id,participant_status').in('match_id',cached.map(m=>m.id)).in('participant_status',['organizer','joined','waitlisted'])
   ]);
   const pmap=Object.fromEntries((people||[]).map(p=>[p.id,p]));
-  const counts={},own={};(parts||[]).forEach(p=>{counts[p.match_id]=(counts[p.match_id]||0)+1;if(p.user_id===S.user.id)own[p.match_id]=p.participant_status});
+  const counts={},waits={},own={};(parts||[]).forEach(p=>{if(p.participant_status==='waitlisted')waits[p.match_id]=(waits[p.match_id]||0)+1;else counts[p.match_id]=(counts[p.match_id]||0)+1;if(p.user_id===S.user.id)own[p.match_id]=p.participant_status});
   list.innerHTML=cached.map(m=>{
    const host=pmap[m.organizer_id]||{},count=counts[m.id]||0,stat=own[m.id];
    const age=m.min_age||m.max_age?('Edad '+(m.min_age||'13')+'–'+(m.max_age||'99')):'Todas las edades (13+)';
-   return '<article class="match-card"><div class="match-head"><div><h3>'+escapeHtml(m.title)+'</h3><div class="match-meta">'+escapeHtml(modName(m))+' · '+escapeHtml(dateFmt(m.match_date))+' · '+escapeHtml(timeFmt(m.start_time))+'</div></div><span class="match-badge">'+(m.status==='full'?'Completo':'Abierto')+'</span></div><div class="match-meta">📍 '+escapeHtml(m.area)+(m.venue_name?' · '+escapeHtml(m.venue_name):'')+'<br>👤 '+escapeHtml(host.display_name||host.username||'Organizador')+' · '+count+'/'+m.max_players+' jugadores<br>💰 '+(Number(m.cost_per_player)===0?'Gratis':'$'+Number(m.cost_per_player).toLocaleString('es-AR'))+' por jugador</div><div class="match-badges">'+(m.organizer_is_minor?'<span class="match-badge minor">Organizador menor de edad</span>':'')+(m.is_private?'<span class="match-badge">Privado</span>':'')+'<span class="match-badge">'+escapeHtml(age)+'</span>'+(m.allow_waitlist?'<span class="match-badge">Lista de espera</span>':'')+'</div><div class="match-actions"><button data-detail="'+m.id+'">Ver partido</button>'+(stat==='joined'?'<button class="secondary" data-leave="'+m.id+'">Bajarme</button>':stat==='waitlisted'?'<button class="secondary" data-leave="'+m.id+'">Salir de espera</button>':m.organizer_id===S.user.id?'<button class="secondary" data-cancel="'+m.id+'">Cancelar partido</button>':'')+'</div></article>'
+   return '<article class="match-card"><div class="match-head"><div><h3>'+escapeHtml(m.title)+'</h3><div class="match-meta">'+escapeHtml(modName(m))+' · '+escapeHtml(dateFmt(m.match_date))+' · '+escapeHtml(timeFmt(m.start_time))+'</div></div><span class="match-badge">'+(m.status==='full'?'Completo':'Abierto')+'</span></div><div class="match-meta">📍 '+escapeHtml(m.area)+(m.venue_name?' · '+escapeHtml(m.venue_name):'')+'<br>👤 '+escapeHtml(host.display_name||host.username||'Organizador')+' · '+count+'/'+m.max_players+' jugadores'+(waits[m.id]?' · '+waits[m.id]+' en espera':'')+'<br>💰 '+(Number(m.cost_per_player)===0?'Gratis':'$'+Number(m.cost_per_player).toLocaleString('es-AR'))+' por jugador</div><div class="match-badges">'+(m.organizer_is_minor?'<span class="match-badge minor">Organizador menor de edad</span>':'')+(m.is_private?'<span class="match-badge">Privado</span>':'')+'<span class="match-badge">'+escapeHtml(age)+'</span>'+(m.allow_waitlist?'<span class="match-badge">Lista de espera</span>':'')+'</div><div class="match-actions"><button data-detail="'+m.id+'">Ver partido</button>'+(stat==='joined'?'<button class="secondary" data-leave="'+m.id+'">Bajarme</button>':stat==='waitlisted'?'<button class="secondary" data-leave="'+m.id+'">Salir de espera</button>':m.organizer_id===S.user.id?'<button class="secondary" data-cancel="'+m.id+'">Cancelar partido</button>':'')+'</div></article>'
   }).join('');
  }catch(e){console.error('JOGA matches',e);list.innerHTML='<p class="empty">No pudimos cargar los partidos. '+escapeHtml(e.message||'')+'</p>'}
 }
@@ -53,11 +53,11 @@ async function showDetails(id){
    sb.from('match_participants').select('user_id,participant_status').eq('match_id',id).in('participant_status',['organizer','joined','waitlisted']),
    sb.from('match_private_location').select('exact_address,location_notes').eq('match_id',id).maybeSingle()
   ]);
-  const rows=participants||[],status=rows.find(x=>x.user_id===S.user.id)?.participant_status,organizer=m.organizer_id===S.user.id,count=rows.filter(x=>['organizer','joined'].includes(x.participant_status)).length;
+  const rows=participants||[],status=rows.find(x=>x.user_id===S.user.id)?.participant_status,organizer=m.organizer_id===S.user.id,count=rows.filter(x=>['organizer','joined'].includes(x.participant_status)).length,waitCount=rows.filter(x=>x.participant_status==='waitlisted').length;
   const names=[];if(rows.length){const ids=[...new Set(rows.map(x=>x.user_id))];const {data:ps}=await sb.from('profiles').select('id,display_name,username').in('id',ids);const pm=Object.fromEntries((ps||[]).map(p=>[p.id,p]));rows.forEach(r=>{const p=pm[r.user_id];if(p)names.push((p.display_name||p.username)+' · '+r.participant_status)})}
   let buttons=organizer?'<button data-cancel="'+id+'">Cancelar partido</button>':status==='joined'||status==='waitlisted'?'<button class="secondary" data-leave="'+id+'">Salir del partido</button>':m.status==='open'?'<button data-join="'+id+'">Sumarme</button>':'<span class="match-badge">Completo</span>';
   const location=privateLoc&&privateLoc.exact_address?'<p class="info"><b>Dirección privada:</b> '+escapeHtml(privateLoc.exact_address)+(privateLoc.location_notes?'<br>'+escapeHtml(privateLoc.location_notes):'')+'</p>':'';
-  s.innerHTML='<button class="close" data-close>← Volver</button><h2>'+escapeHtml(m.title)+'</h2><div class="match-meta">'+escapeHtml(modName(m))+' · '+escapeHtml(dateFmt(m.match_date))+' · '+escapeHtml(timeFmt(m.start_time))+'<br>Zona: '+escapeHtml(m.area)+(m.venue_name?' · '+escapeHtml(m.venue_name):'')+'<br>Precio: '+(Number(m.cost_per_player)===0?'Gratis':'$'+Number(m.cost_per_player).toLocaleString('es-AR'))+'<br>'+count+'/'+m.max_players+' confirmados'+(m.organizer_is_minor?'<br><span class="match-badge minor">Organizador menor de edad</span>':'')+(m.min_age||m.max_age?'<br>Edad: '+(m.min_age||13)+'–'+(m.max_age||99):'')+'</div><p>'+escapeHtml(m.description||'Sin descripción adicional.')+'</p>'+location+'<h3>Participantes</h3><p class="info">'+escapeHtml(names.join('\n'))+'</p><div class="match-actions">'+buttons+'</div>';
+  s.innerHTML='<button class="close" data-close>← Volver</button><h2>'+escapeHtml(m.title)+'</h2><div class="match-meta">'+escapeHtml(modName(m))+' · '+escapeHtml(dateFmt(m.match_date))+' · '+escapeHtml(timeFmt(m.start_time))+'<br>Zona: '+escapeHtml(m.area)+(m.venue_name?' · '+escapeHtml(m.venue_name):'')+'<br>Precio: '+(Number(m.cost_per_player)===0?'Gratis':'$'+Number(m.cost_per_player).toLocaleString('es-AR'))+'<br>'+count+'/'+m.max_players+' confirmados'+(waitCount?' · '+waitCount+' en espera':'')+(m.organizer_is_minor?'<br><span class="match-badge minor">Organizador menor de edad</span>':'')+(m.min_age||m.max_age?'<br>Edad: '+(m.min_age||13)+'–'+(m.max_age||99):'')+'</div><p>'+escapeHtml(m.description||'Sin descripción adicional.')+'</p>'+location+'<h3>Participantes</h3><p class="info">'+escapeHtml(names.join('\n'))+'</p><div class="match-actions">'+buttons+'</div>';
   s.querySelector('[data-close]').onclick=closeSheet;
  }catch(x){s.innerHTML='<button class="close" data-close>← Volver</button><p class="err">No pudimos mostrar los detalles: '+escapeHtml(x.message)+'</p>';s.querySelector('[data-close]').onclick=closeSheet}
 }
@@ -71,7 +71,7 @@ document.addEventListener('click',e=>{
  if(t.dataset.cancel){if(confirm('¿Cancelar este partido?'))act('cancel_match',t.dataset.cancel)}
 });
 $m('match-create').addEventListener('click',()=>{if(!S){openAuth('f-login');return}createForm()});
-const oldEnter=enter; // expose a refresh hook after successful sign-in
+// expose a refresh hook after successful sign-in
 window.jogaMatchesRefresh=loadMatches;
 if(S)loadMatches();
 if(sb)sb.auth.onAuthStateChange(()=>setTimeout(()=>{if(S)loadMatches()},50));
