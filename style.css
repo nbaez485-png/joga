@@ -906,3 +906,33 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 .dock .t[data-t="explore"].on{color:#b9a0ff}
 .dock .t[data-t="me"].on{color:#ff77c8}
 @media(max-width:380px){.community-chat{margin-left:12px;margin-right:12px}.community-chat-messages{height:300px}.community-chat-heading h2{font-size:22px}.chat-room-copy span{max-width:160px;white-space:normal}.chat-status{font-size:7px}.community-preview{margin-left:12px;margin-right:12px}}
+
+
+/* FINAL FIX 2026-11-28 — cosmetics preview: center J avatar consistently */
+#v-customize .cosmetic-card .cosmetic-demo{
+  width:128px!important;height:128px!important;min-width:128px!important;
+  position:relative!important;margin:8px auto 12px!important;padding:0!important;
+  overflow:visible!important;display:block!important;isolation:isolate!important;
+}
+#v-customize .cosmetic-card .cosmetic-ring-stage{
+  position:absolute!important;inset:-22px!important;
+  overflow:visible!important;pointer-events:none!important;z-index:1!important;
+}
+#v-customize .cosmetic-card .cosmetic-ring-stage .ring-art{
+  position:absolute!important;left:50%!important;top:50%!important;
+  width:128px!important;height:128px!important;
+  transform:translate(-50%,-50%)!important;
+  background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;
+  object-fit:contain!important;z-index:1!important;
+}
+#v-customize .cosmetic-card .cosmetic-demo .cosmetic-avatar{
+  position:absolute!important;inset:auto!important;
+  left:50%!important;top:50%!important;
+  transform:translate(-50%,-50%)!important;
+  width:64px!important;height:64px!important;min-width:64px!important;
+  margin:0!important;padding:0!important;box-sizing:border-box!important;
+  display:grid!important;place-items:center!important;
+  font:800 26px/1 var(--disp)!important;
+  text-align:center!important;z-index:2!important;
+  border-radius:50%!important;overflow:hidden!important;
+}
