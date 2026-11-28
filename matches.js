@@ -85,7 +85,7 @@ document.addEventListener('click',e=>{
  if(t.dataset.cancel){if(confirm('¿Cancelar este partido?'))act('cancel_match',t.dataset.cancel)}
 });
 let searchTimer;
-$m('match-search')?.addEventListener('input',()=>{filterMatchCards();clearTimeout(searchTimer);const q=$m('match-search').value.trim().toLocaleLowerCase('es-AR').replace(/[^\\p{L}\\p{N}\\s'-]/gu,' ').replace(/\\s+/g,' ').trim();searchTimer=setTimeout(()=>loadMatches(q),350)});
+$m('match-search')?.addEventListener('input',()=>{filterMatchCards();clearTimeout(searchTimer);const q=$m('match-search').value.trim().toLocaleLowerCase('es-AR').replace(/[^\p{L}\p{N}\s'-]/gu,' ').replace(/\s+/g,' ').trim();searchTimer=setTimeout(()=>loadMatches(q),350)});
 $m('match-create').addEventListener('click',()=>{if(!S){openAuth('f-login');return}createForm()});
 // expose a refresh hook after successful sign-in
 window.jogaMatchesRefresh=loadMatches;
