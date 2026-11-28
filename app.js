@@ -97,7 +97,7 @@ const initial=p=>(p.display_name||'?').trim().charAt(0).toUpperCase();
 const avUrl=p=>p.avatar_path?sb.storage.from('avatars').getPublicUrl(p.avatar_path).data.publicUrl+'?v='+encodeURIComponent(p.updated_at):'';
 const one=x=>Array.isArray(x)?x[0]:x;
 function setAv(el,p){const u=avUrl(p);el.style.backgroundImage=u?'url("'+u+'")':'';el.textContent=u?'':initial(p)}
-async function loadProfile(){const{data,error}=await sb.from('profiles').select('*, profile_details(*), profile_protected(plan)').eq('id',S.user.id).single();if(error)throw error;P=data;P.d=one(data.profile_details)||{};P.plan=(one(data.profile_protected)||{}).plan||'free';await loadCosmetics()}
+async function loadProfile(){const{data,error}=await sb.from('profiles').select('*, profile_details(*), profile_protected(plan)').eq('id',S.user.id).single();if(error)throw error;P=data;P.d=one(data.profile_details)||{};P.plan=(one(data.profile_protected)||{}).plan||'free';await Promise.all([loadCosmetics(),loadPlayerStats()])}
 let COS={catalog:[],inventory:[],equipped:{},creator:false};
 async function loadCosmetics(){
  const [cat,inv,equ,cre]=await Promise.all([
@@ -109,6 +109,18 @@ async function loadCosmetics(){
  for(const r of [cat,inv,equ,cre])if(r.error)throw r.error;
  COS.catalog=cat.data||[];COS.inventory=(inv.data||[]).map(x=>x.item_key);COS.equipped=Object.fromEntries((equ.data||[]).map(x=>[x.slot,x.item_key]));COS.creator=(cre.data||[]).length>0;
 }
+async function loadPlayerStats(){
+ const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Argentina/Buenos_Aires'});
+ const [created,participations]=await Promise.all([
+ sb.from('matches').select('id',{count:'exact',head:true}).eq('organizer_id',S.user.id).neq('status','cancelled'),
+ sb.from('match_participants').select('match_id,participant_status').eq('user_id',S.user.id).in('participant_status',['joined','organizer'])
+ ]);
+ if(created.error)throw created.error;if(participations.error)throw participations.error;
+ const ids=[...new Set((participations.data||[]).map(x=>x.match_id))];
+ let upcoming=0;if(ids.length){const{data,error}=await sb.from('matches').select('id,match_date,status').in('id',ids).gte('match_date',today).in('status',['open','full']);if(error)throw error;upcoming=(data||[]).length}
+ $('stat-created').textContent=created.count??0;$('stat-joined').textContent=ids.length;$('stat-upcoming').textContent=upcoming;
+}
+
 function renderCosmetics(){
  const grid=$('cosmetic-grid');if(!grid)return;
  const rings=COS.catalog.filter(x=>x.slot==='ring');const banners=COS.catalog.filter(x=>x.slot==='banner');
