@@ -312,3 +312,9 @@ body{font-size:14px;line-height:1.5;font-weight:500;letter-spacing:0;-webkit-fon
 .cosmetic-card{overflow:visible}
 .cosmetic-card .cosmetic-demo{margin-top:12px}
 @media(prefers-reduced-motion:reduce){.ring-art,.banner-demo:after,.profile-banner:after{animation:none!important}}
+
+/* final palette overrides */
+.profile-banner.banner-creator,.banner-demo.banner-creator{background-color:#650914;background-image:url("assets/banners/creator_banner.svg")!important}
+.profile-banner.banner-elite,.banner-demo.banner-elite{background-color:#075d31;background-image:url("assets/banners/elite_banner.svg")!important}
+.profile-banner.banner-default,.banner-demo.banner-default{background-color:#283029;background-image:url("assets/banners/starter_banner.svg")!important}
+.creator-badge{background:linear-gradient(135deg,#ff5267,#a60020)!important;color:#fff!important;border-color:#ff6478!important;box-shadow:0 0 12px #ff163b88}
