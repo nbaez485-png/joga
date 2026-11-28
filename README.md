@@ -33,6 +33,8 @@ El cliente usa la URL del proyecto y una **publishable key** en el frontend. Nun
 
 Las migraciones guardadas en `supabase/migrations/` deben revisarse y aplicarse en el proyecto de prueba correspondiente antes de llevar cambios de base de datos a producción. No ejecutar migraciones automáticamente desde el frontend.
 
+**Historial incompleto:** el proyecto JOGA de prueba tiene nueve migraciones base registradas en Supabase que todavía no están en este repositorio. Antes de recrear la base desde cero o sincronizar otro entorno, recuperar esas migraciones SQL y revisar el orden; no inventar una base sustituta.
+
 ## Seguridad y mantenimiento
 
 - En Supabase Auth, activar la protección de contraseñas filtradas (Advisor la reporta desactivada en el proyecto de prueba).
