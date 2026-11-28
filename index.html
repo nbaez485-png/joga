@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js"></script>
-<link rel="stylesheet" href="style.css?v=20261128-17">
+<link rel="stylesheet" href="style.css?v=20261128-18">
 </head>
 <body>
 <div class="stage"><div class="app" id="app">
@@ -34,13 +34,13 @@
  <section class="home-activity"><div class="sec"><h2>Tu JOGA</h2><span class="home-next-eyebrow">TU MOVIMIENTO</span></div><div class="home-activity-grid"><div><b id="home-stat-created">—</b><span>Organizadas</span></div><div><b id="home-stat-joined">—</b><span>Participaciones</span></div><div><b id="home-stat-upcoming">—</b><span>Próximas</span></div></div></section>
  <section class="home-actions"><div class="sec"><h2>¿Qué pinta hoy?</h2></div><div class="home-action-grid"><button type="button" onclick="tab('play')" class="home-action-card"><span class="home-action-icon">⚽</span><b>Encontrar partido</b><small>Sumate a una pichanga</small><span class="home-action-arrow">→</span></button><button type="button" onclick="tab('play');setTimeout(()=>document.getElementById('match-create')?.click(),180)" class="home-action-card"><span class="home-action-icon">＋</span><b>Crear pichanga</b><small>Armá tu propio partido</small><span class="home-action-arrow">→</span></button></div></section>
  <section class="home-tip" id="home-tip"><div class="home-next-eyebrow">CÓDIGO DE LA CALLE · CONSEJO</div><h3 id="home-tip-title">El fútbol también se piensa.</h3><p id="home-tip-text"></p></section>
- <section class="home-coming"><div class="sec"><h2>Lo que viene</h2></div><div class="coming-grid"><article><span>✦</span><b>Academia</b><small>Aprendé técnicas, movimientos y recursos de cancha.</small><em>PRÓXIMAMENTE</em></article><article><span>⌁</span><b>Comunidad</b><small>Conocé jugadores, conectá y armá tu grupo.</small><em>PRÓXIMAMENTE</em></article></div></section><p class="foot">JOGA · Fútbol de calle</p>
+ <section class="home-coming"><div class="sec"><h2>Explorá</h2></div><div class="coming-grid"><article><span>✦</span><b>Academia</b><small>Aprendé técnicas, movimientos y recursos de cancha.</small><em>PRÓXIMAMENTE</em></article><article class="player-discover"><span>⌁</span><b>Jugadores</b><small>Encontrá gente para jugar y conocé perfiles públicos.</small><button type="button" onclick="tab('players')">Explorar jugadores <span>→</span></button></article></div></section><p class="foot">JOGA · Fútbol de calle</p>
 </section>
 <section class="view" id="v-play"><div class="play-page"><div class="sec"><h2>Jugar</h2><p class="play-intro">Encontrá tu próximo partido o armá uno.</p></div>
  <input id="match-search" class="match-search" type="search" placeholder="Buscar ciudad, partido, cancha o modalidad" aria-label="Buscar partidos por ciudad, partido, cancha o modalidad">
  <div class="match-filter-row"><select id="match-modality-filter" aria-label="Filtrar por modalidad"><option value="">Modalidad</option><option value="3v3">3v3</option><option value="4v4">4v4</option><option value="5v5">5v5</option><option value="6v6">6v6</option><option value="7v7">7v7</option><option value="8v8">8v8</option><option value="9v9">9v9</option><option value="11v11">11v11</option><option value="otro">Otra modalidad</option></select><select id="match-cost-filter" aria-label="Filtrar por precio"><option value="">Precio</option><option value="free">Gratis</option><option value="paid">Con costo</option></select><select id="match-date-filter" class="match-date-filter" aria-label="Filtrar por fecha"><option value="">Fecha</option><option value="today">Hoy</option><option value="7days">Próximos 7 días</option><option value="weekend">Este finde</option></select></div><button class="match-filter-clear" type="button" id="match-filter-clear" hidden>Limpiar filtros</button><div id="match-list" class="match-list"><p class="empty">Cargando partidos…</p></div>
  <button class="btn match-create" id="match-create" type="button">＋ Crear pichanga</button></div></section>
-<section class="view" id="v-me">
+<section class="view" id="v-players"><div class="players-page"><div class="sec"><div><h2>Jugadores</h2><p class="play-intro">Conocé gente que también vive el fútbol.</p></div></div><input id="players-search" class="players-search" type="search" placeholder="Buscar por nombre o usuario" aria-label="Buscar jugadores por nombre o usuario"><div id="players-results" class="players-results"><p class="empty">Iniciá sesión para explorar jugadores.</p></div><p class="players-note">Solo aparecen perfiles públicos. La privacidad del perfil se respeta.</p></div></section><section class="view" id="v-me">
 <div class="profile-home">
  <div class="profile-profile-cover"><div class="profile-banner" id="profile-banner"></div><div class="profile-hero"><div class="profile-avatar-wrap"><div id="profile-ring-art" class="ring-art ring-none" aria-hidden="true" hidden></div><div class="av" id="profile-home-av"></div></div><div class="profile-identity"><h2 id="profile-home-name">Jugador</h2><span id="profile-home-user">@usuario</span><div class="profile-badges"><span class="profile-badge" id="profile-home-plan">Free</span><span class="profile-badge creator-badge" id="creator-badge" hidden>CREADOR</span></div></div></div></div>
  <div class="profile-stats" id="profile-stats"><div><b id="stat-created">—</b><span>Organizadas</span></div><div><b id="stat-joined">—</b><span>Participaciones</span></div><div><b id="stat-upcoming">—</b><span>Próximas</span></div></div>
@@ -71,6 +71,7 @@
 <nav class="dock" aria-label="Principal">
  <button class="t on" data-t="home" onclick="tab('home')"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v10H3z"/></svg>Inicio</button>
  <button class="t" data-t="play" onclick="tab('play')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m12 7 4 3-1.5 5h-5L8 10z"/></svg>Jugar</button>
+ <button class="t" data-t="players" onclick="tab('players')"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.8"/><path d="M2.5 20c.6-4.5 11.5-4.5 13 0M15 15c3.5-.9 6 1.2 6.5 4"/></svg>Jugadores</button>
  <button class="t" data-t="me" onclick="tab('me')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/></svg>Mi ID</button>
 </nav>
 <div class="auth on" id="auth"><div class="alog"><img alt="JOGA" id="alogo"></div>
@@ -101,7 +102,7 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 </div></div>
-<script src="app.js?v=20261128-17"></script>
+<script src="app.js?v=20261128-18"></script>
 <script src="matches.js"></script>
 </body>
 </html>
