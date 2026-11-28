@@ -769,7 +769,7 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 .home-next,.home-next-match,.home-tip{position:relative;overflow:hidden;border:1px solid #343933;border-radius:16px;background:#151815;color:#f2f3ef}
 .home-next,.home-next-match{isolation:isolate}
 .home-next:before,.home-next-match:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(90deg,transparent 49.6%,rgba(242,243,239,.04) 49.6% 50.4%,transparent 50.4%),linear-gradient(0deg,transparent 49.6%,rgba(242,243,239,.04) 49.6% 50.4%,transparent 50.4%),radial-gradient(circle at center,transparent 0 34%,rgba(242,243,239,.04) 34.2% 34.7%,transparent 35%);background-size:100% 100%}
-.home-next{border-left:3px solid #c9ff1f}
+.home-next{border-left:3px solid #343933}
 .home-next-match{border-left:3px solid #343933}
 .home-next .home-next-eyebrow,.home-next-match .home-next-eyebrow,.home-tip .home-next-eyebrow{color:#a0a59a}
 .home-next-match h3,.home-tip h3{color:#f2f3ef}
@@ -778,7 +778,7 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 .home-activity-grid{gap:8px;border:1px solid #343933;background:#151815}
 .home-activity-grid>div{min-width:0;padding:13px 8px 12px;border:0;border-radius:0;background:transparent}
 .home-activity-grid>div+div{border-left:1px solid #343933}
-.home-activity-grid>div:first-child{border-top:2px solid #c9ff1f}
+.home-activity-grid>div:first-child{border-top:2px solid #343933}
 .home-activity-grid>div:nth-child(2),.home-activity-grid>div:nth-child(3){border-top:2px solid #343933}
 .home-activity-grid b{color:#f2f3ef;font-size:24px}
 .home-activity-grid span{color:#a0a59a}
@@ -794,7 +794,7 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 .community-hero .home-next-eyebrow,.community-status{color:#a0a59a;border-color:#343933}
 .community-preview,.community-chat{border-color:#343933;border-left-color:#343933;background:#151815}
 .community-preview-mark,.chat-room-icon{background:#343933;color:#f2f3ef}
-.community-chat .chat-compose-bottom button{background:#c9ff1f;color:#111}
+.community-chat .chat-compose-bottom button{background:#343933;color:#f2f3ef}
 .community-preview .home-next-eyebrow,.chat-eyebrow,.chat-room-pill,.chat-message-meta b,.community-preview-action{color:#a0a59a}
 .community-chat-heading h2,.community-chat-heading p,.chat-room-copy b,.chat-message p{color:#f2f3ef}
 .chat-room-pill{border-color:#343933}
@@ -877,10 +877,10 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 .dock .create-dock{grid-column:3!important;grid-row:1!important;width:52px;height:52px;margin:0;padding:0;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,#dcff55,#a9e900);color:#111;box-shadow:0 4px 18px #c9ff1f38;position:relative;top:0;transform:none}
 .dock .create-dock span{font-size:30px;line-height:1;color:#111}
 .dock .create-dock:active{transform:scale(.93)}
-.dock .t[data-t="home"].on{color:#d6ff54}
-.dock .t[data-t="play"].on{color:#66d9ff}
-.dock .t[data-t="explore"].on{color:#b9a0ff}
-.dock .t[data-t="me"].on{color:#ff77c8}
+.dock .t[data-t="home"].on{color:#c9ff1f}
+.dock .t[data-t="play"].on{color:#c9ff1f}
+.dock .t[data-t="explore"].on{color:#c9ff1f}
+.dock .t[data-t="me"].on{color:#c9ff1f}
 @media(max-width:380px){.community-chat{margin-left:12px;margin-right:12px}.community-chat-messages{height:300px}.community-chat-heading h2{font-size:22px}.chat-room-copy span{max-width:160px;white-space:normal}.chat-status{font-size:7px}.community-preview{margin-left:12px;margin-right:12px}}
 
 
