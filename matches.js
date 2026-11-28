@@ -16,7 +16,7 @@ const closeSheet=()=>{if(sheet){sheet.classList.remove('on');sheet.remove();shee
 function ensureSheet(){if(sheet)return sheet;sheet=document.createElement('div');sheet.className='match-sheet';sheet.id='match-sheet';$m('app').append(sheet);return sheet}
 function notice(t){if(typeof toast==='function')toast(t);else alert(t)}
 function filterMatchCards(){
- const q=($m('match-search')?.value||'').trim().toLocaleLowerCase('es-AR');
+ const q=($m('match-search')?.value||'').trim().toLocaleLowerCase('es-AR').replace(/[^\\p{L}\\p{N}\\s-]/gu,' ').replace(/\\s+/g,' ').trim();
  const modality=$m('match-modality-filter')?.value||'',cost=$m('match-cost-filter')?.value||'';
  let found=0;
  list.querySelectorAll('.match-card').forEach(card=>{
@@ -109,6 +109,7 @@ document.addEventListener('click',e=>{
 let searchTimer;
 $m('match-search')?.addEventListener('input',()=>{filterMatchCards();clearTimeout(searchTimer);const q=$m('match-search').value.trim().toLocaleLowerCase('es-AR').replace(/[^\p{L}\p{N}\s-]/gu,' ').replace(/\s+/g,' ').trim();searchTimer=setTimeout(()=>loadMatches(q),350)});
 $m('match-modality-filter')?.addEventListener('change',filterMatchCards);$m('match-cost-filter')?.addEventListener('change',filterMatchCards);
+$m('match-filter-clear')?.addEventListener('click',()=>{$m('match-search').value='';$m('match-modality-filter').value='';$m('match-cost-filter').value='';loadMatches('')});
 $m('match-create').addEventListener('click',()=>{if(!S){openAuth('f-login');return}createForm()});
 // expose a refresh hook after successful sign-in
 window.jogaMatchesRefresh=loadMatches;
