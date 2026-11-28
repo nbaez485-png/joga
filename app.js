@@ -64,7 +64,16 @@ document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>
 const setErr=(f,t,ok)=>{const e=f.querySelector('.err');e.textContent=t;e.classList.toggle('ok',!!ok)};
 const busy=(f,on)=>f.querySelectorAll('button').forEach(b=>b.disabled=on);
 function bind(id,fn){const f=$(id);f.addEventListener('submit',async e=>{e.preventDefault();if(!sb){setErr(f,'No se pudo cargar la conexión. Revisá tu internet y recargá.');return}setErr(f,'');busy(f,true);try{await fn(f)}catch(x){setErr(f,msg(x))}busy(f,false)})}
-const age=d=>{const b=new Date(d),n=new Date();let a=n.getFullYear()-b.getFullYear();const m=n.getMonth()-b.getMonth();if(m<0||(m===0&&n.getDate()<b.getDate()))a--;return a};
+const argentinaTodayParts=()=>new Intl.DateTimeFormat('en-US',{timeZone:'America/Argentina/Buenos_Aires',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).reduce((o,p)=>(o[p.type]=p.value,o),{});
+const age=d=>{
+ const [y,m,day]=String(d||'').split('-').map(Number);
+ const check=new Date(Date.UTC(y,m-1,day));
+ if(!Number.isInteger(y)||!Number.isInteger(m)||!Number.isInteger(day)||check.getUTCFullYear()!==y||check.getUTCMonth()!==m-1||check.getUTCDate()!==day)return -1;
+ const t=argentinaTodayParts();let a=Number(t.year)-y;
+ if(Number(t.month)<m||(Number(t.month)===m&&Number(t.day)<day))a--;
+ return a
+};
+const birthLimit=argentinaTodayParts();$('r-bd').min='1900-01-01';$('r-bd').max=String(Number(birthLimit.year)-13).padStart(4,'0')+'-'+birthLimit.month+'-'+birthLimit.day;
 let lastEmail='';
 bind('f-login',async f=>{const email=$('l-em').value.trim(),password=$('l-pw').value;if(!email||!password)return setErr(f,'Completá email y contraseña.');
  const{error}=await sb.auth.signInWithPassword({email,password});if(error){lastEmail=email;throw error}});
