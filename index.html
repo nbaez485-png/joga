@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js"></script>
-<link rel="stylesheet" href="style.css?v=20261128-32">
+<link rel="stylesheet" href="style.css?v=20261128-33">
 </head>
 <body>
 <div class="stage"><div class="app" id="app">
@@ -75,7 +75,10 @@
  </section>
  <button class="btn ghost community-back" type="button" onclick="tab('explore')">← Volver a explorar</button></div></section><section class="view" id="v-players"><div class="players-page"><div class="sec"><div><h2>Jugadores</h2><p class="play-intro">Conocé gente que también vive el fútbol.</p></div></div><input id="players-search" class="players-search" type="search" placeholder="Buscar por nombre o usuario" aria-label="Buscar jugadores por nombre o usuario"><div id="players-results" class="players-results"><p class="empty">Iniciá sesión para explorar jugadores.</p></div><p class="players-note">Solo aparecen perfiles públicos. La privacidad del perfil se respeta.</p></div></section><section class="view" id="v-me">
 <div class="profile-home">
- <div class="profile-profile-cover"><div class="profile-banner" id="profile-banner"></div><div class="profile-hero"><div class="profile-avatar-wrap"><div class="profile-ring-stage" aria-hidden="true"><div id="profile-ring-art" class="ring-art ring-none" hidden></div></div><div class="av" id="profile-home-av"></div></div><div class="profile-identity"><h2 id="profile-home-name">Jugador</h2><span id="profile-home-user">@usuario</span><div class="profile-badges"><span class="profile-badge" id="profile-home-plan">Free</span><span class="profile-badge creator-badge" id="creator-badge" hidden>CREADOR</span></div></div></div></div>
+ <div class="profile-home-heading"><div><span>JOGA / PLAYER CARD</span><h1>Mi ID</h1><p>Tu identidad dentro de la cancha.</p></div><div class="profile-home-mark" aria-hidden="true">J</div></div>
+ <div class="profile-profile-cover"><div class="profile-banner" id="profile-banner"></div><div class="profile-hero"><div class="profile-avatar-wrap"><div class="profile-ring-stage" aria-hidden="true"><div id="profile-ring-art" class="ring-art ring-none" hidden></div></div><div class="av" id="profile-home-av"></div></div><div class="profile-identity"><h2 id="profile-home-name">Jugador</h2><span id="profile-home-user">@usuario</span><div class="profile-player-tag"><small>ID DE JUGADOR</small><b id="profile-home-code">JOGA / @usuario</b></div><div class="profile-badges"><span class="profile-badge" id="profile-home-plan">Free</span><span class="profile-badge creator-badge" id="creator-badge" hidden>CREADOR</span></div></div></div></div>
+
+ <section class="profile-player-details" aria-label="Datos de jugador"><div class="profile-player-details-head"><div><span>FICHA DE JUGADOR</span><h3>Tu estilo de juego</h3></div><span class="profile-card-mark">JOGA</span></div><div class="profile-player-fields"><div><span>POSICIÓN</span><b id="profile-home-position">Sin definir</b></div><div><span>CLUB</span><b id="profile-home-club">Sin definir</b></div></div><p id="profile-home-bio">Todavía no agregaste una presentación. Editá tu perfil para contar cómo jugás.</p></section>
  <div class="profile-stats" id="profile-stats"><div><b id="stat-created">—</b><span>Organizadas</span></div><div><b id="stat-joined">—</b><span>Participaciones</span></div><div><b id="stat-upcoming">—</b><span>Próximas</span></div></div>
  <div class="profile-actions"><button class="btn" type="button" onclick="tab('edit')">Editar perfil</button><button class="btn ghost" type="button" onclick="tab('customize')">Personalizar</button></div>
  <div class="profile-action-list"><button type="button" onclick="tab('settings')">⚙️ Configuración de cuenta <span>›</span></button></div>
@@ -136,7 +139,7 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 </div></div>
-<script src="app.js?v=20261128-28"></script>
-<script src="matches.js?v=20261128-27"></script>
+<script src="app.js?v=20261128-33"></script>
+<script src="matches.js?v=20261128-33"></script>
 </body>
 </html>
