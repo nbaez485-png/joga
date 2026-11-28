@@ -273,11 +273,10 @@ $('pfile').addEventListener('change',async ev=>{const f=ev.target.files[0];if(!f
   await loadProfile();render();toast('Foto actualizada.')}
  catch(x){console.error('foto',step,x);er.textContent=['No se pudo leer o preparar la foto','No se pudo subir la foto','No se pudo guardar la foto en tu perfil'][step]+why(x)+'.'}
  finally{$('phbtn').disabled=false;ev.target.value=''}});
-const other={play:['Jugar','Encontrá una pichanga o armá la tuya.'],street:['La calle','Publicaciones y comunidad llegan en una etapa posterior.']};
 function tab(t){if(t==='edit'&&P)setAv($('pav'),P);document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
- const home=t==='home'||t==='play';$('v-home').classList.toggle('on',home);['me','edit','customize','settings'].forEach(v=>{const el=$('v-'+v);if(el)el.classList.toggle('on',t===v)});$('v-other').classList.toggle('on',t==='street');
- if(t==='play'){setTimeout(()=>{const el=document.querySelector('#v-home .sec');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});if(window.jogaMatchesRefresh)window.jogaMatchesRefresh()},80)}
- if(other[t]){$('oT').textContent=other[t][0];$('oP').textContent=other[t][1]}if(t!=='play')$('main').scrollTo({top:0})}
+ ['home','play','me','edit','customize','settings'].forEach(v=>{const el=$('v-'+v);if(el)el.classList.toggle('on',t===v)});
+ if(t==='play'&&window.jogaMatchesRefresh)window.jogaMatchesRefresh();
+ $('main').scrollTo({top:0,behavior:'smooth'})}
 show(0);
 if(/error_description=/.test(boot)){const m=decodeURIComponent((boot.match(/error_description=([^&]+)/)||[])[1]||'').replace(/\+/g,' ');
  setTimeout(()=>{openAuth('f-login');setErr($('f-login'),/expired|invalid/i.test(m)?'El link venció o ya se usó. Pedí uno nuevo.':'No se pudo completar la acción. Probá de nuevo.')},50)}
