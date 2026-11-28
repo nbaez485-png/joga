@@ -18,8 +18,8 @@ function notice(t){if(typeof toast==='function')toast(t);else alert(t)}
 function filterMatchCards(){
  const q=($m('match-search')?.value||'').trim().toLocaleLowerCase('es-AR').replace(/[^\\p{L}\\p{N}\\s-]/gu,' ').replace(/\\s+/g,' ').trim();
  const modality=$m('match-modality-filter')?.value||'',cost=$m('match-cost-filter')?.value||'',dateMode=$m('match-date-filter')?.value||'';
- const todayStr=today(),todayUTC=Date.parse(todayStr+'T00:00:00Z'),weekEnd=todayUTC+7*86400000;
- const weekendDate=d=>{const dow=new Date(d+'T12:00:00').getDay();return dow===5||dow===6||dow===0};
+ const todayStr=today(),todayUTC=Date.parse(todayStr+'T00:00:00Z'),weekEnd=todayUTC+6*86400000;
+ const weekendDate=d=>{const dow=new Date(d+'T12:00:00Z').getUTCDay();return dow===5||dow===6||dow===0};
  let found=0;
  list.querySelectorAll('.match-card').forEach(card=>{
   const text=card.textContent.toLocaleLowerCase('es-AR'),mod=card.dataset.modality||'',price=card.dataset.cost||'',date=card.dataset.date||'';
