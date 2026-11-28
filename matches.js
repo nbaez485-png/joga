@@ -30,7 +30,7 @@ function filterMatchCards(){
  });
  let empty=list.querySelector('.match-filter-empty');
  const hasFilters=!!q||!!modality||!!cost||!!dateMode;
- if(hasFilters&&found===0){if(!empty){empty=document.createElement('p');empty.className='empty match-filter-empty';empty.textContent='No encontramos partidos con esos filtros.';list.append(empty)}}else if(empty)empty.remove()
+ if(hasFilters&&found===0&&list.querySelectorAll('.match-card').length>0){if(!empty){empty=document.createElement('p');empty.className='empty match-filter-empty';empty.textContent='No encontramos partidos con esos filtros.';list.append(empty)}}else if(empty)empty.remove()
 }
 async function loadMatches(searchText=activeSearch){
  activeSearch=String(searchText||'').trim();searchText=activeSearch;
