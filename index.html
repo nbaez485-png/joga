@@ -31,8 +31,9 @@
  
  <div class="wc" id="wc"></div>
  <div class="sec"><h2>Partidos</h2></div>
- <p class="empty">Acá van a aparecer los partidos de tu zona. Se activan en el próximo módulo.</p>
- <p class="foot">Módulo 1: cuentas y perfiles.</p>
+ <div id="match-list" class="match-list"><p class="empty">Cargando partidos…</p></div>
+ <button class="btn match-create" id="match-create" type="button">＋ Crear una pichanga</button>
+ <p class="foot">JOGA · Fútbol de calle</p>
 </section>
 <section class="view" id="v-other"><div class="soon"><h2 id="oT"></h2><p id="oP"></p><button class="btn" onclick="tab('home')">Volver al inicio</button></div></section>
 <section class="view" id="v-me"><form class="pf" id="pf" novalidate>
@@ -89,5 +90,6 @@
 <div class="toast" id="toast" role="status"></div>
 </div></div>
 <script src="app.js"></script>
+<script src="matches.js"></script>
 </body>
 </html>
