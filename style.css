@@ -453,3 +453,9 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 .preview-avatar .ring-art.ring-electric,.preview-profile-avatar .ring-art.ring-electric{animation:ringPreviewFlash .22s steps(2,end) infinite!important}
 @keyframes ringPreviewBreath{from{transform:scale(.98)}to{transform:scale(1.035)}}
 @keyframes ringPreviewFlash{0%{opacity:.88;transform:scale(.99)}50%{opacity:1;transform:scale(1.035)}100%{opacity:.92;transform:scale(1)}}
+
+/* Cosmetics visibility: locked previews remain vivid; reduce opacity is not applied to artwork */
+.cosmetic-card.locked{opacity:1!important;filter:none!important}
+.cosmetic-card.locked .cosmetic-status{color:#c7c8b8!important}
+.cosmetic-card.locked .ring-art{filter:none!important}
+.cosmetic-demo.ring-bronze{filter:drop-shadow(0 0 7px #c87527)!important}
