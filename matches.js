@@ -1,7 +1,7 @@
 (()=> {
 const $m=id=>document.getElementById(id);
 const list=$m('match-list');
-let cached=[],sheet=null,loadSeq=0,activeSearch='';
+let cached=[],sheet=null,loadSeq=0,activeSearch='',deepMatchId=new URLSearchParams(location.search).get('match');
 const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const argentinaParts=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Argentina/Buenos_Aires',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).reduce((o,p)=>(o[p.type]=p.value,o),{});
 const today=()=>{const p=argentinaParts();return p.year+'-'+p.month+'-'+p.day};
@@ -61,6 +61,7 @@ async function loadMatches(searchText=activeSearch){
    const age=ageLabel(m);
    return '<article class="match-card" data-modality="'+escapeHtml(m.modality||'')+'" data-cost="'+Number(m.cost_per_player||0)+'" data-date="'+escapeHtml(m.match_date)+'"><div class="match-head"><div><h3>'+escapeHtml(m.title)+'</h3><div class="match-meta">'+escapeHtml(modName(m))+' · '+escapeHtml(dateFmt(m.match_date))+' · '+escapeHtml(timeFmt(m.start_time))+'</div></div><span class="match-badge">'+(m.status==='full'?'Completo':'Abierto')+'</span></div><div class="match-meta">📍 '+escapeHtml(m.area)+(m.venue_name?' · '+escapeHtml(m.venue_name):'')+'<br>👤 '+escapeHtml(host.display_name||host.username||'Organizador')+' · '+count+'/'+m.max_players+' jugadores'+(waits[m.id]?' · '+waits[m.id]+' en espera':'')+'<br>💰 '+(Number(m.cost_per_player)===0?'Gratis':'$'+Number(m.cost_per_player).toLocaleString('es-AR'))+' por jugador</div><div class="match-badges">'+(m.organizer_is_minor?'<span class="match-badge minor">Organizador menor de edad</span>':'')+(m.is_private?'<span class="match-badge">Privado</span>':'')+'<span class="match-badge">'+escapeHtml(age)+'</span>'+(m.allow_waitlist?'<span class="match-badge">Lista de espera</span>':'')+'</div><div class="match-actions"><button data-detail="'+m.id+'">Ver partido</button>'+(stat==='joined'?'<button class="secondary" data-leave="'+m.id+'">Bajarme</button>':stat==='waitlisted'?'<button class="secondary" data-leave="'+m.id+'">Salir de espera</button>':m.organizer_id===S.user.id?'<button class="secondary" data-cancel="'+m.id+'">Cancelar partido</button>':'')+'</div></article>'
   }).join('');filterMatchCards();
+  if(deepMatchId){const target=deepMatchId;deepMatchId=null;history.replaceState(null,'',location.pathname+location.hash);if(cached.some(x=>x.id===target))showDetails(target);else notice('Ese partido ya no está disponible para sumarte.')}
  }catch(e){if(seq!==loadSeq)return;console.error('JOGA matches',e);list.innerHTML='<p class="empty">No pudimos cargar los partidos. Revisá tu conexión e intentá de nuevo.</p>'}
 }
 function createForm(){
@@ -82,6 +83,15 @@ function createForm(){
   }catch(x){err.textContent='No se pudo publicar: '+friendlyError(x);console.error(x)}finally{submit.disabled=false}
  };
 }
+async function shareMatch(id){
+ const m=cached.find(x=>x.id===id);if(!m)return;
+ const url=new URL(location.origin+location.pathname);url.searchParams.set('match',id);
+ const text='Sumate a esta pichanga en JOGA: '+(m.title||'Partido')+' · '+(m.area||'');
+ try{if(navigator.share){await navigator.share({title:'JOGA · '+(m.title||'Partido'),text,url:url.toString()});return}
+  if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(url.toString());notice('Link del partido copiado.');return}
+  window.prompt('Copiá el link del partido:',url.toString());
+ }catch(e){if(e&&e.name!=='AbortError')notice('No pudimos compartir el link.');}
+}
 async function showDetails(id){
  const m=cached.find(x=>x.id===id);if(!m)return;
  const s=ensureSheet();s.innerHTML='<button class="close" data-close>← Volver</button><h2>'+escapeHtml(m.title)+'</h2><p class="info">Cargando detalles…</p>';s.classList.add('on');s.querySelector('[data-close]').onclick=closeSheet;
@@ -97,18 +107,19 @@ async function showDetails(id){
   const names=[];if(rows.length){const ids=[...new Set(rows.map(x=>x.user_id))];const {data:ps,error:profileError}=await sb.from('profiles').select('id,display_name,username').in('id',ids);if(profileError)throw profileError;const pm=Object.fromEntries((ps||[]).map(p=>[p.id,p]));rows.forEach(r=>{const p=pm[r.user_id];if(p)names.push((p.display_name||p.username)+' · '+r.participant_status)})}
   let buttons=organizer?'<button data-cancel="'+id+'">Cancelar partido</button>':status==='joined'||status==='waitlisted'?'<button class="secondary" data-leave="'+id+'">Salir del partido</button>':(m.status==='open'||(m.status==='full'&&m.allow_waitlist))?'<button data-join="'+id+'">'+(m.status==='full'?'Entrar a la lista de espera':'Sumarme')+'</button>':'<span class="match-badge">Completo</span>';
   const location=privateLoc&&privateLoc.exact_address?'<p class="info"><b>Dirección privada:</b> '+escapeHtml(privateLoc.exact_address)+(privateLoc.location_notes?'<br>'+escapeHtml(privateLoc.location_notes):'')+'</p>':'';
-  s.innerHTML='<button class="close" data-close>← Volver</button><h2>'+escapeHtml(m.title)+'</h2><div class="match-meta">'+escapeHtml(modName(m))+' · '+escapeHtml(dateFmt(m.match_date))+' · '+escapeHtml(timeFmt(m.start_time))+'<br>Zona: '+escapeHtml(m.area)+(m.venue_name?' · '+escapeHtml(m.venue_name):'')+'<br>Precio: '+(Number(m.cost_per_player)===0?'Gratis':'$'+Number(m.cost_per_player).toLocaleString('es-AR'))+'<br>'+count+'/'+m.max_players+' confirmados'+(waitCount?' · '+waitCount+' en espera':'')+(m.organizer_is_minor?'<br><span class="match-badge minor">Organizador menor de edad</span>':'')+(m.min_age||m.max_age?'<br>'+escapeHtml(ageLabel(m)):'')+'</div><p>'+escapeHtml(m.description||'Sin descripción adicional.')+'</p>'+location+'<h3>Participantes</h3><p class="info">'+escapeHtml(names.join('\n'))+'</p><div class="match-actions">'+buttons+'</div>';
+  s.innerHTML='<button class="close" data-close>← Volver</button><h2>'+escapeHtml(m.title)+'</h2><div class="match-meta">'+escapeHtml(modName(m))+' · '+escapeHtml(dateFmt(m.match_date))+' · '+escapeHtml(timeFmt(m.start_time))+'<br>Zona: '+escapeHtml(m.area)+(m.venue_name?' · '+escapeHtml(m.venue_name):'')+'<br>Precio: '+(Number(m.cost_per_player)===0?'Gratis':'$'+Number(m.cost_per_player).toLocaleString('es-AR'))+'<br>'+count+'/'+m.max_players+' confirmados'+(waitCount?' · '+waitCount+' en espera':'')+(m.organizer_is_minor?'<br><span class="match-badge minor">Organizador menor de edad</span>':'')+(m.min_age||m.max_age?'<br>'+escapeHtml(ageLabel(m)):'')+'</div><p>'+escapeHtml(m.description||'Sin descripción adicional.')+'</p>'+location+'<h3>Participantes</h3><p class="info">'+escapeHtml(names.join('\n'))+'</p><div class="match-actions">'+buttons+'<button class="secondary" data-share="'+id+'">Compartir</button></div>';
   s.querySelector('[data-close]').onclick=closeSheet;
  }catch(x){s.innerHTML='<button class="close" data-close>← Volver</button><p class="err">No pudimos mostrar los detalles: '+escapeHtml(x.message)+'</p>';s.querySelector('[data-close]').onclick=closeSheet}
 }
 async function act(name,id){try{const {data,error}=await sb.rpc(name,{p_match_id:id});if(error)throw error;notice(name==='join_match'?(data==='waitlisted'?'Entraste a la lista de espera.':'¡Ya estás anotado!'):name==='leave_match'?(data==='left_waitlist'?'Saliste de la lista de espera.':data==='left_and_promoted'?'Te bajaste y se liberó el lugar para alguien de la espera.':'Te bajaste del partido.'): 'Partido cancelado.');closeSheet();await loadMatches()}catch(e){notice('No se pudo completar: '+friendlyError(e))}}
 document.addEventListener('click',e=>{
- const t=e.target.closest('[data-detail],[data-join],[data-leave],[data-cancel]');
+ const t=e.target.closest('[data-detail],[data-join],[data-leave],[data-cancel],[data-share]');
  if(!t)return;
  if(t.dataset.detail)showDetails(t.dataset.detail);
  if(t.dataset.join)act('join_match',t.dataset.join);
  if(t.dataset.leave)act('leave_match',t.dataset.leave);
  if(t.dataset.cancel){if(confirm('¿Cancelar este partido?'))act('cancel_match',t.dataset.cancel)}
+ if(t.dataset.share)shareMatch(t.dataset.share);
 });
 let searchTimer;
 $m('match-search')?.addEventListener('input',()=>{filterMatchCards();clearTimeout(searchTimer);const q=$m('match-search').value.trim().toLocaleLowerCase('es-AR').replace(/[^\p{L}\p{N}\s-]/gu,' ').replace(/\s+/g,' ').trim();searchTimer=setTimeout(()=>loadMatches(q),350)});
