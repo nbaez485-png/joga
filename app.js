@@ -104,6 +104,7 @@ async function loadProfile(){
  const results=await Promise.allSettled([loadCosmetics(),loadPlayerStats()]);
  if(results[0].status==='rejected'){console.error('cosmetics load',results[0].reason);COS={catalog:[],inventory:[],equipped:{},creator:false};}
  if(results[1].status==='rejected'){console.error('profile stats load',results[1].reason);$('stat-created').textContent='—';$('stat-joined').textContent='—';$('stat-upcoming').textContent='—';}
+ try{const ringB64=await fetch('assets/rings/fire_ring.gif.b64?v=20261128-5');if(ringB64.ok)FIRE_RING_DATA='data:image/gif;base64,'+(await ringB64.text()).trim()}catch(e){console.warn('fire ring GIF loading failed',e)}
 }
 let FIRE_RING_DATA='';
  function ringSrc(key){return key==='fire_ring'&&FIRE_RING_DATA?FIRE_RING_DATA:'assets/rings/'+key+'.svg?v=20261128-5';}
