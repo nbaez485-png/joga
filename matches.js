@@ -22,7 +22,7 @@ async function loadMatches(searchText=''){
  try{
   let query=sb.from('matches').select('id,organizer_id,title,modality,custom_modality,match_date,start_time,area,venue_name,venue_type,max_players,cost_per_player,level_hint,description,is_private,allow_waitlist,status,min_age,max_age,organizer_is_minor').in('status',['open','full']).gte('match_date',today()).order('match_date').order('start_time');
   if(searchText)query=query.or('title.ilike.%'+searchText+'%,area.ilike.%'+searchText+'%');
-  const {data,error}=await query.limit(30);
+  const {data,error}=await query.limit(searchText?100:30);
   if(error)throw error;
   cached=(data||[]).filter(isUpcoming);
   if(!cached.length){list.innerHTML='<p class="empty">'+(searchText?'No encontramos partidos con esa búsqueda.':'Todavía no hay partidos. ¡Podés crear el primero!')+'</p>';return}
@@ -68,7 +68,7 @@ async function showDetails(id){
   if(locationResult.error)throw locationResult.error;
   const participants=participantsResult.data,privateLoc=locationResult.data;
   const rows=participants||[],status=rows.find(x=>x.user_id===S.user.id)?.participant_status,organizer=m.organizer_id===S.user.id,count=rows.filter(x=>['organizer','joined'].includes(x.participant_status)).length,waitCount=rows.filter(x=>x.participant_status==='waitlisted').length;
-  const names=[];if(rows.length){const ids=[...new Set(rows.map(x=>x.user_id))];const {data:ps}=await sb.from('profiles').select('id,display_name,username').in('id',ids);const pm=Object.fromEntries((ps||[]).map(p=>[p.id,p]));rows.forEach(r=>{const p=pm[r.user_id];if(p)names.push((p.display_name||p.username)+' · '+r.participant_status)})}
+  const names=[];if(rows.length){const ids=[...new Set(rows.map(x=>x.user_id))];const {data:ps,error:profileError}=await sb.from('profiles').select('id,display_name,username').in('id',ids);if(profileError)throw profileError;const pm=Object.fromEntries((ps||[]).map(p=>[p.id,p]));rows.forEach(r=>{const p=pm[r.user_id];if(p)names.push((p.display_name||p.username)+' · '+r.participant_status)})}
   let buttons=organizer?'<button data-cancel="'+id+'">Cancelar partido</button>':status==='joined'||status==='waitlisted'?'<button class="secondary" data-leave="'+id+'">Salir del partido</button>':m.status==='open'?'<button data-join="'+id+'">Sumarme</button>':'<span class="match-badge">Completo</span>';
   const location=privateLoc&&privateLoc.exact_address?'<p class="info"><b>Dirección privada:</b> '+escapeHtml(privateLoc.exact_address)+(privateLoc.location_notes?'<br>'+escapeHtml(privateLoc.location_notes):'')+'</p>':'';
   s.innerHTML='<button class="close" data-close>← Volver</button><h2>'+escapeHtml(m.title)+'</h2><div class="match-meta">'+escapeHtml(modName(m))+' · '+escapeHtml(dateFmt(m.match_date))+' · '+escapeHtml(timeFmt(m.start_time))+'<br>Zona: '+escapeHtml(m.area)+(m.venue_name?' · '+escapeHtml(m.venue_name):'')+'<br>Precio: '+(Number(m.cost_per_player)===0?'Gratis':'$'+Number(m.cost_per_player).toLocaleString('es-AR'))+'<br>'+count+'/'+m.max_players+' confirmados'+(waitCount?' · '+waitCount+' en espera':'')+(m.organizer_is_minor?'<br><span class="match-badge minor">Organizador menor de edad</span>':'')+(m.min_age||m.max_age?'<br>'+escapeHtml(ageLabel(m)):'')+'</div><p>'+escapeHtml(m.description||'Sin descripción adicional.')+'</p>'+location+'<h3>Participantes</h3><p class="info">'+escapeHtml(names.join('\n'))+'</p><div class="match-actions">'+buttons+'</div>';
@@ -85,7 +85,7 @@ document.addEventListener('click',e=>{
  if(t.dataset.cancel){if(confirm('¿Cancelar este partido?'))act('cancel_match',t.dataset.cancel)}
 });
 let searchTimer;
-$m('match-search')?.addEventListener('input',()=>{filterMatchCards();clearTimeout(searchTimer);const q=$m('match-search').value.trim().toLocaleLowerCase('es-AR').replace(/[,%()]/g,' ').replace(/\s+/g,' ').trim();searchTimer=setTimeout(()=>loadMatches(q),350)});
+$m('match-search')?.addEventListener('input',()=>{filterMatchCards();clearTimeout(searchTimer);const q=$m('match-search').value.trim().toLocaleLowerCase('es-AR').replace(/[^\\p{L}\\p{N}\\s'-]/gu,' ').replace(/\\s+/g,' ').trim();searchTimer=setTimeout(()=>loadMatches(q),350)});
 $m('match-create').addEventListener('click',()=>{if(!S){openAuth('f-login');return}createForm()});
 // expose a refresh hook after successful sign-in
 window.jogaMatchesRefresh=loadMatches;
