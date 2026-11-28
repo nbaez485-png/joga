@@ -304,7 +304,7 @@ $('pfile').addEventListener('change',async ev=>{const f=ev.target.files[0];if(!f
  catch(x){console.error('foto',step,x);er.textContent=['No se pudo leer o preparar la foto','No se pudo subir la foto','No se pudo guardar la foto en tu perfil'][step]+why(x)+'.'}
  finally{$('phbtn').disabled=false;ev.target.value=''}});
 function tab(t){if(t==='edit'&&P)setAv($('pav'),P);document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
- ['home','play','players','me','edit','customize','settings'].forEach(v=>{const el=$('v-'+v);if(el)el.classList.toggle('on',t===v)});
+ ['home','play','explore','academy','community','players','me','edit','customize','settings'].forEach(v=>{const el=$('v-'+v);if(el)el.classList.toggle('on',t===v)});
  if(t==='players'&&window.jogaPlayersRefresh)window.jogaPlayersRefresh();
  if(t==='play'&&window.jogaMatchesRefresh)window.jogaMatchesRefresh();
  $('main').scrollTo({top:0,behavior:'smooth'})}
