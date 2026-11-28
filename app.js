@@ -372,8 +372,8 @@ async function enter(session){
  if(P&&S&&S.user&&S.user.id===userId&&!P._profileFallback){S=session;return}
  entering=true;enteringUserId=userId;S=session;P=createFallbackProfile(session);
  setProfileStatus('Cargando tu ficha de jugador…',false);
- try{render();$('auth').classList.remove('on');tab('home')}
- catch(initialError){console.error('JOGA initial profile render',initialError)}
+ $('auth').classList.remove('on');tab('home');
+ try{render()}catch(initialError){console.error('JOGA initial profile render',initialError);setProfileStatus('Tu cuenta está activa, pero el perfil tuvo un error visual. Probá reintentar.',true)}
  try{
   await loadProfile();
   if(!S||S.user.id!==userId)return;
@@ -387,7 +387,8 @@ async function enter(session){
   console.error('JOGA profile load failed',error);
   if(S&&S.user.id===userId){
    setProfileStatus('No pudimos actualizar tu ficha desde el servidor. Mostramos los datos básicos de tu cuenta. Podés volver a intentar.',true);
-   try{render();$('auth').classList.remove('on');tab('home')}catch(renderError){console.error('JOGA fallback render',renderError)}
+   $('auth').classList.remove('on');tab('home');
+   try{render()}catch(renderError){console.error('JOGA fallback render',renderError)}
   }
  }finally{if(enteringUserId===userId){entering=false;enteringUserId=null}}
 }
