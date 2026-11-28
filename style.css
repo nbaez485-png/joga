@@ -223,3 +223,15 @@ body{font-size:14px;line-height:1.5;font-weight:500;letter-spacing:0;-webkit-fon
 .settings-card p{color:var(--mu);font-size:13px;margin-bottom:12px}
 .settings-card .btn{width:100%;margin-top:8px}
 @media(prefers-reduced-motion:reduce){.ring-fire,.ring-electric,.ring-rainbow,.ring-neon,.ring-fire:before,.ring-electric:before{animation:none!important}}
+
+/* Interactive inventory state */
+.cosmetic-card{appearance:none;color:inherit;cursor:pointer;width:100%;font-family:inherit}
+.cosmetic-card.locked{opacity:.46;cursor:not-allowed;filter:grayscale(.45)}
+.cosmetic-card.equipped{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset}
+.cosmetic-status{display:block;font-size:11px;font-weight:700;margin-top:7px;color:var(--ac)}
+.cosmetic-note{font-size:12px;color:var(--mu);margin:0 0 14px}
+.profile-avatar-wrap.ring-fire{border:3px solid #ff6b22;box-shadow:0 0 12px #ff3d1260;animation:firePulse 1.4s ease-in-out infinite}
+.profile-avatar-wrap.ring-electric{border:3px solid #46b8ff;box-shadow:0 0 12px #1b9aff80;animation:electricPulse .8s ease-in-out infinite alternate}
+.profile-avatar-wrap.ring-rainbow{border:4px solid transparent;background:conic-gradient(red,orange,yellow,lime,cyan,blue,magenta,red);animation:ringSpin 4s linear infinite}
+.profile-avatar-wrap.ring-neon{border:3px solid #b34cff;box-shadow:0 0 8px #a333ff,0 0 20px #a333ff66;animation:neonPulse 1.7s ease-in-out infinite}
+.profile-avatar-wrap.ring-bronze,.profile-avatar-wrap.ring-silver,.profile-avatar-wrap.ring-gold,.profile-avatar-wrap.ring-diamond{animation:none}
