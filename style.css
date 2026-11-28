@@ -432,3 +432,7 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 .cosmetic-card.locked .cosmetic-status{color:#b0b39d}
 .cosmetic-status{letter-spacing:.15px}
 .profile-avatar-wrap .av{background-image:initial}
+
+/* Guarantee the profile photo can be supplied by setAv() inline styles. */
+.profile-avatar-wrap .av{background-image:initial}
+#profile-home-av{background-image:initial}
