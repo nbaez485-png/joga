@@ -462,3 +462,21 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 
 /* First raster VFX asset: Fuego is a looping GIF, no SVG/CSS animation stacked on top */
 .ring-art.ring-fire{animation:none!important}
+
+/* JOGA rank frames v20261128-6: real PNG sprite, static only; no SVG or ring animations */
+.ring-art{display:block;position:absolute;pointer-events:none;object-fit:contain;z-index:1;max-width:none;transform:translate(-50%,-50%);left:50%;top:50%;background-repeat:no-repeat;background-size:500% 100%;filter:none!important;animation:none!important}
+.ring-art.ring-bronze{background-position:0% center}
+.ring-art.ring-silver{background-position:25% center}
+.ring-art.ring-gold{background-position:50% center}
+.ring-art.ring-platinum{background-position:75% center}
+.ring-art.ring-diamond{background-position:100% center}
+.cosmetic-demo{width:104px;height:104px;position:relative;overflow:visible;margin:8px auto 12px;background:transparent!important;border:0!important;box-shadow:none!important;isolation:isolate}
+.cosmetic-demo .ring-art{width:128px;height:128px;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1}
+.cosmetic-demo .cosmetic-avatar{position:absolute;inset:15px!important;z-index:2;border-radius:50%;overflow:hidden;background:#16181b!important;border:2px solid #070809;box-shadow:inset 0 0 10px #000,0 0 3px #000}
+.profile-avatar-wrap{position:relative;isolation:isolate;overflow:visible!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.profile-avatar-wrap .ring-art{width:136px;height:136px;z-index:1}
+.profile-avatar-wrap .av{position:relative;z-index:2;width:106px;height:106px;background-color:#17191c!important;background-position:center;background-size:cover;border:0!important}
+.preview-profile-avatar .ring-art,.preview-avatar .ring-art{width:154px;height:154px;z-index:1}
+#profile-ring-art[hidden]{display:none!important}
+.ring-art[class*="ring-"]{animation:none!important;filter:none!important;box-shadow:none!important;border:0!important;border-radius:0!important}
+@media(prefers-reduced-motion:reduce){.ring-art{animation:none!important}}
