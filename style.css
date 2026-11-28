@@ -318,3 +318,10 @@ body{font-size:14px;line-height:1.5;font-weight:500;letter-spacing:0;-webkit-fon
 .profile-banner.banner-elite,.banner-demo.banner-elite{background-color:#075d31;background-image:url("assets/banners/elite_banner.svg")!important}
 .profile-banner.banner-default,.banner-demo.banner-default{background-color:#283029;background-image:url("assets/banners/starter_banner.svg")!important}
 .creator-badge{background:linear-gradient(135deg,#ff5267,#a60020)!important;color:#fff!important;border-color:#ff6478!important;box-shadow:0 0 12px #ff163b88}
+
+@keyframes eliteArtwork{to{rotate:360deg}}
+@keyframes creatorArtwork{to{rotate:360deg}}
+.ring-art.ring-elite{animation:eliteArtwork 7s linear infinite,neonArtwork 1.5s ease-in-out infinite alternate}
+.ring-art.ring-creator{animation:creatorArtwork 4s linear infinite,fireFlicker .3s ease-in-out infinite alternate;filter:drop-shadow(0 0 8px #ff183b)}
+.profile-avatar-wrap.ring-elite{box-shadow:0 0 12px #22df7666}
+.profile-avatar-wrap.ring-creator{box-shadow:0 0 16px #ff183b99}
