@@ -419,3 +419,16 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 #profile-home-av{background-color:#17191c!important;background-position:center!important;background-repeat:no-repeat!important;background-size:cover!important}
 #pav{background-position:center!important;background-size:cover!important}
 .ring-none{display:none!important}
+
+/* Avatar image must remain the inline profile photo, never forced to none. */
+.profile-avatar-wrap .av{background-image:initial}
+#profile-home-av,#pav{background-position:center!important;background-size:cover!important;background-repeat:no-repeat!important}
+.ring-art{display:block;mix-blend-mode:normal;transform-origin:50% 50%;backface-visibility:hidden}
+img.ring-art[class*="ring-"]{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;outline:0!important;padding:0!important}
+.cosmetic-demo{overflow:visible!important;clip-path:none!important}
+.cosmetic-card{position:relative;overflow:visible}
+.cosmetic-card .cosmetic-demo .cosmetic-avatar{background:#14171b!important}
+.cosmetic-card.equipped{border-color:var(--ac)!important;box-shadow:0 0 0 1px #c9ff1f inset,0 0 18px #c9ff1f20}
+.cosmetic-card.locked .cosmetic-status{color:#b0b39d}
+.cosmetic-status{letter-spacing:.15px}
+.profile-avatar-wrap .av{background-image:initial}
