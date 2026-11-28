@@ -106,7 +106,7 @@ async function loadProfile(){
  if(results[1].status==='rejected'){console.error('profile stats load',results[1].reason);$('stat-created').textContent='—';$('stat-joined').textContent='—';$('stat-upcoming').textContent='—';}
  
 }
-function ringSrc(){return 'assets/rings/rank_frames.png?v=20261128-6';}
+let RANK_SPRITE_DATA='';function ringSrc(){return RANK_SPRITE_DATA;}
  let COS={catalog:[],inventory:[],equipped:{},creator:false};
 async function loadCosmetics(){
  const [cat,inv,equ,cre]=await Promise.all([
