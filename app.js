@@ -268,13 +268,13 @@ async function equipCosmetic(key){
 const PLAN={free:'Free',elite:'Elite',premium:'Elite'};
 function render(){if(!P)return;
  $('loc').textContent='@'+P.username;
- $('profile-home-name').textContent=P.display_name;$('profile-home-user').textContent='@'+P.username;$('profile-home-code').textContent='JOGA / @'+P.username;$('profile-home-position').textContent=P.d.favorite_position||'Sin definir';$('profile-home-club').textContent=P.d.favorite_club||'Sin definir';$('profile-home-bio').textContent=P.d.bio||'Todavía no agregaste una presentación. Editá tu perfil para contar cómo jugás.';$('profile-home-plan').textContent='Plan '+PLAN[P.plan];setAv($('profile-home-av'),P);$('settings-email').textContent=S.user.email;renderCosmetics();
+ $('profile-home-name').textContent=P.display_name;$('profile-home-user').textContent='@'+P.username;$('profile-home-code').textContent='JOGA / @'+P.username;$('profile-home-position').textContent=P.d.favorite_position||'Sin definir';$('profile-home-club').textContent=P.d.favorite_club||'Sin definir';$('profile-home-bio').textContent=P.d.bio||'Todavía no agregaste una presentación. Editá tu perfil para contar cómo jugás.';$('profile-home-plan').textContent='Plan '+PLAN[P.plan];setAv($('profile-home-av'),P);$('settings-email').textContent=S.user.email;
  setAv($('pav'),P);$('ph2').textContent=P.display_name;
  $('pchips').innerHTML='<span class="chip"></span>';$('pchips').firstChild.textContent='@'+P.username;
  $('p-dn').value=P.display_name;$('p-un').value=P.username;$('p-pos').value=P.d.favorite_position||'';$('p-club').value=P.d.favorite_club||'';$('p-bio').value=P.d.bio||'';
  $('bioc').textContent=$('p-bio').value.length+' de 300';
  setVis(P.visibility);$('plan').textContent='Plan '+PLAN[P.plan];$('pmail').textContent='Sesión iniciada con '+S.user.email;
- const sel=$('p-pos');if(P.d.favorite_position&&![...sel.options].some(o=>o.value===P.d.favorite_position)){sel.add(new Option(P.d.favorite_position,P.d.favorite_position));sel.value=P.d.favorite_position}}
+ const sel=$('p-pos');if(P.d.favorite_position&&![...sel.options].some(o=>o.value===P.d.favorite_position)){sel.add(new Option(P.d.favorite_position,P.d.favorite_position));sel.value=P.d.favorite_position}try{renderCosmetics()}catch(cosmeticError){console.error('JOGA cosmetics render failed; profile kept available',cosmeticError);const note=$('cosmetic-note');if(note)note.textContent='La personalización no pudo cargarse, pero tu perfil sigue disponible.'}}
 let vis='public';function setVis(v){vis=v;document.querySelectorAll('#vis button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
 $('vis').addEventListener('click',e=>{if(e.target.dataset.v)setVis(e.target.dataset.v)});
 $('p-bio').addEventListener('input',()=>$('bioc').textContent=$('p-bio').value.length+' de 300');
@@ -422,7 +422,7 @@ $('pfile').addEventListener('change',async ev=>{const f=ev.target.files[0];if(!f
  finally{$('phbtn').disabled=false;ev.target.value=''}});
 function tab(t){if(t==='edit'&&P)setAv($('pav'),P);document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
  ['home','play','explore','academy','community','players','me','edit','customize','settings'].forEach(v=>{const el=$('v-'+v);if(el)el.classList.toggle('on',t===v)});
- if(t==='players'&&window.jogaPlayersRefresh)window.jogaPlayersRefresh();
+ if(t==='me'&&P){try{render()}catch(profileRenderError){console.error('JOGA Mi ID render',profileRenderError);const heading=$('profile-home-name');if(heading&&!heading.textContent)heading.textContent=P.display_name||'Jugador';const code=$('profile-home-code');if(code)code.textContent='JOGA / @'+(P.username||'jugador');}}\n if(t==='players'&&window.jogaPlayersRefresh)window.jogaPlayersRefresh();
  if(t==='play'&&window.jogaMatchesRefresh)window.jogaMatchesRefresh();
  if(t==='community'&&window.jogaCommunityRefresh)window.jogaCommunityRefresh();
  $('main').scrollTo({top:0,behavior:'smooth'})}
