@@ -16,7 +16,7 @@ const closeSheet=()=>{if(sheet){sheet.classList.remove('on');sheet.remove();shee
 function ensureSheet(){if(sheet)return sheet;sheet=document.createElement('div');sheet.className='match-sheet';sheet.id='match-sheet';$m('app').append(sheet);return sheet}
 function notice(t){if(typeof toast==='function')toast(t);else alert(t)}
 function filterMatchCards(){
- const q=($m('match-search')?.value||'').trim().toLocaleLowerCase('es-AR').replace(/[^\\p{L}\\p{N}\\s-]/gu,' ').replace(/\\s+/g,' ').trim();
+ const q=($m('match-search')?.value||'').trim().toLocaleLowerCase('es-AR').replace(/[^\p{L}\p{N}\s-]/gu,' ').replace(/\s+/g,' ').trim();
  const modality=$m('match-modality-filter')?.value||'',cost=$m('match-cost-filter')?.value||'',dateMode=$m('match-date-filter')?.value||'';
  const todayStr=today(),todayUTC=Date.parse(todayStr+'T00:00:00Z'),weekEnd=todayUTC+6*86400000;
  const todayDow=new Date(todayStr+'T12:00:00Z').getUTCDay(),friOffset=(5-todayDow+7)%7,weekendStart=todayUTC+(todayDow===5||todayDow===6||todayDow===0?0:friOffset)*86400000,weekendDays=todayDow===5?2:todayDow===6?1:todayDow===0?0:2,weekendEnd=weekendStart+weekendDays*86400000;
