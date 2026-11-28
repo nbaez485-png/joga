@@ -18,6 +18,7 @@ JOGA es una plataforma mobile-first para organizar fútbol amateur y callejero: 
 
 - Registro, inicio de sesión, confirmación por email y recuperación de contraseña.
 - Perfil de jugador, foto, usuario, privacidad y datos opcionales.
+- Exploración y búsqueda de perfiles públicos por nombre o usuario; perfiles privados quedan ocultos salvo el propio y contexto de partido autorizado.
 - Creación de partidos públicos; modalidad, fecha/hora, localidad, cancha, precio, límites de edad, descripción y lista de espera.
 - Inscripción, baja, lista de espera y cancelación por organizador.
 - Búsqueda de partidos y filtros combinables por modalidad, costo y fecha (hoy, próximos 7 días o finde).
@@ -39,7 +40,8 @@ Las migraciones guardadas en `supabase/migrations/` deben revisarse y aplicarse 
 
 ## Seguridad y mantenimiento
 
-- En Supabase Auth, activar la protección de contraseñas filtradas (Advisor la reporta desactivada en el proyecto de prueba).
+- La política RLS de perfiles se endureció en el proyecto JOGA de prueba: perfiles privados solo son visibles al propio usuario y en contexto de partido autorizado. Migración `20261128091908_restrict_private_profile_visibility.sql`.
+- En Supabase Auth, activar la protección de contraseñas filtradas (Advisor la reporta desactivada en el proyecto de prueba; pendiente antes del lanzamiento).
 - Las RPC `SECURITY DEFINER` para crear, anotarse, salir, cancelar y equipar cosméticos están intencionalmente expuestas a `authenticated`; mantener sus comprobaciones de `auth.uid()` y autorización.
 - No exponer claves secretas ni conceder acceso a datos privados por conveniencia.
 - Los índices de las claves foráneas cosméticas se añadieron en la migración `index_cosmetic_item_fk_columns`.
