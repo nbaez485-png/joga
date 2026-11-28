@@ -97,7 +97,14 @@ const initial=p=>(p.display_name||'?').trim().charAt(0).toUpperCase();
 const avUrl=p=>p.avatar_path?sb.storage.from('avatars').getPublicUrl(p.avatar_path).data.publicUrl+'?v='+encodeURIComponent(p.updated_at):'';
 const one=x=>Array.isArray(x)?x[0]:x;
 function setAv(el,p){const u=avUrl(p);el.style.backgroundImage=u?'url("'+u+'")':'';el.textContent=u?'':initial(p)}
-async function loadProfile(){const{data,error}=await sb.from('profiles').select('*, profile_details(*), profile_protected(plan)').eq('id',S.user.id).single();if(error)throw error;P=data;P.d=one(data.profile_details)||{};P.plan=(one(data.profile_protected)||{}).plan||'free';await Promise.all([loadCosmetics(),loadPlayerStats()])}
+async function loadProfile(){
+ const{data,error}=await sb.from('profiles').select('*, profile_details(*), profile_protected(plan)').eq('id',S.user.id).single();
+ if(error)throw error;
+ P=data;P.d=one(data.profile_details)||{};P.plan=(one(data.profile_protected)||{}).plan||'free';
+ const results=await Promise.allSettled([loadCosmetics(),loadPlayerStats()]);
+ if(results[0].status==='rejected'){console.error('cosmetics load',results[0].reason);COS={catalog:[],inventory:[],equipped:{},creator:false};}
+ if(results[1].status==='rejected'){console.error('profile stats load',results[1].reason);$('stat-created').textContent='—';$('stat-joined').textContent='—';$('stat-upcoming').textContent='—';}
+}
 let COS={catalog:[],inventory:[],equipped:{},creator:false};
 async function loadCosmetics(){
  const [cat,inv,equ,cre]=await Promise.all([
@@ -179,7 +186,7 @@ function renderCosmetics(){
  $('cosmetic-note').textContent=COS.creator?'Cuenta Creador: todos los cosméticos actuales y futuros disponibles.': 'Los rangos se ganan jugando; los efectos especiales llegan por logros y eventos. Elite es el único plan de pago.';
  const wrap=$('profile-home-av').parentElement;
  const ring=COS.catalog.find(x=>x.item_key===COS.equipped.ring);const banner=COS.catalog.find(x=>x.item_key===COS.equipped.banner);
- wrap.className='profile-avatar-wrap '+(ring?ring.css_class:'ring-default');const ringArt=$('profile-ring-art');ringArt.src=ring?'assets/rings/'+ring.item_key+'.svg':'';ringArt.className='ring-art '+(ring?ring.css_class:'ring-none');ringArt.hidden=!ring;const bannerEl=$('profile-banner');bannerEl.className='profile-banner '+(banner?banner.css_class:'banner-default');bannerEl.style.backgroundImage='url("assets/banners/'+(banner?banner.item_key:'starter_banner')+'.svg")';
+ wrap.className='profile-avatar-wrap'+(ring?' '+ring.css_class:'');const ringArt=$('profile-ring-art');ringArt.src=ring?'assets/rings/'+ring.item_key+'.svg':'';ringArt.className='ring-art '+(ring?ring.css_class:'ring-none');ringArt.hidden=!ring;const bannerEl=$('profile-banner');bannerEl.className='profile-banner '+(banner?banner.css_class:'banner-default');bannerEl.style.backgroundImage='url("assets/banners/'+(banner?banner.item_key:'starter_banner')+'.svg")';
  $('creator-badge').hidden=!COS.creator;
 }
 async function equipCosmetic(key){
