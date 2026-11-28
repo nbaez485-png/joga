@@ -150,7 +150,7 @@ async function equipCosmetic(key){
  await loadCosmetics();renderCosmetics();render();toast('Cosmético equipado.');
 }
 
-const PLAN={free:'Free',premium:'Premium',elite:'Elite'};
+const PLAN={free:'Free',elite:'Elite',premium:'Elite'};
 function render(){if(!P)return;
  $('loc').textContent='@'+P.username;
  $('profile-home-name').textContent=P.display_name;$('profile-home-user').textContent='@'+P.username;$('profile-home-plan').textContent='Plan '+PLAN[P.plan];setAv($('profile-home-av'),P);$('settings-email').textContent=S.user.email;renderCosmetics();
