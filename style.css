@@ -670,7 +670,7 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 .coming-grid article{border:1px solid var(--line);background:var(--s1);border-radius:16px;padding:15px;display:flex;flex-direction:column;gap:7px}
 .coming-grid article>span{font-size:22px;color:var(--ac)}.coming-grid b{font:800 22px/.98 var(--disp);text-transform:uppercase}.coming-grid small{font-size:11px;color:var(--mu);line-height:1.35;min-height:46px}.coming-grid em{font-style:normal;font-size:9px;letter-spacing:1px;font-weight:900;color:var(--ac)}
 .home-tip{border-color:#39462a}.home-tip .home-next-eyebrow{margin-bottom:8px}
-@media(min-width:600px){.home-next-match,.home-tip,.home-activity-grid,.home-action-grid,.coming-grid{max-width:560px;margin-left:auto;margin-right:auto}}
+@media(min-width:600px){.home-next-match,.home-tip,.home-activity-grid,.coming-grid{max-width:560px;margin-left:auto;margin-right:auto}}
 
 /* Players discovery */
 .dock{grid-template-columns:repeat(4,1fr)}
@@ -802,3 +802,20 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 .dock .t{min-width:0}
 .dock .create-dock{grid-column:3;grid-row:1;justify-self:center;align-self:center;margin:0;width:50px;height:50px;position:relative;top:0;transform:none}
 .dock .create-dock:active{transform:scale(.94)}
+
+/* Cosmetic tiers use their own restrained accent colors */
+#ring-ranks-grid .cosmetic-card:nth-child(1){--cosmetic-accent:#c98550}
+#ring-ranks-grid .cosmetic-card:nth-child(2){--cosmetic-accent:#c6d0d8}
+#ring-ranks-grid .cosmetic-card:nth-child(3){--cosmetic-accent:#e8c45e}
+#ring-ranks-grid .cosmetic-card:nth-child(4){--cosmetic-accent:#77d7e8}
+#ring-ranks-grid .cosmetic-card:nth-child(5){--cosmetic-accent:#a9a5ff}
+#ring-exclusive-grid .cosmetic-card:nth-child(1){--cosmetic-accent:#c9ff1f}
+#ring-exclusive-grid .cosmetic-card:nth-child(2){--cosmetic-accent:#b9a0ff}
+#ring-exclusive-grid .cosmetic-card:nth-child(3){--cosmetic-accent:#ff77c8}
+#ring-exclusive-grid .cosmetic-card:nth-child(4){--cosmetic-accent:#ffb347}
+#ring-ranks-grid .cosmetic-card,
+#ring-exclusive-grid .cosmetic-card{border-color:color-mix(in srgb,var(--cosmetic-accent) 28%,var(--line));background:linear-gradient(155deg,color-mix(in srgb,var(--cosmetic-accent) 9%,var(--s1)),var(--s1) 72%)}
+#ring-ranks-grid .cosmetic-card h3,
+#ring-exclusive-grid .cosmetic-card h3{color:var(--cosmetic-accent)}
+#ring-ranks-grid .cosmetic-card.equipped,
+#ring-exclusive-grid .cosmetic-card.equipped{border-color:color-mix(in srgb,var(--cosmetic-accent) 62%,var(--line));box-shadow:0 0 0 1px color-mix(in srgb,var(--cosmetic-accent) 18%,transparent),0 8px 20px color-mix(in srgb,var(--cosmetic-accent) 9%,transparent)}
