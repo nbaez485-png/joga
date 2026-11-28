@@ -1,7 +1,7 @@
 (()=> {
 const $m=id=>document.getElementById(id);
 const list=$m('match-list');
-let cached=[],sheet=null,loadSeq=0;
+let cached=[],sheet=null,loadSeq=0,activeSearch='';
 const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const argentinaParts=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Argentina/Buenos_Aires',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).reduce((o,p)=>(o[p.type]=p.value,o),{});
 const today=()=>{const p=argentinaParts();return p.year+'-'+p.month+'-'+p.day};
@@ -16,7 +16,9 @@ const closeSheet=()=>{if(sheet){sheet.classList.remove('on');sheet.remove();shee
 function ensureSheet(){if(sheet)return sheet;sheet=document.createElement('div');sheet.className='match-sheet';sheet.id='match-sheet';$m('app').append(sheet);return sheet}
 function notice(t){if(typeof toast==='function')toast(t);else alert(t)}
 function filterMatchCards(){const q=($m('match-search')?.value||'').trim().toLocaleLowerCase('es-AR');let found=0;list.querySelectorAll('.match-card').forEach(card=>{const ok=!q||card.textContent.toLocaleLowerCase('es-AR').includes(q);card.hidden=!ok;if(ok)found++});let empty=list.querySelector('.match-filter-empty');if(q&&found===0){if(!empty){empty=document.createElement('p');empty.className='empty match-filter-empty';empty.textContent='No encontramos partidos con esa búsqueda.';list.append(empty)}}else if(empty)empty.remove()}
-async function loadMatches(searchText=''){
+async function loadMatches(searchText=activeSearch){
+ activeSearch=String(searchText||'').trim();searchText=activeSearch;
+ const seq=++loadSeq;
  if(!sb||!S){list.innerHTML='<p class="empty">Iniciá sesión para ver los partidos.</p>';return}
  list.innerHTML='<p class="empty">Buscando pichangas…</p>';
  try{
@@ -24,6 +26,7 @@ async function loadMatches(searchText=''){
   if(searchText)query=query.or('title.ilike.%'+searchText+'%,area.ilike.%'+searchText+'%');
   const {data,error}=await query.limit(searchText?100:30);
   if(error)throw error;
+  if(seq!==loadSeq)return;
   cached=(data||[]).filter(isUpcoming);
   if(!cached.length){list.innerHTML='<p class="empty">'+(searchText?'No encontramos partidos con esa búsqueda.':'Todavía no hay partidos. ¡Podés crear el primero!')+'</p>';return}
   const ids=[...new Set(cached.map(m=>m.organizer_id))];
@@ -31,6 +34,7 @@ async function loadMatches(searchText=''){
    sb.from('profiles').select('id,display_name,username').in('id',ids),
    sb.from('match_participants').select('match_id,user_id,participant_status').in('match_id',cached.map(m=>m.id)).in('participant_status',['organizer','joined','waitlisted'])
   ]);
+  if(seq!==loadSeq)return;
   if(peopleResult.error)throw peopleResult.error;
   if(partsResult.error)throw partsResult.error;
   const people=peopleResult.data||[],parts=partsResult.data||[];
