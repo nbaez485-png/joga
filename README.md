@@ -20,7 +20,7 @@ JOGA es una plataforma mobile-first para organizar fútbol amateur y callejero: 
 - Perfil de jugador, foto, usuario, privacidad y datos opcionales.
 - Creación de partidos públicos; modalidad, fecha/hora, localidad, cancha, precio, límites de edad, descripción y lista de espera.
 - Inscripción, baja, lista de espera y cancelación por organizador.
-- Búsqueda de partidos y filtros combinables por modalidad y costo.
+- Búsqueda de partidos y filtros combinables por modalidad, costo y fecha (hoy, próximos 7 días o finde).
 - Personalización e inventario cosmético en Supabase. El trabajo de los avatar rings está en pausa hasta revisar visualmente los assets en el teléfono.
 
 ## Publicación
@@ -33,7 +33,7 @@ El cliente usa la URL del proyecto y una **publishable key** en el frontend. Nun
 
 Las migraciones guardadas en `supabase/migrations/` deben revisarse y aplicarse en el proyecto de prueba correspondiente antes de llevar cambios de base de datos a producción. No ejecutar migraciones automáticamente desde el frontend.
 
-## QA rápido antes de publicar
+## Seguridad y mantenimiento\n\n- En Supabase Auth, activar la protección de contraseñas filtradas (Advisor la reporta desactivada en el proyecto de prueba).\n- Las RPC \\`SECURITY DEFINER\\` para crear, anotarse, salir, cancelar y equipar cosméticos están intencionalmente expuestas a \\`authenticated\\`; mantener sus comprobaciones de \\`auth.uid()\\` y autorización.\n- No exponer claves secretas ni conceder acceso a datos privados por conveniencia.\n- Los índices de las claves foráneas cosméticas se añadieron en la migración \\`index_cosmetic_item_fk_columns\\`.\n\n## QA rápido antes de publicar
 
 1. Revisar sintaxis de `app.js` y `matches.js`.
 2. Confirmar que cada ID usado desde JavaScript exista en el HTML o sea creado dinámicamente.
