@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js"></script>
-<link rel="stylesheet" href="style.css?v=20261128-15">
+<link rel="stylesheet" href="style.css?v=20261128-16">
 </head>
 <body>
 <div class="stage"><div class="app" id="app">
@@ -30,7 +30,11 @@
  </div>
  
  <section class="home-next"><div class="home-next-eyebrow">JOGA · Fútbol de calle</div><h2>La calle te espera.</h2><p>Encontrá un partido cerca o sumate a uno que ya está armado.</p><button class="btn" type="button" onclick="tab('play')">Buscar partido <span aria-hidden="true">→</span></button></section>
- <p class="foot">JOGA · Fútbol de calle</p>
+ <section class="home-next-match" id="home-next-match"><div class="home-next-eyebrow">TU PRÓXIMO PARTIDO</div><div id="home-next-match-content"><h3>Preparando la cancha…</h3><p>Tu actividad aparece acá cuando te anotás.</p></div></section>
+ <section class="home-activity"><div class="sec"><h2>Tu JOGA</h2><span class="home-next-eyebrow">TU MOVIMIENTO</span></div><div class="home-activity-grid"><div><b id="home-stat-created">—</b><span>Organizadas</span></div><div><b id="home-stat-joined">—</b><span>Participaciones</span></div><div><b id="home-stat-upcoming">—</b><span>Próximas</span></div></div></section>
+ <section class="home-actions"><div class="sec"><h2>¿Qué pinta hoy?</h2></div><div class="home-action-grid"><button type="button" onclick="tab('play')" class="home-action-card"><span class="home-action-icon">⚽</span><b>Encontrar partido</b><small>Sumate a una pichanga</small><span class="home-action-arrow">→</span></button><button type="button" onclick="tab('play');setTimeout(()=>document.getElementById('match-create')?.click(),180)" class="home-action-card"><span class="home-action-icon">＋</span><b>Crear pichanga</b><small>Armá tu propio partido</small><span class="home-action-arrow">→</span></button></div></section>
+ <section class="home-tip" id="home-tip"><div class="home-next-eyebrow">CÓDIGO DE LA CALLE · CONSEJO</div><h3 id="home-tip-title">El fútbol también se piensa.</h3><p id="home-tip-text"></p></section>
+ <section class="home-coming"><div class="sec"><h2>Lo que viene</h2></div><div class="coming-grid"><article><span>✦</span><b>Academia</b><small>Aprendé técnicas, movimientos y recursos de cancha.</small><em>PRÓXIMAMENTE</em></article><article><span>⌁</span><b>Comunidad</b><small>Conocé jugadores, conectá y armá tu grupo.</small><em>PRÓXIMAMENTE</em></article></div></section><p class="foot">JOGA · Fútbol de calle</p>
 </section>
 <section class="view" id="v-play"><div class="play-page"><div class="sec"><h2>Jugar</h2><p class="play-intro">Encontrá tu próximo partido o armá uno.</p></div>
  <input id="match-search" class="match-search" type="search" placeholder="Buscar ciudad, partido, cancha o modalidad" aria-label="Buscar partidos por ciudad, partido, cancha o modalidad">
@@ -97,7 +101,7 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 </div></div>
-<script src="app.js?v=20261128-12"></script>
+<script src="app.js?v=20261128-16"></script>
 <script src="matches.js"></script>
 </body>
 </html>
