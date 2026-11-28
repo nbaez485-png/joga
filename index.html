@@ -62,7 +62,18 @@
  <button type="button" class="btn ghost" id="pout">Cerrar sesión</button>
  <small id="pmail" style="text-align:center;margin-top:14px"></small>
 </form></section>
-</main>
+<section class="view" id="v-customize"><div class="customize-page"><h2>Personalización</h2><p>Previsualizá los estilos. El equipamiento y desbloqueos se conectarán al inventario seguro en una próxima etapa.</p>
+<div class="cosmetic-grid">
+ <article class="cosmetic-card"><div class="cosmetic-demo ring-bronze"><div class="cosmetic-avatar">J</div></div><h3>Bronce</h3><small>Rango · Estático</small></article>
+ <article class="cosmetic-card"><div class="cosmetic-demo ring-silver"><div class="cosmetic-avatar">J</div></div><h3>Plata</h3><small>Rango · Estático</small></article>
+ <article class="cosmetic-card"><div class="cosmetic-demo ring-gold"><div class="cosmetic-avatar">J</div></div><h3>Oro</h3><small>Rango · Estático</small></article>
+ <article class="cosmetic-card"><div class="cosmetic-demo ring-diamond"><div class="cosmetic-avatar">J</div></div><h3>Diamante</h3><small>Rango · Estático</small></article>
+ <article class="cosmetic-card"><div class="cosmetic-demo ring-fire"><div class="cosmetic-avatar">J</div></div><h3>Fuego</h3><small>Cosmético animado</small></article>
+ <article class="cosmetic-card"><div class="cosmetic-demo ring-electric"><div class="cosmetic-avatar">J</div></div><h3>Eléctrico</h3><small>Cosmético animado</small></article>
+ <article class="cosmetic-card"><div class="cosmetic-demo ring-rainbow"><div class="cosmetic-avatar">J</div></div><h3>Multicolor</h3><small>Cosmético animado</small></article>
+ <article class="cosmetic-card"><div class="cosmetic-demo ring-neon"><div class="cosmetic-avatar">J</div></div><h3>Neón</h3><small>Cosmético animado</small></article>
+</div><button class="btn ghost" type="button" onclick="tab('me')">Volver al perfil</button></div></section>
+<section class="view" id="v-settings"><div class="settings-page"><h2>Configuración</h2><p>Cuenta y preferencias, separado de tu perfil de jugador.</p><div class="settings-card"><h3>Cuenta</h3><p id="settings-email"></p><button class="btn ghost" type="button" onclick="tab('edit')">Editar perfil</button><button class="btn ghost" type="button" id="settings-signout">Cerrar sesión</button></div><button class="btn ghost" type="button" onclick="tab('me')">Volver al perfil</button></div></section></main>
 <nav class="dock" aria-label="Principal">
  <button class="t on" data-t="home" onclick="tab('home')"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v10H3z"/></svg>Inicio</button>
  <button class="t" data-t="play" onclick="tab('play')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m12 7 4 3-1.5 5h-5L8 10z"/></svg>Jugar</button>
