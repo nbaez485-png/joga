@@ -122,10 +122,10 @@ async function loadPlayerStats(){
 }
 
 function renderCosmetics(){
- const grid=$('cosmetic-grid');if(!grid)return;
  const rings=COS.catalog.filter(x=>x.slot==='ring');
  const banners=COS.catalog.filter(x=>x.slot==='banner');
  const rankGrid=$('ring-ranks-grid'),effectGrid=$('ring-effects-grid'),exclusiveGrid=$('ring-exclusive-grid');
+ if(!rankGrid||!effectGrid||!exclusiveGrid)return;
  [rankGrid,effectGrid,exclusiveGrid].forEach(g=>{if(g)g.innerHTML=''});
  const ringOrder=['starter_ring','bronze_ring','silver_ring','gold_ring','diamond_ring','fire_ring','electric_ring','rainbow_ring','neon_ring','elite_ring','creator_ring'];
  rings.sort((a,b)=>ringOrder.indexOf(a.item_key)-ringOrder.indexOf(b.item_key));
@@ -143,7 +143,7 @@ function renderCosmetics(){
  }
  
  const bg=$('banner-grid');if(bg){bg.innerHTML='';for(const item of banners){const owned=COS.creator||COS.inventory.includes(item.item_key),equipped=COS.equipped.banner===item.item_key;const card=document.createElement('button');card.type='button';card.className='cosmetic-card'+(equipped?' equipped':'')+(owned?' owned':' locked');card.disabled=!owned;card.innerHTML='<div class="banner-demo '+item.css_class+'"></div><h3></h3><small></small><span class="cosmetic-status"></span>';card.querySelector('.banner-demo').style.backgroundImage='url("assets/banners/'+item.item_key+'.svg")';card.querySelector('h3').textContent=item.display_name;card.querySelector('small').textContent=item.animated?'Animado':'Estático';card.querySelector('.cosmetic-status').textContent=equipped?'Equipado':owned?'Tocar para equipar':'Bloqueado';if(owned&&!equipped)card.addEventListener('click',()=>equipCosmetic(item.item_key));bg.append(card)}}
- $('cosmetic-note').textContent=COS.creator?'Cuenta Creador: todos los cosméticos actuales y futuros disponibles.': 'Los cosméticos bloqueados se desbloquearán con logros, eventos o planes. Por ahora tenés el aro inicial.';
+ $('cosmetic-note').textContent=COS.creator?'Cuenta Creador: todos los cosméticos actuales y futuros disponibles.': 'Los rangos se ganan jugando; los efectos especiales llegan por logros y eventos. Elite es el único plan de pago.';
  const wrap=$('profile-home-av').parentElement;
  const ring=COS.catalog.find(x=>x.item_key===COS.equipped.ring);const banner=COS.catalog.find(x=>x.item_key===COS.equipped.banner);
  wrap.className='profile-avatar-wrap '+(ring?ring.css_class:'ring-default');const ringArt=$('profile-ring-art');ringArt.src='assets/rings/'+(ring?ring.item_key:'starter_ring')+'.svg';ringArt.className='ring-art '+(ring?ring.css_class:'ring-default');const bannerEl=$('profile-banner');bannerEl.className='profile-banner '+(banner?banner.css_class:'banner-default');bannerEl.style.backgroundImage='url("assets/banners/'+(banner?banner.item_key:'starter_banner')+'.svg")';
