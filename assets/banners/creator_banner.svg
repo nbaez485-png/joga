@@ -10,8 +10,8 @@
 <g fill="none" stroke="#ff425f" stroke-width="3" opacity=".85"><path d="M25 25 95 90 25 155M45 18 115 90 45 162M615 20 545 90 615 160"/></g>
 <g transform="translate(505 90)" filter="url(#glow)">
 <path d="M0-72 55-43 68 0 55 43 0 72-55 43-68 0-55-43z" fill="#21000a" stroke="url(#red)" stroke-width="4"/>
-<path d="M-45 13-34-43-5-21 0-47 14-20 37-37 43 18 0 52z" fill="url(#red)" stroke="#ffd3da" stroke-width="2.5"/>
-<path d="M-31 10-11-7 0 2 14-12 31 13 0 39z" fill="#490011" stroke="#ff7188" stroke-width="2"/>
+<path d="M-48 30-58-34-20-10 0-54 20-10 58-34 48 30 0 15Z" fill="url(#red)" stroke="#ffd3da" stroke-width="3.5" stroke-linejoin="round"/><path d="M-43 30H43L0 59Z" fill="#710018" stroke="#ff7188" stroke-width="3"/><path d="M-58-34 0-54 58-34 48 30 0 15-48 30Z" fill="none" stroke="#ffedf0" stroke-width="1.8" opacity=".8"/>
+<circle cx="-58" cy="-34" r="5" fill="#fff0f3"/><circle cx="0" cy="-54" r="5" fill="#fff0f3"/><circle cx="58" cy="-34" r="5" fill="#fff0f3"/>
 <path d="M-42-55l11 11M42-55 31-44M-43 51l12-11M43 51 31 40" stroke="#fff0f3" stroke-width="3"/>
 <circle cx="0" cy="-3" r="6" fill="#fff1f4"/>
 </g>
