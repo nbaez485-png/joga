@@ -480,3 +480,11 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 #profile-ring-art[hidden]{display:none!important}
 .ring-art[class*="ring-"]{animation:none!important;filter:none!important;box-shadow:none!important;border:0!important;border-radius:0!important}
 @media(prefers-reduced-motion:reduce){.ring-art{animation:none!important}}
+
+/* Fix rank sprite: override earlier background shorthand !important that erased ring art. */
+.ring-art{background-size:500% 100%!important;background-repeat:no-repeat!important}
+.ring-art.ring-bronze{background-position:0% center!important}
+.ring-art.ring-silver{background-position:25% center!important}
+.ring-art.ring-gold{background-position:50% center!important}
+.ring-art.ring-platinum{background-position:75% center!important}
+.ring-art.ring-diamond{background-position:100% center!important}
