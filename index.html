@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js"></script>
-<link rel="stylesheet" href="style.css?v=20261128-26">
+<link rel="stylesheet" href="style.css?v=20261128-27">
 </head>
 <body>
 <div class="stage"><div class="app" id="app">
@@ -40,7 +40,7 @@
 <button class="explore-tile players-tile" type="button" onclick="tab('players')"><span class="explore-kicker">ENCONTRÁ</span><strong>Jugadores</strong><small>Conocé gente que comparte tu pasión.</small><span class="explore-link">Buscar jugadores <b>→</b></span></button>
 <button class="explore-tile progress-tile" type="button" onclick="tab('me')"><span class="explore-kicker">TU IDENTIDAD</span><strong>Perfil & progreso</strong><small>Tu actividad, estadísticas y personalización.</small><span class="explore-link">Ver perfil <b>→</b></span></button>
 </div></section>
-<section class="x-preview"><div class="x-preview-head"><div><span class="home-next-eyebrow">JOGA EN X</span><h3>El fútbol no se queda en la cancha.</h3></div><span class="x-mark">𝕏</span></div><p>Acá van las novedades, anuncios y publicaciones oficiales de JOGA cuando conectemos la cuenta.</p><div class="x-preview-post"><div class="x-post-brand">JOGA <span>· Cuenta oficial</span></div><strong>La calle siempre tiene una historia.</strong><p>Estamos construyendo un lugar para que el fútbol amateur vuelva a encontrarse.</p><small>Feed de X · Próximamente</small></div><button class="x-preview-action" type="button" onclick="tab('community')">Ver comunidad <span>→</span></button></section><p class="foot">JOGA · Fútbol de calle</p>
+<section class="community-preview"><div class="community-preview-mark" aria-hidden="true">J</div><div class="community-preview-copy"><span class="home-next-eyebrow">JOGA · CHAT DE COMUNIDAD</span><h3>La cancha también sigue fuera del partido.</h3><p>Charlá con otros jugadores, compartí fútbol y enterate de lo que pasa en JOGA.</p><button class="community-preview-action" type="button" onclick="tab('community')">Entrar al chat <span>→</span></button></div></section><p class="foot">JOGA · Fútbol de calle</p>
 </section>
 <section class="view" id="v-play"><div class="play-page"><div class="sec"><h2>Jugar</h2><p class="play-intro">Encontrá tu próximo partido o armá uno.</p></div>
  <input id="match-search" class="match-search" type="search" placeholder="Buscar ciudad, partido, cancha o modalidad" aria-label="Buscar partidos por ciudad, partido, cancha o modalidad">
@@ -53,8 +53,25 @@
 <button class="explore-tile progress-tile" type="button" onclick="tab('me')"><span class="explore-kicker">TU PERFIL</span><strong>Tu progreso</strong><small>Actividad, estadísticas y estilo.</small><span class="explore-link">Ver perfil <b>→</b></span></button>
 </div></div></section>
 <section class="view" id="v-academy"><div class="academy-page"><div class="academy-hero"><span class="home-next-eyebrow">JOGA · ACADEMIA</span><h1>El talento<br>también se entrena.</h1><p>Aprendé movimientos, fundamentos y trucos para llevar a la cancha.</p><span class="academy-status">CONTENIDO EN PREPARACIÓN</span></div><div class="sec"><h2>Tu entrenamiento</h2></div><div class="academy-course-grid"><article><span class="course-no">01</span><b>Control y primer toque</b><p>Cómo recibir, orientar y proteger la pelota.</p><span class="course-state">PRÓXIMAMENTE</span></article><article><span class="course-no">02</span><b>Regate y cambios de ritmo</b><p>Engaños simples para ganar espacio.</p><span class="course-state">PRÓXIMAMENTE</span></article><article><span class="course-no">03</span><b>Pase y visión</b><p>Elegí mejor y jugá más rápido.</p><span class="course-state">PRÓXIMAMENTE</span></article><article><span class="course-no">04</span><b>Defensa y marca</b><p>Timing, postura y lectura del rival.</p><span class="course-state">PRÓXIMAMENTE</span></article><article><span class="course-no">05</span><b>Fútbol callejero</b><p>Recursos, creatividad y juego corto.</p><span class="course-state">PRÓXIMAMENTE</span></article><article><span class="course-no">06</span><b>Entrenamiento físico</b><p>Agilidad, resistencia y coordinación.</p><span class="course-state">PRÓXIMAMENTE</span></article></div><button class="btn ghost academy-back" type="button" onclick="tab('explore')">← Volver a explorar</button></div></section>
-<section class="view" id="v-community"><div class="community-page"><div class="community-hero"><span class="home-next-eyebrow">JOGA · COMUNIDAD</span><h1>La cancha<br>nos conecta.</h1><p>Una comunidad para compartir fútbol, novedades y momentos de juego.</p></div><section class="community-social-card"><div class="social-icon">𝕏</div><div><span class="home-next-eyebrow">JOGA EN X / TWITTER</span><h2>Seguinos cuando abramos la cuenta.</h2><p>Este espacio va a reunir anuncios, novedades, avances y publicaciones de JOGA.</p><span class="community-status">CUENTA OFICIAL · PRÓXIMAMENTE</span></div></section><section class="community-feed"><div class="sec"><h2>Lo que se viene</h2></div><article><span class="feed-tag">PRODUCTO</span><h3>Partidos más fáciles de encontrar.</h3><p>Estamos puliendo la experiencia para que armar o sumarse a una pichanga sea simple.</p></article><article><span class="feed-tag">ACADEMIA</span><h3>Aprender jugando.</h3><p>Pronto habrá contenido para mejorar técnica y recursos, sin perder el estilo de la calle.</p></article><article><span class="feed-tag">COMUNIDAD</span><h3>Esto recién empieza.</h3><p>JOGA se construye con quienes salen a jugar. Las novedades se publicarán acá y en nuestras redes.</p></article></section><button class="btn ghost community-back" type="button" onclick="tab('explore')">← Volver a explorar</button></div></section>
-<section class="view" id="v-players"><div class="players-page"><div class="sec"><div><h2>Jugadores</h2><p class="play-intro">Conocé gente que también vive el fútbol.</p></div></div><input id="players-search" class="players-search" type="search" placeholder="Buscar por nombre o usuario" aria-label="Buscar jugadores por nombre o usuario"><div id="players-results" class="players-results"><p class="empty">Iniciá sesión para explorar jugadores.</p></div><p class="players-note">Solo aparecen perfiles públicos. La privacidad del perfil se respeta.</p></div></section><section class="view" id="v-me">
+<section class="view" id="v-community"><div class="community-page">
+ <div class="community-hero"><span class="home-next-eyebrow">JOGA · COMUNIDAD</span><h1>La cancha<br>nos conecta.</h1><p>El fútbol no termina cuando termina el partido. Este es el punto de encuentro de todos los jugadores.</p></div>
+ <section class="community-chat">
+  <div class="community-chat-heading"><div><span class="chat-eyebrow">SALA GENERAL</span><h2>Chat de la comunidad</h2><p>Hablá de fútbol, partidos y todo lo que pasa en JOGA.</p></div><span class="chat-room-pill"><i></i> GENERAL</span></div>
+  <div class="chat-room-bar"><div class="chat-room-icon">J</div><div class="chat-room-copy"><b>La tribuna</b><span>Un lugar para todos los jugadores</span></div><span class="chat-status" id="community-chat-status">CONECTANDO</span></div>
+  <div class="community-chat-messages" id="community-chat-messages" aria-live="polite" aria-relevant="additions text"><div class="chat-empty"><span class="chat-empty-ball">◉</span><b>La cancha está abierta.</b><p>Los mensajes de la comunidad van a aparecer acá.</p></div></div>
+  <form class="community-chat-form" id="community-chat-form">
+   <label class="sr-only" for="community-chat-input">Escribí un mensaje</label>
+   <textarea id="community-chat-input" maxlength="500" rows="2" placeholder="Escribí algo para la comunidad…" required></textarea>
+   <div class="chat-compose-bottom"><span id="community-chat-count">0 / 500</span><button id="community-chat-send" type="submit">Enviar <span>↑</span></button></div>
+  </form>
+  <p class="chat-guidelines">Buena onda siempre. Nada de insultos, spam ni datos personales.</p>
+ </section>
+ <section class="community-feed"><div class="sec"><h2>Desde JOGA</h2><span class="home-next-eyebrow">NOVEDADES</span></div>
+  <article><span class="feed-tag">PARTIDOS</span><h3>Encontrarse para jugar.</h3><p>Buscá partidos abiertos o creá uno con tus propias reglas y límites de edad.</p></article>
+  <article><span class="feed-tag">ACADEMIA</span><h3>Aprender jugando.</h3><p>Estamos preparando contenido para mejorar técnica, control y recursos de cancha.</p></article>
+  <article><span class="feed-tag">COMUNIDAD</span><h3>JOGA se construye entre todos.</h3><p>Compartí ideas, ayudá a otros jugadores y hacé crecer la comunidad.</p></article>
+ </section>
+ <button class="btn ghost community-back" type="button" onclick="tab('explore')">← Volver a explorar</button></div></section><section class="view" id="v-players"><div class="players-page"><div class="sec"><div><h2>Jugadores</h2><p class="play-intro">Conocé gente que también vive el fútbol.</p></div></div><input id="players-search" class="players-search" type="search" placeholder="Buscar por nombre o usuario" aria-label="Buscar jugadores por nombre o usuario"><div id="players-results" class="players-results"><p class="empty">Iniciá sesión para explorar jugadores.</p></div><p class="players-note">Solo aparecen perfiles públicos. La privacidad del perfil se respeta.</p></div></section><section class="view" id="v-me">
 <div class="profile-home">
  <div class="profile-profile-cover"><div class="profile-banner" id="profile-banner"></div><div class="profile-hero"><div class="profile-avatar-wrap"><div class="profile-ring-stage" aria-hidden="true"><div id="profile-ring-art" class="ring-art ring-none" hidden></div></div><div class="av" id="profile-home-av"></div></div><div class="profile-identity"><h2 id="profile-home-name">Jugador</h2><span id="profile-home-user">@usuario</span><div class="profile-badges"><span class="profile-badge" id="profile-home-plan">Free</span><span class="profile-badge creator-badge" id="creator-badge" hidden>CREADOR</span></div></div></div></div>
  <div class="profile-stats" id="profile-stats"><div><b id="stat-created">—</b><span>Organizadas</span></div><div><b id="stat-joined">—</b><span>Participaciones</span></div><div><b id="stat-upcoming">—</b><span>Próximas</span></div></div>
@@ -117,7 +134,7 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 </div></div>
-<script src="app.js?v=20261128-26"></script>
-<script src="matches.js"></script>
+<script src="app.js?v=20261128-27"></script>
+<script src="matches.js?v=20261128-27"></script>
 </body>
 </html>
