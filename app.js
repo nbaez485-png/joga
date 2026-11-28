@@ -106,7 +106,7 @@ async function loadProfile(){
  if(results[1].status==='rejected'){console.error('profile stats load',results[1].reason);$('stat-created').textContent='—';$('stat-joined').textContent='—';$('stat-upcoming').textContent='—';}
  
 }
-let RANK_SPRITE_DATA='';function ringSrc(){return RANK_SPRITE_DATA;}
+let RANK_SPRITE_DATA='';const RING_FRAME_DATA={};function ringSrc(key){return RING_FRAME_DATA[key]||RANK_SPRITE_DATA;}\nasync function buildRingFrames(){const atlas=new Image();atlas.src=RANK_SPRITE_DATA;await atlas.decode();if(atlas.naturalWidth!==384||atlas.naturalHeight!==384)throw new Error('Unexpected ring atlas size '+atlas.naturalWidth+'x'+atlas.naturalHeight);const keys=['bronze_ring','silver_ring','gold_ring','platinum_ring','diamond_ring','elite_ring','creator_ring','epic_ring','legendary_ring'];for(let i=0;i<keys.length;i++){const x=(i%3)*128,y=Math.floor(i/3)*128,canvas=document.createElement('canvas');canvas.width=128;canvas.height=128;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,128,128);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(atlas,x,y,128,128,8,8,112,112);RING_FRAME_DATA[keys[i]]=canvas.toDataURL('image/png');}}
  let COS={catalog:[],inventory:[],equipped:{},creator:false};
 async function loadCosmetics(){
  const [cat,inv,equ,cre,sprite1,sprite2,sprite3,sprite4]=await Promise.all([
@@ -120,7 +120,7 @@ async function loadCosmetics(){
  fetch('assets/rings/rank_atlas_part4.b64?v=20261128-8').then(r=>{if(!r.ok)throw new Error('Rank atlas 4 missing '+r.status);return r.text()})
  ]);
  for(const r of [cat,inv,equ,cre])if(r.error)throw r.error;
- RANK_SPRITE_DATA='data:image/png;base64,'+[sprite1,sprite2,sprite3,sprite4].join('').trim();
+ RANK_SPRITE_DATA='data:image/png;base64,'+[sprite1,sprite2,sprite3,sprite4].join('').trim();\n await buildRingFrames();
  COS.catalog=cat.data||[];COS.inventory=(inv.data||[]).map(x=>x.item_key);COS.equipped=Object.fromEntries((equ.data||[]).map(x=>[x.slot,x.item_key]));COS.creator=(cre.data||[]).length>0;
 }
 async function loadPlayerStats(){
@@ -146,7 +146,7 @@ function openCosmeticPreview(item){
  const ring=item.slot==='ring'?item:equippedRing;
  const bannerItem=item.slot==='banner'?item:equippedBanner;
  art.hidden=!ring;
- art.style.setProperty('background-image',ring?'url("'+ringSrc()+'")':'','important');
+ art.style.setProperty('background-image',ring?'url("'+ringSrc(ring.item_key)+'")':'','important');
  art.className='ring-art '+(ring?ring.css_class:'ring-none');
  banner.style.setProperty('background-image','url("assets/banners/'+(bannerItem?bannerItem.item_key:'starter_banner')+'.svg?v=20261128-8")','important');
  if(P){
@@ -182,7 +182,7 @@ function renderCosmetics(){
  const owned=COS.creator||COS.inventory.includes(item.item_key),equipped=COS.equipped.ring===item.item_key;
  const card=document.createElement('button');card.type='button';card.className='cosmetic-card'+(equipped?' equipped':'')+(owned?' owned':' locked');
  card.disabled=false;
- card.innerHTML='<div class="cosmetic-demo '+item.css_class+'"><div class="ring-art '+item.css_class+'" aria-hidden="true"></div><div class="cosmetic-avatar">J</div></div><h3></h3><small></small><span class="cosmetic-status"></span>';const art=card.querySelector('.ring-art');art.style.setProperty('background-image','url("'+ringSrc()+'")','important');
+ card.innerHTML='<div class="cosmetic-demo '+item.css_class+'"><div class="ring-art '+item.css_class+'" aria-hidden="true"></div><div class="cosmetic-avatar">J</div></div><h3></h3><small></small><span class="cosmetic-status"></span>';const art=card.querySelector('.ring-art');art.style.setProperty('background-image','url("'+ringSrc(item.item_key)+'")','important');
  card.querySelector('h3').textContent=item.display_name;
  card.querySelector('small').textContent=item.animated?'Animado':'Estático';
  card.querySelector('.cosmetic-status').textContent=equipped?'Equipado':owned?'Vista previa · equipar':'Bloqueado · ver';
@@ -198,7 +198,7 @@ function renderCosmetics(){
  $('cosmetic-note').textContent='Rangos estáticos de JOGA. Los efectos animados y exclusivos se agregarán más adelante.';
  const wrap=$('profile-home-av').parentElement;
  const ring=COS.catalog.find(x=>x.item_key===COS.equipped.ring);const banner=COS.catalog.find(x=>x.item_key===COS.equipped.banner);
- wrap.className='profile-avatar-wrap'+(ring?' '+ring.css_class:'');const ringArt=$('profile-ring-art');ringArt.style.setProperty('background-image',ring?'url("'+ringSrc()+'")':'','important');ringArt.className='ring-art '+(ring?ring.css_class:'ring-none');ringArt.hidden=!ring;const bannerEl=$('profile-banner');bannerEl.className='profile-banner '+(banner?banner.css_class:'banner-default');bannerEl.style.setProperty('background-image','url("assets/banners/'+(banner?banner.item_key:'starter_banner')+'.svg?v=20261128-8")','important');
+ wrap.className='profile-avatar-wrap'+(ring?' '+ring.css_class:'');const ringArt=$('profile-ring-art');ringArt.style.setProperty('background-image',ring?'url("'+ringSrc(ring.item_key)+'")':'','important');ringArt.className='ring-art '+(ring?ring.css_class:'ring-none');ringArt.hidden=!ring;const bannerEl=$('profile-banner');bannerEl.className='profile-banner '+(banner?banner.css_class:'banner-default');bannerEl.style.setProperty('background-image','url("assets/banners/'+(banner?banner.item_key:'starter_banner')+'.svg?v=20261128-8")','important');
  $('creator-badge').hidden=!COS.creator;
 }
 async function equipCosmetic(key){

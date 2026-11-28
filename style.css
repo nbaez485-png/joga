@@ -627,3 +627,15 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 .profile-profile-cover .profile-banner:after{width:100%!important;height:100%!important;transform:none!important;z-index:0!important}
 .preview-profile .preview-banner{background-position:65% center!important}
 .preview-profile .preview-banner:after{width:100%!important;height:100%!important;transform:none!important;z-index:0!important}
+
+/* 2026-11-28 fix: each ring uses an isolated transparent PNG frame.
+   Atlas cell edges were clipping details and CSS sprite offsets caused inconsistent crops. */
+.ring-art{
+ background-position:center!important;background-size:contain!important;background-repeat:no-repeat!important;
+ background-color:transparent!important;object-fit:contain!important;
+}
+.ring-art.ring-bronze,.ring-art.ring-silver,.ring-art.ring-gold,
+.ring-art.ring-platinum,.ring-art.ring-diamond,.ring-art.ring-elite,
+.ring-art.ring-creator,.ring-art.ring-epic,.ring-art.ring-legendary{
+ background-position:center!important;background-size:contain!important;
+}
