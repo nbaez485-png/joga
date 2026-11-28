@@ -2,12 +2,12 @@ const SB_URL='https://quiwqzxjltpyhcyccnsy.supabase.co',SB_KEY='sb_publishable_r
 const boot=location.hash+location.search;
 const $=id=>document.getElementById(id);
 const legends=[
- {n:'Primer paso',s:'Ambición',q:'«No naciste para mirar cómo otros hacen historia.»',by:'',cr:'',t:'#c9ff1f'},
+ {n:'Primer paso',s:'Ambición',q:'«No naciste para mirar cómo otros hacen historia.»',by:'',cr:'',t:'#b7d66b'},
  {n:'Creé',s:'Orígenes',q:'«Mientras haya una pelota, siempre habrá una razón para creer.»',by:'',cr:'',t:'#ffb347'},
  {n:'Dejalo todo',s:'Determinación',q:'«Jugá cada partido como si fuera el que te va a cambiar la vida.»',by:'',cr:'',t:'#ff7a45'},
  {n:'Seguí',s:'Resistencia',q:'«No viniste hasta acá para dejar de creer ahora.»',by:'',cr:'',t:'#74b9e8'},
  {n:'Recordá',s:'Disciplina',q:'«Cuando todo te diga que pares, recordá por qué empezaste.»',by:'',cr:'',t:'#7be0a0'},
- {n:'Lo mejor',s:'Futuro',q:'«Tu historia todavía no llegó a la mejor parte.»',by:'',cr:'',t:'#c9ff1f'}
+ {n:'Lo mejor',s:'Futuro',q:'«Tu historia todavía no llegó a la mejor parte.»',by:'',cr:'',t:'#b7d66b'}
 ];
 const ball=(x,y,r)=>`<g transform="translate(${x} ${y})"><circle r="${r}" fill="#f2f3ef"/><path d="M0 ${-r*.38}l${r*.36} ${r*.27}-${r*.14} ${r*.43}h-${r*.44}l-${r*.14}-${r*.43}z" fill="#101110"/><path d="M0 ${-r*.38}V${-r}M${r*.36} ${-r*.11}L${r*.95} ${-r*.31}M${r*.22} ${r*.32}L${r*.58} ${r*.8}M-${r*.22} ${r*.32}L-${r*.58} ${r*.8}M-${r*.36} ${-r*.11}L-${r*.95} ${-r*.31}" stroke="#101110" stroke-width="${r*.05}" fill="none"/><circle r="${r}" fill="none" stroke="#000" stroke-opacity=".25" stroke-width="2"/></g>`;
 const man=(x,y,k,r=0,extra='')=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${k})" fill="#080a07"><circle cy="-70" r="13"/><path d="M-16 -54h32l8 52-12 4-6 62h-12l-4-48-4 48h-12l-6-62-12-4z"/>${extra}</g>`;
@@ -107,7 +107,7 @@ async function loadProfile(){
  P=data;P.d=one(data.profile_details)||{};P.plan=(one(data.profile_protected)||{}).plan||'free';
  const results=await Promise.allSettled([loadCosmetics(),loadPlayerStats()]);
  if(results[0].status==='rejected'){console.error('cosmetics load',results[0].reason);COS={catalog:[],inventory:[],equipped:{},creator:false};}
- if(results[1].status==='rejected'){console.error('profile stats load',results[1].reason);$('stat-created').textContent='—';$('stat-joined').textContent='—';$('stat-upcoming').textContent='—';}
+ if(results[1].status==='rejected'){console.error('profile stats load',results[1].reason);['stat-created','stat-joined','stat-upcoming','home-stat-created','home-stat-joined','home-stat-upcoming'].forEach(id=>$(id).textContent='—');const nextEl=$('home-next-match-content');if(nextEl)nextEl.innerHTML='<h3>No pudimos cargar tu actividad.</h3><p>Revisá tu conexión e intentá de nuevo.</p><button class="home-next-match-btn" type="button" onclick="tab(\'play\')">Ir a jugar <span>→</span></button>';}
  
 }
 let RANK_SPRITE_DATA='';const RING_FRAME_DATA={};function ringSrc(key){return RING_FRAME_DATA[key]||RANK_SPRITE_DATA;}
@@ -155,16 +155,16 @@ async function loadPlayerStats(){
  ]);
  if(created.error)throw created.error;if(participations.error)throw participations.error;
  const ids=[...new Set((participations.data||[]).map(x=>x.match_id))];
- let upcoming=0;
+ let upcoming=0,next=null;
  if(ids.length){
   const{data,error}=await sb.from('matches').select('id,title,area,match_date,start_time,status,modality,venue_name').in('id',ids).gte('match_date',today).in('status',['open','full']).order('match_date').order('start_time');
   if(error)throw error;
   const future=(data||[]).filter(m=>m.match_date>today||(m.match_date===today&&(m.start_time||'').slice(0,5)>nowTime));
-  upcoming=future.length;
-  const next=future[0];
-  const nextEl=$('home-next-match-content');
-  if(nextEl){nextEl.innerHTML=next?'<h3>'+safeText(next.title||'Partido')+'</h3><p>'+safeText(next.area||'')+' · '+safeText(homeDate(next.match_date))+' · '+safeText(String(next.start_time||'').slice(0,5))+'</p><button class="home-next-match-btn" type="button" onclick="tab(\'play\')">Ver partidos <span>→</span></button>':'<h3>Sin partidos por ahora.</h3><p>La próxima pichanga que te anotes aparece acá.</p><button class="home-next-match-btn" type="button" onclick="tab(\'play\')">Buscar partido <span>→</span></button>'}
+  upcoming=future.length;next=future[0]||null;
  }
+ const nextEl=$('home-next-match-content');
+ if(nextEl){nextEl.innerHTML=next?'<h3>'+safeText(next.title||'Partido')+'</h3><p>'+safeText(next.area||'')+' · '+safeText(homeDate(next.match_date))+' · '+safeText(String(next.start_time||'').slice(0,5))+'</p><button class="home-next-match-btn" type="button" onclick="tab(\'play\')">Ver partidos <span>→</span></button>':'<h3>Sin partidos por ahora.</h3><p>La próxima pichanga que te anotes aparece acá.</p><button class="home-next-match-btn" type="button" onclick="tab(\'play\')">Buscar partido <span>→</span></button>'}
+
  $('stat-created').textContent=created.count??0;$('stat-joined').textContent=ids.length;$('stat-upcoming').textContent=upcoming;
  $('home-stat-created').textContent=created.count??0;$('home-stat-joined').textContent=ids.length;$('home-stat-upcoming').textContent=upcoming;
 }
@@ -268,7 +268,7 @@ async function equipCosmetic(key){
 const PLAN={free:'Free',elite:'Elite',premium:'Elite'};
 function render(){if(!P)return;
  $('loc').textContent='@'+P.username;
- $('profile-home-name').textContent=P.display_name;$('profile-home-user').textContent='@'+P.username;$('profile-home-plan').textContent='Plan '+PLAN[P.plan];setAv($('profile-home-av'),P);$('settings-email').textContent=S.user.email;renderCosmetics();
+ $('profile-home-name').textContent=P.display_name;$('profile-home-user').textContent='@'+P.username;$('profile-home-code').textContent='JOGA / @'+P.username;$('profile-home-position').textContent=P.d.favorite_position||'Sin definir';$('profile-home-club').textContent=P.d.favorite_club||'Sin definir';$('profile-home-bio').textContent=P.d.bio||'Todavía no agregaste una presentación. Editá tu perfil para contar cómo jugás.';$('profile-home-plan').textContent='Plan '+PLAN[P.plan];setAv($('profile-home-av'),P);$('settings-email').textContent=S.user.email;renderCosmetics();
  setAv($('pav'),P);$('ph2').textContent=P.display_name;
  $('pchips').innerHTML='<span class="chip"></span>';$('pchips').firstChild.textContent='@'+P.username;
  $('p-dn').value=P.display_name;$('p-un').value=P.username;$('p-pos').value=P.d.favorite_position||'';$('p-club').value=P.d.favorite_club||'';$('p-bio').value=P.d.bio||'';
