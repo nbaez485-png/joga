@@ -621,3 +621,9 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
  .preview-profile .preview-profile-avatar .ring-art{width:116px!important;height:116px!important}
  .preview-profile .preview-profile-avatar .preview-avatar-inner{width:82px!important;height:82px!important}
 }
+
+/* Final cover focus: keep the emblem inside the narrow profile crop and shade the full canvas. */
+.profile-profile-cover .profile-banner{background-position:65% center!important}
+.profile-profile-cover .profile-banner:after{width:100%!important;height:100%!important;transform:none!important;z-index:0!important}
+.preview-profile .preview-banner{background-position:65% center!important}
+.preview-profile .preview-banner:after{width:100%!important;height:100%!important;transform:none!important;z-index:0!important}
