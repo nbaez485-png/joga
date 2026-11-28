@@ -370,3 +370,7 @@ body{font-size:14px;line-height:1.5;font-weight:500;letter-spacing:0;-webkit-fon
 .cosmetic-card.locked{opacity:.82}
 .cosmetic-card .cosmetic-status{font-size:11px}
 @media(prefers-reduced-motion:reduce){.ring-art{animation:none!important}}
+
+.preview-banner[hidden]{display:none!important}
+.preview-banner{height:108px;width:100%;border-radius:15px;margin:26px 0 20px;border:1px solid #525a5d;background-size:cover;background-position:center;box-shadow:0 0 22px #ffffff12}
+.preview-avatar[hidden]{display:none!important}
