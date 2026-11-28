@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js"></script>
-<link rel="stylesheet" href="style.css?v=20261128-24">
+<link rel="stylesheet" href="style.css?v=20261128-25">
 </head>
 <body>
 <div class="stage"><div class="app" id="app">
@@ -32,7 +32,7 @@
  <section class="home-next"><div class="home-next-eyebrow">JOGA · Fútbol de calle</div><h2>La calle te espera.</h2><p>Encontrá un partido cerca o sumate a uno que ya está armado.</p><button class="btn" type="button" onclick="tab('play')">Buscar partido <span aria-hidden="true">→</span></button></section>
  <section class="home-next-match" id="home-next-match"><div class="home-next-eyebrow">TU PRÓXIMO PARTIDO</div><div id="home-next-match-content"><h3>Preparando la cancha…</h3><p>Tu actividad aparece acá cuando te anotás.</p></div></section>
  <section class="home-activity"><div class="sec"><h2>Tu JOGA</h2><span class="home-next-eyebrow">TU MOVIMIENTO</span></div><div class="home-activity-grid"><div><b id="home-stat-created">—</b><span>Organizadas</span></div><div><b id="home-stat-joined">—</b><span>Participaciones</span></div><div><b id="home-stat-upcoming">—</b><span>Próximas</span></div></div></section>
- <section class="home-actions"><div class="sec"><h2>¿Qué pinta hoy?</h2></div><div class="home-action-grid"><button type="button" onclick="tab('play')" class="home-action-card"><span class="home-action-icon">⚽</span><b>Encontrar partido</b><small>Sumate a una pichanga</small><span class="home-action-arrow">→</span></button><button type="button" onclick="tab('play');setTimeout(()=>document.getElementById('match-create')?.click(),180)" class="home-action-card"><span class="home-action-icon">＋</span><b>Crear pichanga</b><small>Armá tu propio partido</small><span class="home-action-arrow">→</span></button></div></section>
+ 
  <section class="home-tip" id="home-tip"><div class="home-next-eyebrow">CÓDIGO DE LA CALLE · CONSEJO</div><h3 id="home-tip-title">El fútbol también se piensa.</h3><p id="home-tip-text"></p></section>
  <section class="home-explore"><div class="sec"><h2>Explorá JOGA</h2><span class="home-next-eyebrow">MÁS QUE PARTIDOS</span></div><div class="explore-grid">
 <button class="explore-tile academy-tile" type="button" onclick="tab('academy')"><span class="explore-kicker">APRENDÉ</span><strong>Academia</strong><small>Técnica, control, regate y recursos de cancha.</small><span class="explore-link">Entrar <b>→</b></span></button>
@@ -117,7 +117,7 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 </div></div>
-<script src="app.js?v=20261128-24"></script>
+<script src="app.js?v=20261128-25"></script>
 <script src="matches.js"></script>
 </body>
 </html>
