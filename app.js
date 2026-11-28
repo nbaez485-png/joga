@@ -139,9 +139,9 @@ function openCosmeticPreview(item){
  const ring=item.slot==='ring'?item:equippedRing;
  const bannerItem=item.slot==='banner'?item:equippedBanner;
  art.hidden=!ring;
- art.src=ring?'assets/rings/'+ring.item_key+'.svg?v=20261128-3':'';
+ art.src=ring?'assets/rings/'+ring.item_key+'.svg?v=20261128-4':'';
  art.className='ring-art '+(ring?ring.css_class:'ring-none');
- banner.style.backgroundImage='url("assets/banners/'+(bannerItem?bannerItem.item_key:'starter_banner')+'.svg")';
+ banner.style.backgroundImage='url("assets/banners/'+(bannerItem?bannerItem.item_key:'starter_banner')+'.svg?v=20261128-4")';
  if(P){
   profileName.textContent=P.display_name||'Jugador JOGA';
   profileUser.textContent='@'+(P.username||'jugador');
@@ -173,7 +173,7 @@ function renderCosmetics(){
  const owned=COS.creator||COS.inventory.includes(item.item_key),equipped=COS.equipped.ring===item.item_key;
  const card=document.createElement('button');card.type='button';card.className='cosmetic-card'+(equipped?' equipped':'')+(owned?' owned':' locked');
  card.disabled=false;
- card.innerHTML='<div class="cosmetic-demo '+item.css_class+'"><img class="ring-art" alt=""><div class="cosmetic-avatar">J</div></div><h3></h3><small></small><span class="cosmetic-status"></span>';const art=card.querySelector('.ring-art');art.src='assets/rings/'+item.item_key+'.svg?v=20261128-3';art.classList.add(item.css_class);
+ card.innerHTML='<div class="cosmetic-demo '+item.css_class+'"><img class="ring-art" alt=""><div class="cosmetic-avatar">J</div></div><h3></h3><small></small><span class="cosmetic-status"></span>';const art=card.querySelector('.ring-art');art.src='assets/rings/'+item.item_key+'.svg?v=20261128-4';art.classList.add(item.css_class);
  card.querySelector('h3').textContent=item.display_name;
  card.querySelector('small').textContent=item.animated?'Animado':'Estático';
  card.querySelector('.cosmetic-status').textContent=equipped?'Equipado':owned?'Vista previa · equipar':'Bloqueado · ver';
@@ -182,11 +182,11 @@ function renderCosmetics(){
  if(target)target.append(card)
  }
  
- const bg=$('banner-grid');if(bg){bg.innerHTML='';for(const item of banners){const owned=COS.creator||COS.inventory.includes(item.item_key),equipped=COS.equipped.banner===item.item_key;const card=document.createElement('button');card.type='button';card.className='cosmetic-card'+(equipped?' equipped':'')+(owned?' owned':' locked');card.innerHTML='<div class="banner-demo '+item.css_class+'"></div><h3></h3><small></small><span class="cosmetic-status"></span>';card.querySelector('.banner-demo').style.backgroundImage='url("assets/banners/'+item.item_key+'.svg")';card.querySelector('h3').textContent=item.display_name;card.querySelector('small').textContent=item.animated?'Animado':'Estático';card.querySelector('.cosmetic-status').textContent=equipped?'Equipado':owned?'Vista previa · equipar':'Bloqueado · ver';card.addEventListener('click',()=>openCosmeticPreview(item));bg.append(card)}}
+ const bg=$('banner-grid');if(bg){bg.innerHTML='';for(const item of banners){const owned=COS.creator||COS.inventory.includes(item.item_key),equipped=COS.equipped.banner===item.item_key;const card=document.createElement('button');card.type='button';card.className='cosmetic-card'+(equipped?' equipped':'')+(owned?' owned':' locked');card.innerHTML='<div class="banner-demo '+item.css_class+'"></div><h3></h3><small></small><span class="cosmetic-status"></span>';card.querySelector('.banner-demo').style.backgroundImage='url("assets/banners/'+item.item_key+'.svg?v=20261128-4")';card.querySelector('h3').textContent=item.display_name;card.querySelector('small').textContent=item.animated?'Animado':'Estático';card.querySelector('.cosmetic-status').textContent=equipped?'Equipado':owned?'Vista previa · equipar':'Bloqueado · ver';card.addEventListener('click',()=>openCosmeticPreview(item));bg.append(card)}}
  $('cosmetic-note').textContent=COS.creator?'Cuenta Creador: todos los cosméticos actuales y futuros disponibles.': 'Los rangos se ganan jugando; los efectos especiales llegan por logros y eventos. Elite es el único plan de pago.';
  const wrap=$('profile-home-av').parentElement;
  const ring=COS.catalog.find(x=>x.item_key===COS.equipped.ring);const banner=COS.catalog.find(x=>x.item_key===COS.equipped.banner);
- wrap.className='profile-avatar-wrap'+(ring?' '+ring.css_class:'');const ringArt=$('profile-ring-art');ringArt.src=ring?'assets/rings/'+ring.item_key+'.svg?v=20261128-3':'';ringArt.className='ring-art '+(ring?ring.css_class:'ring-none');ringArt.hidden=!ring;const bannerEl=$('profile-banner');bannerEl.className='profile-banner '+(banner?banner.css_class:'banner-default');bannerEl.style.backgroundImage='url("assets/banners/'+(banner?banner.item_key:'starter_banner')+'.svg")';
+ wrap.className='profile-avatar-wrap'+(ring?' '+ring.css_class:'');const ringArt=$('profile-ring-art');ringArt.src=ring?'assets/rings/'+ring.item_key+'.svg?v=20261128-4':'';ringArt.className='ring-art '+(ring?ring.css_class:'ring-none');ringArt.hidden=!ring;const bannerEl=$('profile-banner');bannerEl.className='profile-banner '+(banner?banner.css_class:'banner-default');bannerEl.style.backgroundImage='url("assets/banners/'+(banner?banner.item_key:'starter_banner')+'.svg?v=20261128-4")';
  $('creator-badge').hidden=!COS.creator;
 }
 async function equipCosmetic(key){
