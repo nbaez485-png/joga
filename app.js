@@ -125,21 +125,31 @@ async function loadPlayerStats(){
 function openCosmeticPreview(item){
  const modal=$('cosmetic-preview');if(!modal)return;
  const owned=COS.creator||COS.inventory.includes(item.item_key);
- const art=$('preview-ring-art'),name=$('preview-cosmetic-name'),desc=$('preview-cosmetic-desc'),btn=$('preview-equip');
- const ringPreview=$('preview-avatar'),bannerPreview=$('preview-banner'),mock=$('preview-profile');
+ const art=$('preview-ring-art'),banner=$('preview-banner'),name=$('preview-cosmetic-name'),desc=$('preview-cosmetic-desc'),btn=$('preview-equip');
+ const profileName=$('preview-profile-name'),profileUser=$('preview-profile-user'),avatar=$('preview-profile-avatar-inner');
  const equippedRing=COS.catalog.find(x=>x.item_key===COS.equipped.ring);
  const equippedBanner=COS.catalog.find(x=>x.item_key===COS.equipped.banner);
- mock.hidden=false;
- if(item.slot==='banner'){bannerPreview.style.backgroundImage='url("assets/banners/'+item.item_key+'.svg")';}
- else{art.src='assets/rings/'+item.item_key+'.svg';art.className='ring-art '+item.css_class;}
- if(item.slot==='ring')bannerPreview.style.backgroundImage='url("assets/banners/'+(equippedBanner?equippedBanner.item_key:'starter_banner')+'.svg")';
- if(item.slot==='banner'){art.src=equippedRing?'assets/rings/'+equippedRing.item_key+'.svg':'';art.className='ring-art '+(equippedRing?equippedRing.css_class:'ring-none');art.hidden=!equippedRing;}
- else art.hidden=false;
+ const ring=item.slot==='ring'?item:equippedRing;
+ const bannerItem=item.slot==='banner'?item:equippedBanner;
+ art.hidden=!ring;
+ art.src=ring?'assets/rings/'+ring.item_key+'.svg':'';
+ art.className='ring-art '+(ring?ring.css_class:'ring-none');
+ banner.style.backgroundImage='url("assets/banners/'+(bannerItem?bannerItem.item_key:'starter_banner')+'.svg")';
+ if(P){
+  profileName.textContent=P.display_name||'Jugador JOGA';
+  profileUser.textContent='@'+(P.username||'jugador');
+  const image=avUrl(P);
+  avatar.style.backgroundImage=image?'url("'+image+'")':'';
+  avatar.textContent=image?'':initial(P);
+ }else{profileName.textContent='Jugador JOGA';profileUser.textContent='@jugador';avatar.textContent='J';}
  name.textContent=item.display_name;
- desc.textContent=item.slot==='banner'?'Así se verá el banner en tu perfil.':item.animated?'Efecto animado · así se verá en tu perfil.':'Aro de rango · vista previa en el perfil.';
- btn.textContent=COS.equipped.ring===item.item_key?'Ya está equipado':owned?'Equipar en mi perfil':'Todavía bloqueado';
- btn.disabled=!owned||(item.slot==='ring'?COS.equipped.ring===item.item_key:COS.equipped.banner===item.item_key);
- btn.onclick=()=>{equipCosmetic(item.item_key);modal.hidden=true};
+ desc.textContent=item.slot==='banner'
+  ? 'Vista previa del banner en tu perfil, con tu aro y tu foto.'
+  : (item.animated?'Vista previa animada del aro alrededor de tu foto.':'Vista previa del aro de rango en tu perfil.');
+ const current=item.slot==='ring'?COS.equipped.ring:COS.equipped.banner;
+ btn.textContent=current===item.item_key?'Ya está equipado':owned?'Equipar en mi perfil':'Todavía bloqueado';
+ btn.disabled=!owned||current===item.item_key;
+ btn.onclick=async()=>{const ok=await equipCosmetic(item.item_key);if(ok)modal.hidden=true;};
  modal.hidden=false;
 }
 document.addEventListener('click',e=>{if(e.target.closest('[data-preview-close]'))$('cosmetic-preview').hidden=true});
@@ -174,8 +184,8 @@ function renderCosmetics(){
 }
 async function equipCosmetic(key){
  const b=await sb.rpc('equip_cosmetic',{p_item_key:key});
- if(b.error){toast('No se pudo equipar: '+msg(b.error));return}
- await loadCosmetics();renderCosmetics();render();toast('Cosmético equipado.');
+ if(b.error){toast('No se pudo equipar: '+msg(b.error));return false}
+ await loadCosmetics();renderCosmetics();render();toast('Cosmético equipado.');return true;
 }
 
 const PLAN={free:'Free',elite:'Elite',premium:'Elite'};
@@ -212,7 +222,7 @@ $('pf').addEventListener('submit',async e=>{e.preventDefault();const er=$('perr'
   await loadProfile();render();toast('Perfil guardado.')}
  catch(x){er.textContent=msg(x)}
  $('psave').disabled=false});
-$('pout').addEventListener('click',()=>sb.auth.signOut());$('settings-signout').addEventListener('click',()=>sb.auth.signOut());
+$('settings-signout').addEventListener('click',()=>sb.auth.signOut());
 $('phbtn').addEventListener('click',()=>$('pfile').click());
 async function square(file){
  const buf=await file.arrayBuffer(),blob=new Blob([buf],{type:file.type});
