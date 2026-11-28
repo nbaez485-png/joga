@@ -16,14 +16,16 @@ const closeSheet=()=>{if(sheet){sheet.classList.remove('on');sheet.remove();shee
 function ensureSheet(){if(sheet)return sheet;sheet=document.createElement('div');sheet.className='match-sheet';sheet.id='match-sheet';$m('app').append(sheet);return sheet}
 function notice(t){if(typeof toast==='function')toast(t);else alert(t)}
 function filterMatchCards(){const q=($m('match-search')?.value||'').trim().toLocaleLowerCase('es-AR');let found=0;list.querySelectorAll('.match-card').forEach(card=>{const ok=!q||card.textContent.toLocaleLowerCase('es-AR').includes(q);card.hidden=!ok;if(ok)found++});let empty=list.querySelector('.match-filter-empty');if(q&&found===0){if(!empty){empty=document.createElement('p');empty.className='empty match-filter-empty';empty.textContent='No encontramos partidos con esa búsqueda.';list.append(empty)}}else if(empty)empty.remove()}
-async function loadMatches(){
+async function loadMatches(searchText=''){
  if(!sb||!S){list.innerHTML='<p class="empty">Iniciá sesión para ver los partidos.</p>';return}
  list.innerHTML='<p class="empty">Buscando pichangas…</p>';
  try{
-  const {data,error}=await sb.from('matches').select('id,organizer_id,title,modality,custom_modality,match_date,start_time,area,venue_name,venue_type,max_players,cost_per_player,level_hint,description,is_private,allow_waitlist,status,min_age,max_age,organizer_is_minor').in('status',['open','full']).gte('match_date',today()).order('match_date').order('start_time').limit(30);
+  let query=sb.from('matches').select('id,organizer_id,title,modality,custom_modality,match_date,start_time,area,venue_name,venue_type,max_players,cost_per_player,level_hint,description,is_private,allow_waitlist,status,min_age,max_age,organizer_is_minor').in('status',['open','full']).gte('match_date',today()).order('match_date').order('start_time');
+  if(searchText)query=query.or('title.ilike.%'+searchText+'%,area.ilike.%'+searchText+'%');
+  const {data,error}=await query.limit(30);
   if(error)throw error;
   cached=(data||[]).filter(isUpcoming);
-  if(!cached.length){list.innerHTML='<p class="empty">Todavía no hay partidos. ¡Podés crear el primero!</p>';return}
+  if(!cached.length){list.innerHTML='<p class="empty">'+(searchText?'No encontramos partidos con esa búsqueda.':'Todavía no hay partidos. ¡Podés crear el primero!')+'</p>';return}
   const ids=[...new Set(cached.map(m=>m.organizer_id))];
   const [peopleResult,partsResult]=await Promise.all([
    sb.from('profiles').select('id,display_name,username').in('id',ids),
@@ -58,10 +60,13 @@ async function showDetails(id){
  const m=cached.find(x=>x.id===id);if(!m)return;
  const s=ensureSheet();s.innerHTML='<button class="close" data-close>← Volver</button><h2>'+escapeHtml(m.title)+'</h2><p class="info">Cargando detalles…</p>';s.classList.add('on');s.querySelector('[data-close]').onclick=closeSheet;
  try{
-  const [{data:participants},{data:privateLoc}]=await Promise.all([
+  const [participantsResult,locationResult]=await Promise.all([
    sb.from('match_participants').select('user_id,participant_status').eq('match_id',id).in('participant_status',['organizer','joined','waitlisted']),
    sb.from('match_private_location').select('exact_address,location_notes').eq('match_id',id).maybeSingle()
   ]);
+  if(participantsResult.error)throw participantsResult.error;
+  if(locationResult.error)throw locationResult.error;
+  const participants=participantsResult.data,privateLoc=locationResult.data;
   const rows=participants||[],status=rows.find(x=>x.user_id===S.user.id)?.participant_status,organizer=m.organizer_id===S.user.id,count=rows.filter(x=>['organizer','joined'].includes(x.participant_status)).length,waitCount=rows.filter(x=>x.participant_status==='waitlisted').length;
   const names=[];if(rows.length){const ids=[...new Set(rows.map(x=>x.user_id))];const {data:ps}=await sb.from('profiles').select('id,display_name,username').in('id',ids);const pm=Object.fromEntries((ps||[]).map(p=>[p.id,p]));rows.forEach(r=>{const p=pm[r.user_id];if(p)names.push((p.display_name||p.username)+' · '+r.participant_status)})}
   let buttons=organizer?'<button data-cancel="'+id+'">Cancelar partido</button>':status==='joined'||status==='waitlisted'?'<button class="secondary" data-leave="'+id+'">Salir del partido</button>':m.status==='open'?'<button data-join="'+id+'">Sumarme</button>':'<span class="match-badge">Completo</span>';
@@ -79,7 +84,8 @@ document.addEventListener('click',e=>{
  if(t.dataset.leave)act('leave_match',t.dataset.leave);
  if(t.dataset.cancel){if(confirm('¿Cancelar este partido?'))act('cancel_match',t.dataset.cancel)}
 });
-$m('match-search')?.addEventListener('input',filterMatchCards);
+let searchTimer;
+$m('match-search')?.addEventListener('input',()=>{filterMatchCards();clearTimeout(searchTimer);const q=$m('match-search').value.trim().toLocaleLowerCase('es-AR').replace(/[,%()]/g,' ').replace(/\s+/g,' ').trim();searchTimer=setTimeout(()=>loadMatches(q),350)});
 $m('match-create').addEventListener('click',()=>{if(!S){openAuth('f-login');return}createForm()});
 // expose a refresh hook after successful sign-in
 window.jogaMatchesRefresh=loadMatches;
