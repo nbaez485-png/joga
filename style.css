@@ -235,3 +235,10 @@ body{font-size:14px;line-height:1.5;font-weight:500;letter-spacing:0;-webkit-fon
 .profile-avatar-wrap.ring-rainbow{border:4px solid transparent;background:conic-gradient(red,orange,yellow,lime,cyan,blue,magenta,red);animation:ringSpin 4s linear infinite}
 .profile-avatar-wrap.ring-neon{border:3px solid #b34cff;box-shadow:0 0 8px #a333ff,0 0 20px #a333ff66;animation:neonPulse 1.7s ease-in-out infinite}
 .profile-avatar-wrap.ring-bronze,.profile-avatar-wrap.ring-silver,.profile-avatar-wrap.ring-gold,.profile-avatar-wrap.ring-diamond{animation:none}
+
+.cosmetic-subtitle{font:700 20px var(--disp);text-transform:uppercase;margin:14px 0 8px}
+.profile-banner{height:84px;border-radius:14px;margin:8px 0 0;overflow:hidden;background:linear-gradient(120deg,#242821,#353c31);border:1px solid var(--line)}
+.banner-demo{height:52px;border-radius:10px;margin:6px 0;background:linear-gradient(120deg,#252a22,#424c3b);border:1px solid #3a4235}
+.banner-premium{background:linear-gradient(120deg,#3b2c12,#b99732,#423015);border-color:#a98832}
+.banner-elite{background:linear-gradient(120deg,#102a19,#37a84c,#163d20);border-color:#39d85b;animation:neonPulse 1.7s ease-in-out infinite}
+.banner-creator{background:linear-gradient(120deg,#172f24,#baff27,#194a29,#172f24);border-color:#c9ff1f;animation:neonPulse 2s ease-in-out infinite}
