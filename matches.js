@@ -19,13 +19,13 @@ function filterMatchCards(){
  const q=($m('match-search')?.value||'').trim().toLocaleLowerCase('es-AR').replace(/[^\\p{L}\\p{N}\\s-]/gu,' ').replace(/\\s+/g,' ').trim();
  const modality=$m('match-modality-filter')?.value||'',cost=$m('match-cost-filter')?.value||'',dateMode=$m('match-date-filter')?.value||'';
  const todayStr=today(),todayUTC=Date.parse(todayStr+'T00:00:00Z'),weekEnd=todayUTC+6*86400000;
- const weekendDate=d=>{const dow=new Date(d+'T12:00:00Z').getUTCDay();return dow===5||dow===6||dow===0};
+ const todayDow=new Date(todayStr+'T12:00:00Z').getUTCDay(),friOffset=(5-todayDow+7)%7,weekendStart=todayUTC+(todayDow===6||todayDow===0?0:friOffset)*86400000,weekendEnd=weekendStart+2*86400000;
  let found=0;
  list.querySelectorAll('.match-card').forEach(card=>{
   const text=card.textContent.toLocaleLowerCase('es-AR'),mod=card.dataset.modality||'',price=card.dataset.cost||'',date=card.dataset.date||'';
   const dateUTC=Date.parse(date+'T00:00:00Z');
   const okText=!q||text.includes(q),okMod=!modality||mod===modality,okCost=!cost||(cost==='free'?price==='0':price!=='0');
-  const okDate=!dateMode||(dateMode==='today'?date===todayStr:dateMode==='7days'?dateUTC>=todayUTC&&dateUTC<=weekEnd:dateMode==='weekend'?dateUTC>=todayUTC&&dateUTC<=weekEnd&&weekendDate(date):true);
+  const okDate=!dateMode||(dateMode==='today'?date===todayStr:dateMode==='7days'?dateUTC>=todayUTC&&dateUTC<=weekEnd:dateMode==='weekend'?dateUTC>=weekendStart&&dateUTC<=weekendEnd:true);
   const ok=okText&&okMod&&okCost&&okDate;card.hidden=!ok;if(ok)found++;
  });
  let empty=list.querySelector('.match-filter-empty');
