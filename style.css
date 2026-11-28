@@ -459,3 +459,6 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 .cosmetic-card.locked .cosmetic-status{color:#c7c8b8!important}
 .cosmetic-card.locked .ring-art{filter:none!important}
 .cosmetic-demo.ring-bronze{filter:drop-shadow(0 0 7px #c87527)!important}
+
+/* First raster VFX asset: Fuego is a looping GIF, no SVG/CSS animation stacked on top */
+.ring-art.ring-fire{animation:none!important}
