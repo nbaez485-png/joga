@@ -57,7 +57,7 @@ Las migraciones guardadas en `supabase/migrations/` deben revisarse y aplicarse 
 
 ## Roadmap (orden de trabajo)
 
-1. **Jugadores y amigos:** búsqueda por usuario/ID, perfiles públicos, solicitudes, bloquear y reportar.
+1. **Jugadores y amigos:** búsqueda por nombre/usuario y perfiles públicos ya implementados; quedan búsqueda por ID, solicitudes de amistad, bloquear y reportar.
 2. **Historial y asistencia:** validar partido jugado, registrar asistencia, estadísticas reales y revisión de faltas.
 3. **Notificaciones:** recordatorios, cambios de cupo, promoción de lista de espera y actividad de amigos.
 4. **Comunidad y Academia:** publicaciones de fútbol callejero y contenidos de técnica.
