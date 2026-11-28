@@ -411,3 +411,11 @@ img.ring-art.ring-elite,img.ring-art.ring-creator{
 .preview-profile-avatar-inner{background-position:center;background-size:cover;background-repeat:no-repeat}
 #preview-profile-avatar-inner{background-position:center;background-size:cover;background-repeat:no-repeat}
 #pav{background-position:center!important;background-size:cover!important}
+
+/* Final no-square pass: remove legacy class backgrounds from artwork elements and make avatar photo win. */
+img.ring-art[class*="ring-"]{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;outline:none!important;padding:0!important}
+.cosmetic-demo, .profile-avatar-wrap{background:transparent!important;border:0!important;box-shadow:none!important}
+.profile-avatar-wrap .av{background-color:#17191c!important;background-position:center!important;background-repeat:no-repeat!important;background-size:cover!important;border:2px solid #08090a!important}
+#profile-home-av{background-color:#17191c!important;background-position:center!important;background-repeat:no-repeat!important;background-size:cover!important}
+#pav{background-position:center!important;background-size:cover!important}
+.ring-none{display:none!important}
