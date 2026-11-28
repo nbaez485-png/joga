@@ -21,6 +21,8 @@ JOGA es una plataforma mobile-first para organizar fútbol amateur y callejero: 
 - Creación de partidos públicos; modalidad, fecha/hora, localidad, cancha, precio, límites de edad, descripción y lista de espera.
 - Inscripción, baja, lista de espera y cancelación por organizador.
 - Búsqueda de partidos y filtros combinables por modalidad, costo y fecha (hoy, próximos 7 días o finde).
+- Compartir partidos públicos con link directo que abre sus detalles.
+- Inicio con próximo partido, actividad del jugador, accesos rápidos y consejo futbolero diario.
 - Personalización e inventario cosmético en Supabase. El trabajo de los avatar rings está en pausa hasta revisar visualmente los assets en el teléfono.
 
 ## Publicación
@@ -44,12 +46,21 @@ Las migraciones guardadas en `supabase/migrations/` deben revisarse y aplicarse 
 
 ## QA rápido antes de publicar
 
-1. Revisar sintaxis de `app.js` y `matches.js`.
-2. Confirmar que cada ID usado desde JavaScript exista en el HTML o sea creado dinámicamente.
-3. Probar con cuenta autenticada: búsqueda, filtros, crear partido, ver detalles, sumarse, salir, lista de espera y cancelación.
-4. Probar validaciones: modalidad personalizada, rango de edad, fecha/hora futura, precio y campos obligatorios.
-5. Revisar perfil, editar perfil, cambio de foto y logout/login.
-6. Probar móvil: pantalla chica, teclado, scroll de formularios, safe areas y cache limpia.
+- El workflow `JOGA QA` ejecuta checks estáticos en cada push y PR: sintaxis JS, IDs duplicados, IDs referenciados, navegación, Inicio, filtros, share links y cache versioning.
+- Revisar también manualmente en un teléfono: búsqueda, filtros, crear partido, ver detalles, sumarse, salir, lista de espera y cancelación.
+- Probar validaciones: modalidad personalizada, rango de edad, fecha/hora futura, precio y campos obligatorios.
+- Revisar perfil, editar perfil, cambio de foto y logout/login.
+- Probar móvil: pantalla chica, teclado, scroll de formularios, safe areas y cache limpia.
+- La QA automatizada no sustituye pruebas reales con dos cuentas ni pruebas de RLS en Supabase.
+
+## Roadmap (orden de trabajo)
+
+1. **Jugadores y amigos:** búsqueda por usuario/ID, perfiles públicos, solicitudes, bloquear y reportar.
+2. **Historial y asistencia:** validar partido jugado, registrar asistencia, estadísticas reales y revisión de faltas.
+3. **Notificaciones:** recordatorios, cambios de cupo, promoción de lista de espera y actividad de amigos.
+4. **Comunidad y Academia:** publicaciones de fútbol callejero y contenidos de técnica.
+5. **Equipos y progreso:** equipos, temporadas, logros, recompensas y cosméticos.
+6. **Privados e invitaciones:** cuando la base de acceso y las invitaciones estén listas.
 
 ## Pendientes conocidos
 
