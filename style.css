@@ -488,3 +488,136 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
 .ring-art.ring-gold{background-position:50% center!important}
 .ring-art.ring-platinum{background-position:75% center!important}
 .ring-art.ring-diamond{background-position:100% center!important}
+
+/* JOGA exact reference atlas: 3x3 raster frames, native 128px cells, no vector recreation */
+.ring-art{
+ position:absolute!important;left:50%!important;top:50%!important;
+ width:128px!important;height:128px!important;
+ transform:translate(-50%,-50%)!important;
+ background-repeat:no-repeat!important;background-size:300% 300%!important;
+ background-color:transparent!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ box-shadow:none!important;filter:none!important;animation:none!important;
+ object-fit:fill!important;max-width:none!important;z-index:1!important;
+ pointer-events:none!important;
+}
+.ring-art.ring-bronze{background-position:0% 0%!important}
+.ring-art.ring-silver{background-position:50% 0%!important}
+.ring-art.ring-gold{background-position:100% 0%!important}
+.ring-art.ring-platinum{background-position:0% 50%!important}
+.ring-art.ring-diamond{background-position:50% 50%!important}
+.ring-art.ring-elite{background-position:100% 50%!important}
+.ring-art.ring-creator{background-position:0% 100%!important}
+.ring-art.ring-epic{background-position:50% 100%!important}
+.ring-art.ring-legendary{background-position:100% 100%!important}
+.cosmetic-demo{
+ width:128px!important;height:128px!important;position:relative!important;
+ margin:8px auto 12px!important;padding:0!important;overflow:visible!important;
+ display:block!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;isolation:isolate;
+}
+.cosmetic-demo .ring-art{z-index:1!important}
+.cosmetic-demo .cosmetic-avatar{
+ position:absolute!important;left:50%!important;top:50%!important;
+ transform:translate(-50%,-50%)!important;inset:auto!important;
+ width:90px!important;height:90px!important;box-sizing:border-box!important;
+ z-index:2!important;border-radius:50%!important;overflow:hidden!important;
+ display:grid;place-items:center;background:#17191c!important;
+ border:0!important;box-shadow:none!important;
+}
+.profile-avatar-wrap{
+ position:relative!important;isolation:isolate!important;overflow:visible!important;
+ width:128px!important;height:128px!important;min-width:128px!important;
+ padding:0!important;display:block!important;flex:0 0 128px!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;
+}
+.profile-avatar-wrap .ring-art{z-index:1!important}
+.profile-avatar-wrap .av{
+ position:absolute!important;left:50%!important;top:50%!important;
+ transform:translate(-50%,-50%)!important;
+ width:90px!important;height:90px!important;min-width:90px!important;
+ border-radius:50%!important;overflow:hidden!important;z-index:2!important;
+ border:0!important;box-shadow:none!important;
+ background-color:#17191c!important;background-position:center!important;
+ background-repeat:no-repeat!important;background-size:cover!important;
+}
+.profile-avatar-wrap:before,.profile-avatar-wrap:after{content:none!important;display:none!important}
+.profile-avatar-wrap[class*="ring-"]{border:0!important;background:transparent!important;box-shadow:none!important;animation:none!important}
+.ring-art[class*="ring-"]{animation:none!important;filter:none!important}
+#profile-ring-art[hidden]{display:none!important}
+/* The banner is one cover behind the portrait AND identity, not a separate strip above them. */
+.profile-profile-cover{
+ position:relative!important;isolation:isolate!important;overflow:hidden!important;
+ min-height:172px!important;margin:0 0 12px!important;border-radius:17px!important;
+ border:1px solid #343a36!important;background:#111!important;
+}
+.profile-profile-cover .profile-banner{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ min-height:172px!important;margin:0!important;border:0!important;
+ border-radius:inherit!important;background-size:cover!important;
+ background-position:center!important;z-index:0!important;
+}
+.profile-profile-cover .profile-banner:after{
+ content:""!important;position:absolute!important;inset:0!important;
+ background:linear-gradient(90deg,rgba(3,6,5,.60),rgba(3,6,5,.34) 62%,rgba(3,6,5,.46))!important;
+ animation:none!important;
+}
+.profile-profile-cover .profile-hero{
+ position:relative!important;z-index:1!important;min-height:172px!important;
+ display:flex!important;align-items:center!important;gap:14px!important;
+ padding:18px 14px!important;background:transparent!important;
+}
+.profile-profile-cover .profile-identity{
+ min-width:0!important;position:relative!important;z-index:2!important;
+ text-shadow:0 2px 8px #000,0 1px 2px #000!important;
+}
+.profile-profile-cover .profile-identity h2{
+ font-size:clamp(21px,6vw,29px)!important;line-height:1!important;
+ overflow-wrap:anywhere!important;margin:0 0 4px!important;
+}
+.profile-profile-cover .profile-identity span{color:#f0f0f0!important}
+.profile-profile-cover .profile-badges{position:relative;z-index:2}
+.profile-stats{margin-top:12px!important}
+/* Same layered treatment in the cosmetic preview. */
+.preview-profile{
+ position:relative!important;isolation:isolate!important;overflow:hidden!important;
+ display:grid!important;grid-template-columns:128px minmax(0,1fr)!important;
+ align-items:center!important;gap:12px!important;min-height:160px!important;
+ padding:14px!important;border-radius:15px!important;
+}
+.preview-profile .preview-banner{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ margin:0!important;border:0!important;border-radius:inherit!important;
+ background-size:cover!important;background-position:center!important;z-index:0!important;
+}
+.preview-profile .preview-banner:after{
+ content:""!important;position:absolute!important;inset:0!important;
+ background:linear-gradient(90deg,rgba(0,0,0,.62),rgba(0,0,0,.30))!important;
+}
+.preview-profile .preview-profile-avatar,.preview-profile .preview-profile-identity{
+ position:relative!important;z-index:1!important;
+}
+.preview-profile .preview-profile-avatar{
+ width:128px!important;height:128px!important;min-width:128px!important;
+ margin:0!important;display:grid!important;place-items:center!important;
+}
+.preview-profile .preview-profile-avatar .ring-art{z-index:1!important}
+.preview-profile .preview-profile-avatar .preview-avatar-inner{
+ width:90px!important;height:90px!important;border:0!important;
+ position:relative!important;z-index:2!important;
+}
+.preview-profile-identity{min-width:0!important;text-shadow:0 2px 7px #000!important}
+.preview-profile-identity b{overflow-wrap:anywhere}
+@media(max-width:380px){
+ .profile-profile-cover .profile-hero{gap:9px!important;padding:12px 9px!important}
+ .profile-avatar-wrap{width:116px!important;height:116px!important;min-width:116px!important;flex-basis:116px!important}
+ .profile-avatar-wrap .ring-art{width:116px!important;height:116px!important}
+ .profile-avatar-wrap .av{width:82px!important;height:82px!important}
+ .profile-profile-cover{min-height:156px!important}
+ .profile-profile-cover .profile-hero{min-height:156px!important}
+ .preview-profile{grid-template-columns:116px minmax(0,1fr)!important;gap:8px!important;padding:10px!important}
+ .preview-profile .preview-profile-avatar{width:116px!important;height:116px!important;min-width:116px!important}
+ .preview-profile .preview-profile-avatar .ring-art{width:116px!important;height:116px!important}
+ .preview-profile .preview-profile-avatar .preview-avatar-inner{width:82px!important;height:82px!important}
+}
