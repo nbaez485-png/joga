@@ -283,7 +283,107 @@ async function enter(session){if(P&&S&&S.user.id===session.user.id){S=session;re
   const ca=session.user.email_confirmed_at;if(/type=signup/.test(boot)||(ca&&Date.now()-new Date(ca)<300000&&/access_token|[?&]code=/.test(boot))){toast('Email confirmado. ¡Bienvenido a JOGA!',7000);history.replaceState(null,'',location.pathname)}}
  catch(e){toast('No pudimos cargar tu perfil. '+msg(e));openAuth('f-login')}
  entering=false}
-function leave(){P=null;S=null;document.querySelectorAll('.auth input').forEach(i=>i.value='');openAuth('f-login')}
+function leave(){stopCommunityChat();P=null;S=null;document.querySelectorAll('.auth input').forEach(i=>i.value='');openAuth('f-login')}
+
+/* Community chat — public room for signed-in JOGA players */
+let communityChatChannel=null,communityChatMessages=[],communityChatSending=false,lastCommunityMessageAt=0;
+function communityChatStatus(label,online=false){
+ const el=$('community-chat-status');if(!el)return;
+ el.textContent=label;el.classList.toggle('online',!!online);
+}
+function renderCommunityChat(){
+ const list=$('community-chat-messages');if(!list)return;
+ list.innerHTML='';
+ if(!communityChatMessages.length){
+  const empty=document.createElement('div');empty.className='chat-empty';
+  const mark=document.createElement('span');mark.className='chat-empty-ball';mark.textContent='◉';
+  const title=document.createElement('b');title.textContent='La cancha está abierta.';
+  const copy=document.createElement('p');copy.textContent='Sé el primero en saludar y arrancar la charla.';
+  empty.append(mark,title,copy);list.append(empty);return;
+ }
+ const fragment=document.createDocumentFragment();
+ communityChatMessages.forEach(m=>{
+  const row=document.createElement('article');row.className='chat-message'+(S&&m.sender_id===S.user.id?' mine':'');
+  const meta=document.createElement('div');meta.className='chat-message-meta';
+  const user=document.createElement('b');user.textContent='@'+String(m.sender_username||'jugador').replace(/^@/,'');
+  const stamp=document.createElement('time'),date=new Date(m.created_at);
+  stamp.textContent=Number.isNaN(date.getTime())?'':date.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+  meta.append(user,stamp);
+  const body=document.createElement('p');body.textContent=m.body||'';
+  row.append(meta,body);fragment.append(row);
+ });
+ list.append(fragment);list.scrollTop=list.scrollHeight;
+}
+function mergeCommunityChatMessages(rows){
+ const byId=new Map(communityChatMessages.map(m=>[m.id,m]));
+ (rows||[]).forEach(m=>{if(m&&m.id)byId.set(m.id,m)});
+ communityChatMessages=[...byId.values()].sort((a,b)=>new Date(a.created_at)-new Date(b.created_at)).slice(-60);
+ renderCommunityChat();
+}
+function stopCommunityChat(){
+ if(communityChatChannel&&sb)sb.removeChannel(communityChatChannel);
+ communityChatChannel=null;communityChatMessages=[];
+}
+function showCommunityChatError(error){
+ const list=$('community-chat-messages');if(!list)return;
+ list.innerHTML='';
+ const card=document.createElement('div');card.className='chat-empty chat-setup-message';
+ const title=document.createElement('b'),copy=document.createElement('p');
+ const detail=String(error&&(error.message||error.details||error.code)||error||'');
+ if(/community_messages|PGRST205|42P01|relation .* does not exist/i.test(detail)){
+  title.textContent='El chat está preparado, falta activarlo.';
+  copy.textContent='Todavía no está creada la tabla de mensajes en Supabase. La configuración está en supabase/community_chat_setup.sql.';
+  communityChatStatus('CONFIGURACIÓN PENDIENTE');
+ }else{
+  title.textContent='No pudimos cargar los mensajes.';
+  copy.textContent='Revisá tu conexión e intentá de nuevo.';
+  communityChatStatus('SIN CONEXIÓN');
+ }
+ card.append(title,copy);list.append(card);
+}
+async function loadCommunityChat(){
+ const list=$('community-chat-messages');if(!list)return;
+ if(!sb){communityChatStatus('SIN CONEXIÓN');return}
+ if(!S||!P){communityChatStatus('INICIÁ SESIÓN');return}
+ communityChatStatus('CARGANDO');
+ if(!communityChatChannel){
+  communityChatChannel=sb.channel('joga-community-chat')
+   .on('postgres_changes',{event:'INSERT',schema:'public',table:'community_messages'},payload=>mergeCommunityChatMessages([payload.new]))
+   .subscribe(status=>{
+    if(status==='SUBSCRIBED')communityChatStatus('EN VIVO',true);
+    else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')communityChatStatus('REINTENTANDO');
+    else if(status==='CLOSED')communityChatStatus('DESCONECTADO');
+   });
+ }
+ try{
+  const{data,error}=await sb.from('community_messages').select('id,sender_id,sender_username,body,created_at').order('created_at',{ascending:false}).limit(60);
+  if(error)throw error;
+  mergeCommunityChatMessages((data||[]).reverse());
+ }catch(error){console.error('JOGA community chat',error);showCommunityChatError(error)}
+}
+const communityChatForm=$('community-chat-form');
+if(communityChatForm)communityChatForm.addEventListener('submit',async e=>{
+ e.preventDefault();
+ const input=$('community-chat-input'),button=$('community-chat-send');
+ if(!S||!P){toast('Iniciá sesión para escribir en la comunidad.');return}
+ const body=input.value.trim();
+ if(!body)return;
+ if(body.length>500){toast('El mensaje no puede superar los 500 caracteres.');return}
+ if(communityChatSending)return;
+ if(Date.now()-lastCommunityMessageAt<1200){toast('Esperá un segundo antes de enviar otro mensaje.');return}
+ communityChatSending=true;button.disabled=true;
+ try{
+  const{error}=await sb.from('community_messages').insert({sender_id:S.user.id,sender_username:P.username,body});
+  if(error)throw error;
+  lastCommunityMessageAt=Date.now();input.value='';$('community-chat-count').textContent='0 / 500';
+  await loadCommunityChat();
+ }catch(error){console.error('JOGA send community message',error);toast(/community_messages|PGRST205|42P01|does not exist/i.test(String(error.message||error))?'El chat todavía no está activado en la base de pruebas.':'No se pudo enviar el mensaje. Revisá la conexión e intentá otra vez.')}
+ finally{communityChatSending=false;button.disabled=false}
+});
+const communityChatInput=$('community-chat-input');
+if(communityChatInput)communityChatInput.addEventListener('input',()=>{$('community-chat-count').textContent=communityChatInput.value.length+' / 500'});
+window.jogaCommunityRefresh=loadCommunityChat;
+
 $('pf').addEventListener('submit',async e=>{e.preventDefault();const er=$('perr');er.textContent='';er.classList.remove('ok');
  const dn=$('p-dn').value.trim(),un=$('p-un').value.trim().toLowerCase();
  if(dn.length<1||dn.length>40){er.textContent='El nombre visible debe tener entre 1 y 40 caracteres.';return}
@@ -324,6 +424,7 @@ function tab(t){if(t==='edit'&&P)setAv($('pav'),P);document.querySelectorAll('.d
  ['home','play','explore','academy','community','players','me','edit','customize','settings'].forEach(v=>{const el=$('v-'+v);if(el)el.classList.toggle('on',t===v)});
  if(t==='players'&&window.jogaPlayersRefresh)window.jogaPlayersRefresh();
  if(t==='play'&&window.jogaMatchesRefresh)window.jogaMatchesRefresh();
+ if(t==='community'&&window.jogaCommunityRefresh)window.jogaCommunityRefresh();
  $('main').scrollTo({top:0,behavior:'smooth'})}
 show(0);
 if(/error_description=/.test(boot)){const m=decodeURIComponent((boot.match(/error_description=([^&]+)/)||[])[1]||'').replace(/\+/g,' ');
