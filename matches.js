@@ -15,7 +15,19 @@ const friendlyError=e=>{const msg=String(e?.message||e||'');const map=[[/age_bel
 const closeSheet=()=>{if(sheet){sheet.classList.remove('on');sheet.remove();sheet=null}};
 function ensureSheet(){if(sheet)return sheet;sheet=document.createElement('div');sheet.className='match-sheet';sheet.id='match-sheet';$m('app').append(sheet);return sheet}
 function notice(t){if(typeof toast==='function')toast(t);else alert(t)}
-function filterMatchCards(){const q=($m('match-search')?.value||'').trim().toLocaleLowerCase('es-AR');let found=0;list.querySelectorAll('.match-card').forEach(card=>{const ok=!q||card.textContent.toLocaleLowerCase('es-AR').includes(q);card.hidden=!ok;if(ok)found++});let empty=list.querySelector('.match-filter-empty');if(q&&found===0){if(!empty){empty=document.createElement('p');empty.className='empty match-filter-empty';empty.textContent='No encontramos partidos con esa búsqueda.';list.append(empty)}}else if(empty)empty.remove()}
+function filterMatchCards(){
+ const q=($m('match-search')?.value||'').trim().toLocaleLowerCase('es-AR');
+ const modality=$m('match-modality-filter')?.value||'',cost=$m('match-cost-filter')?.value||'';
+ let found=0;
+ list.querySelectorAll('.match-card').forEach(card=>{
+  const text=card.textContent.toLocaleLowerCase('es-AR'),mod=card.dataset.modality||'',price=card.dataset.cost||'';
+  const okText=!q||text.includes(q),okMod=!modality||mod===modality,okCost=!cost||(cost==='free'?price==='0':price!=='0');
+  const ok=okText&&okMod&&okCost;card.hidden=!ok;if(ok)found++;
+ });
+ let empty=list.querySelector('.match-filter-empty');
+ const hasFilters=!!q||!!modality||!!cost;
+ if(hasFilters&&found===0){if(!empty){empty=document.createElement('p');empty.className='empty match-filter-empty';empty.textContent='No encontramos partidos con esos filtros.';list.append(empty)}}else if(empty)empty.remove()
+}
 async function loadMatches(searchText=activeSearch){
  activeSearch=String(searchText||'').trim();searchText=activeSearch;
  const seq=++loadSeq;
@@ -43,7 +55,7 @@ async function loadMatches(searchText=activeSearch){
   list.innerHTML=cached.map(m=>{
    const host=pmap[m.organizer_id]||{},count=counts[m.id]||0,stat=own[m.id];
    const age=ageLabel(m);
-   return '<article class="match-card"><div class="match-head"><div><h3>'+escapeHtml(m.title)+'</h3><div class="match-meta">'+escapeHtml(modName(m))+' · '+escapeHtml(dateFmt(m.match_date))+' · '+escapeHtml(timeFmt(m.start_time))+'</div></div><span class="match-badge">'+(m.status==='full'?'Completo':'Abierto')+'</span></div><div class="match-meta">📍 '+escapeHtml(m.area)+(m.venue_name?' · '+escapeHtml(m.venue_name):'')+'<br>👤 '+escapeHtml(host.display_name||host.username||'Organizador')+' · '+count+'/'+m.max_players+' jugadores'+(waits[m.id]?' · '+waits[m.id]+' en espera':'')+'<br>💰 '+(Number(m.cost_per_player)===0?'Gratis':'$'+Number(m.cost_per_player).toLocaleString('es-AR'))+' por jugador</div><div class="match-badges">'+(m.organizer_is_minor?'<span class="match-badge minor">Organizador menor de edad</span>':'')+(m.is_private?'<span class="match-badge">Privado</span>':'')+'<span class="match-badge">'+escapeHtml(age)+'</span>'+(m.allow_waitlist?'<span class="match-badge">Lista de espera</span>':'')+'</div><div class="match-actions"><button data-detail="'+m.id+'">Ver partido</button>'+(stat==='joined'?'<button class="secondary" data-leave="'+m.id+'">Bajarme</button>':stat==='waitlisted'?'<button class="secondary" data-leave="'+m.id+'">Salir de espera</button>':m.organizer_id===S.user.id?'<button class="secondary" data-cancel="'+m.id+'">Cancelar partido</button>':'')+'</div></article>'
+   return '<article class="match-card" data-modality="'+escapeHtml(m.modality||'')+'" data-cost="'+Number(m.cost_per_player||0)+'"><div class="match-head"><div><h3>'+escapeHtml(m.title)+'</h3><div class="match-meta">'+escapeHtml(modName(m))+' · '+escapeHtml(dateFmt(m.match_date))+' · '+escapeHtml(timeFmt(m.start_time))+'</div></div><span class="match-badge">'+(m.status==='full'?'Completo':'Abierto')+'</span></div><div class="match-meta">📍 '+escapeHtml(m.area)+(m.venue_name?' · '+escapeHtml(m.venue_name):'')+'<br>👤 '+escapeHtml(host.display_name||host.username||'Organizador')+' · '+count+'/'+m.max_players+' jugadores'+(waits[m.id]?' · '+waits[m.id]+' en espera':'')+'<br>💰 '+(Number(m.cost_per_player)===0?'Gratis':'$'+Number(m.cost_per_player).toLocaleString('es-AR'))+' por jugador</div><div class="match-badges">'+(m.organizer_is_minor?'<span class="match-badge minor">Organizador menor de edad</span>':'')+(m.is_private?'<span class="match-badge">Privado</span>':'')+'<span class="match-badge">'+escapeHtml(age)+'</span>'+(m.allow_waitlist?'<span class="match-badge">Lista de espera</span>':'')+'</div><div class="match-actions"><button data-detail="'+m.id+'">Ver partido</button>'+(stat==='joined'?'<button class="secondary" data-leave="'+m.id+'">Bajarme</button>':stat==='waitlisted'?'<button class="secondary" data-leave="'+m.id+'">Salir de espera</button>':m.organizer_id===S.user.id?'<button class="secondary" data-cancel="'+m.id+'">Cancelar partido</button>':'')+'</div></article>'
   }).join('');filterMatchCards();
  }catch(e){if(seq!==loadSeq)return;console.error('JOGA matches',e);list.innerHTML='<p class="empty">No pudimos cargar los partidos. Revisá tu conexión e intentá de nuevo.</p>'}
 }
@@ -96,6 +108,7 @@ document.addEventListener('click',e=>{
 });
 let searchTimer;
 $m('match-search')?.addEventListener('input',()=>{filterMatchCards();clearTimeout(searchTimer);const q=$m('match-search').value.trim().toLocaleLowerCase('es-AR').replace(/[^\p{L}\p{N}\s-]/gu,' ').replace(/\s+/g,' ').trim();searchTimer=setTimeout(()=>loadMatches(q),350)});
+$m('match-modality-filter')?.addEventListener('change',filterMatchCards);$m('match-cost-filter')?.addEventListener('change',filterMatchCards);
 $m('match-create').addEventListener('click',()=>{if(!S){openAuth('f-login');return}createForm()});
 // expose a refresh hook after successful sign-in
 window.jogaMatchesRefresh=loadMatches;
