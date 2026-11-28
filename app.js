@@ -106,7 +106,8 @@ async function loadProfile(){
  if(results[1].status==='rejected'){console.error('profile stats load',results[1].reason);$('stat-created').textContent='—';$('stat-joined').textContent='—';$('stat-upcoming').textContent='—';}
  
 }
-let RANK_SPRITE_DATA='';const RING_FRAME_DATA={};function ringSrc(key){return RING_FRAME_DATA[key]||RANK_SPRITE_DATA;}\nasync function buildRingFrames(){const atlas=new Image();atlas.src=RANK_SPRITE_DATA;await atlas.decode();if(atlas.naturalWidth!==384||atlas.naturalHeight!==384)throw new Error('Unexpected ring atlas size '+atlas.naturalWidth+'x'+atlas.naturalHeight);const keys=['bronze_ring','silver_ring','gold_ring','platinum_ring','diamond_ring','elite_ring','creator_ring','epic_ring','legendary_ring'];for(let i=0;i<keys.length;i++){const x=(i%3)*128,y=Math.floor(i/3)*128,canvas=document.createElement('canvas');canvas.width=128;canvas.height=128;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,128,128);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(atlas,x,y,128,128,8,8,112,112);RING_FRAME_DATA[keys[i]]=canvas.toDataURL('image/png');}}
+let RANK_SPRITE_DATA='';const RING_FRAME_DATA={};function ringSrc(key){return RING_FRAME_DATA[key]||RANK_SPRITE_DATA;}
+async function buildRingFrames(){const atlas=new Image();atlas.src=RANK_SPRITE_DATA;await atlas.decode();if(atlas.naturalWidth!==384||atlas.naturalHeight!==384)throw new Error('Unexpected ring atlas size '+atlas.naturalWidth+'x'+atlas.naturalHeight);const keys=['bronze_ring','silver_ring','gold_ring','platinum_ring','diamond_ring','elite_ring','creator_ring','epic_ring','legendary_ring'];for(let i=0;i<keys.length;i++){const x=(i%3)*128,y=Math.floor(i/3)*128,canvas=document.createElement('canvas');canvas.width=128;canvas.height=128;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,128,128);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(atlas,x,y,128,128,8,8,112,112);RING_FRAME_DATA[keys[i]]=canvas.toDataURL('image/png');}}
  let COS={catalog:[],inventory:[],equipped:{},creator:false};
 async function loadCosmetics(){
  const [cat,inv,equ,cre,sprite1,sprite2,sprite3,sprite4]=await Promise.all([
@@ -120,7 +121,8 @@ async function loadCosmetics(){
  fetch('assets/rings/rank_atlas_part4.b64?v=20261128-8').then(r=>{if(!r.ok)throw new Error('Rank atlas 4 missing '+r.status);return r.text()})
  ]);
  for(const r of [cat,inv,equ,cre])if(r.error)throw r.error;
- RANK_SPRITE_DATA='data:image/png;base64,'+[sprite1,sprite2,sprite3,sprite4].join('').trim();\n await buildRingFrames();
+ RANK_SPRITE_DATA='data:image/png;base64,'+[sprite1,sprite2,sprite3,sprite4].join('').trim();
+ await buildRingFrames();
  COS.catalog=cat.data||[];COS.inventory=(inv.data||[]).map(x=>x.item_key);COS.equipped=Object.fromEntries((equ.data||[]).map(x=>[x.slot,x.item_key]));COS.creator=(cre.data||[]).length>0;
 }
 async function loadPlayerStats(){
