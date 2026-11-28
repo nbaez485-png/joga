@@ -28,8 +28,11 @@ async function loadMatches(){
    sb.from('profiles').select('id,display_name,username').in('id',ids),
    sb.from('match_participants').select('match_id,user_id,participant_status').in('match_id',cached.map(m=>m.id)).in('participant_status',['organizer','joined','waitlisted'])
   ]);
-  const pmap=Object.fromEntries((people||[]).map(p=>[p.id,p]));
-  const counts={},waits={},own={};(parts||[]).forEach(p=>{if(p.participant_status==='waitlisted')waits[p.match_id]=(waits[p.match_id]||0)+1;else counts[p.match_id]=(counts[p.match_id]||0)+1;if(p.user_id===S.user.id)own[p.match_id]=p.participant_status});
+  if(peopleResult.error)throw peopleResult.error;
+  if(partsResult.error)throw partsResult.error;
+  const people=peopleResult.data||[],parts=partsResult.data||[];
+  const pmap=Object.fromEntries(people.map(p=>[p.id,p]));
+  const counts={},waits={},own={};parts.forEach(p=>{if(p.participant_status==='waitlisted')waits[p.match_id]=(waits[p.match_id]||0)+1;else counts[p.match_id]=(counts[p.match_id]||0)+1;if(p.user_id===S.user.id)own[p.match_id]=p.participant_status});
   list.innerHTML=cached.map(m=>{
    const host=pmap[m.organizer_id]||{},count=counts[m.id]||0,stat=own[m.id];
    const age=ageLabel(m);
