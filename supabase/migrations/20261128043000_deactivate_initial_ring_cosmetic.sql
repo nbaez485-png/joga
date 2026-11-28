@@ -1,0 +1,1 @@
+update public.cosmetic_catalog set active=false where item_key='starter_ring';
