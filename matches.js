@@ -40,7 +40,7 @@ async function loadMatches(searchText=activeSearch){
  try{
   let query=sb.from('matches').select('id,organizer_id,title,modality,custom_modality,match_date,start_time,area,venue_name,venue_type,max_players,cost_per_player,level_hint,description,is_private,allow_waitlist,status,min_age,max_age,organizer_is_minor').in('status',['open','full']).gte('match_date',today()).order('match_date').order('start_time');
   if(searchText)query=query.or('title.ilike.%'+searchText+'%,area.ilike.%'+searchText+'%');
-  const {data,error}=await query.limit(searchText?100:30);
+  const {data,error}=await query.limit(100);
   if(error)throw error;
   if(seq!==loadSeq)return;
   cached=(data||[]).filter(isUpcoming);
