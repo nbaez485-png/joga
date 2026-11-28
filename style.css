@@ -185,7 +185,7 @@ body{font-size:14px;line-height:1.5;font-weight:500;letter-spacing:0;-webkit-fon
 .profile-hero{display:flex;align-items:center;gap:18px;padding:18px 0}
 .profile-avatar-wrap{padding:5px;border-radius:50%;width:116px;height:116px;display:grid;place-items:center;flex:none}
 .profile-avatar-wrap .av{width:106px;height:106px;border:0}
-.ring-creator{background:conic-gradient(#c9ff1f,#fff5a0,#c9ff1f,#76ff9e,#c9ff1f);box-shadow:0 0 18px #c9ff1f45}
+.ring-default{background:conic-gradient(#c9ff1f,#fff5a0,#c9ff1f,#76ff9e,#c9ff1f);box-shadow:0 0 12px #c9ff1f30}
 .profile-identity h2{font:800 32px/.98 var(--disp);text-transform:uppercase}
 .profile-identity span{color:var(--mu);font-size:13px}
 .profile-badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
