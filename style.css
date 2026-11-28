@@ -179,3 +179,47 @@ body{font-size:14px;line-height:1.5;font-weight:500;letter-spacing:0;-webkit-fon
  .match-actions button{padding:8px 11px}
 }
 @media(min-width:600px){.hero{height:430px}.hi h1{font-size:64px}}
+
+/* Profile redesign: profile home, edit, cosmetics and settings are separate views */
+.profile-home,.customize-page,.settings-page{padding:calc(env(safe-area-inset-top,0px) + 74px) 18px 24px}
+.profile-hero{display:flex;align-items:center;gap:18px;padding:18px 0}
+.profile-avatar-wrap{padding:5px;border-radius:50%;width:116px;height:116px;display:grid;place-items:center;flex:none}
+.profile-avatar-wrap .av{width:106px;height:106px;border:0}
+.ring-creator{background:conic-gradient(#c9ff1f,#fff5a0,#c9ff1f,#76ff9e,#c9ff1f);box-shadow:0 0 18px #c9ff1f45}
+.profile-identity h2{font:800 32px/.98 var(--disp);text-transform:uppercase}
+.profile-identity span{color:var(--mu);font-size:13px}
+.profile-badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.profile-badge{border:1px solid var(--line);border-radius:20px;padding:4px 9px;font-size:10px!important;font-weight:800;letter-spacing:.4px;color:var(--tx)!important}
+.creator-badge{border-color:var(--ac);color:var(--ac)!important}
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);background:var(--s1);border-radius:14px;margin:12px 0}
+.profile-stats div{text-align:center;padding:13px 4px}.profile-stats div+div{border-left:1px solid var(--line)}
+.profile-stats b{display:block;font:700 28px/1 var(--disp)}.profile-stats span{font-size:11px;color:var(--mu)}
+.profile-actions{display:flex;gap:10px;margin:12px 0}.profile-actions .btn{min-width:0}
+.profile-section{padding:18px 0}.profile-section h3,.settings-card h3{font:700 22px/1 var(--disp);text-transform:uppercase;margin-bottom:7px}
+.profile-section p,.customize-page>p,.settings-page>p{color:var(--mu);font-size:13px}
+.profile-action-list button{width:100%;display:flex;justify-content:space-between;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--s1);font-weight:700}
+.customize-page h2,.settings-page h2{font:800 36px/.95 var(--disp);text-transform:uppercase;margin-bottom:8px}
+.cosmetic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.cosmetic-card{border:1px solid var(--line);background:var(--s1);border-radius:15px;padding:12px;text-align:center}
+.cosmetic-demo{width:88px;height:88px;margin:8px auto 12px;border-radius:50%;padding:4px;display:grid;place-items:center;position:relative}
+.cosmetic-avatar{width:100%;height:100%;border-radius:50%;background:linear-gradient(145deg,#30342e,#141614);display:grid;place-items:center;font:800 34px var(--disp);border:2px solid #111}
+.ring-bronze{border:4px solid #b87945;box-shadow:inset 0 0 0 2px #5e351f}
+.ring-silver{border:4px solid #c5cbd1;box-shadow:inset 0 0 0 2px #666e75}
+.ring-gold{border:4px solid #e6be52;box-shadow:inset 0 0 0 2px #856326}
+.ring-diamond{border:4px solid #8deaff;box-shadow:inset 0 0 0 2px #447d98}
+.ring-fire{border:3px solid #ff6b22;box-shadow:0 0 14px #ff3d1260;animation:firePulse 1.4s ease-in-out infinite}
+.ring-fire:before{content:'';position:absolute;inset:-6px;border-radius:50%;border:3px solid transparent;border-top-color:#ffb52e;border-right-color:#ff4d16;filter:drop-shadow(0 0 5px #ff4d16);animation:ringSpin 2.3s linear infinite}
+.ring-electric{border:3px solid #46b8ff;box-shadow:0 0 14px #1b9aff80;animation:electricPulse .8s ease-in-out infinite alternate}
+.ring-electric:before{content:'';position:absolute;inset:-5px;border:2px dashed #b3efff;border-radius:50%;animation:ringSpin 1.2s linear infinite}
+.ring-rainbow{border:4px solid transparent;background:conic-gradient(red,orange,yellow,lime,cyan,blue,magenta,red) border-box;animation:ringSpin 4s linear infinite}
+.ring-neon{border:3px solid #b34cff;box-shadow:0 0 8px #a333ff,0 0 20px #a333ff66;animation:neonPulse 1.7s ease-in-out infinite}
+@keyframes ringSpin{to{transform:rotate(360deg)}}
+@keyframes firePulse{50%{box-shadow:0 0 22px #ff4b1880}}
+@keyframes electricPulse{to{box-shadow:0 0 22px #26aaff;filter:brightness(1.3)}}
+@keyframes neonPulse{50%{box-shadow:0 0 22px #b34cff,0 0 32px #b34cff66}}
+.cosmetic-card h3{font:700 21px/1 var(--disp);text-transform:uppercase}
+.cosmetic-card small{font-size:11px;color:var(--mu)}
+.settings-card{background:var(--s1);border:1px solid var(--line);border-radius:15px;padding:16px;margin:18px 0}
+.settings-card p{color:var(--mu);font-size:13px;margin-bottom:12px}
+.settings-card .btn{width:100%;margin-top:8px}
+@media(prefers-reduced-motion:reduce){.ring-fire,.ring-electric,.ring-rainbow,.ring-neon,.ring-fire:before,.ring-electric:before{animation:none!important}}
