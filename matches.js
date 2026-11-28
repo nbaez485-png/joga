@@ -19,7 +19,7 @@ function filterMatchCards(){
  const q=($m('match-search')?.value||'').trim().toLocaleLowerCase('es-AR').replace(/[^\\p{L}\\p{N}\\s-]/gu,' ').replace(/\\s+/g,' ').trim();
  const modality=$m('match-modality-filter')?.value||'',cost=$m('match-cost-filter')?.value||'',dateMode=$m('match-date-filter')?.value||'';
  const todayStr=today(),todayUTC=Date.parse(todayStr+'T00:00:00Z'),weekEnd=todayUTC+6*86400000;
- const todayDow=new Date(todayStr+'T12:00:00Z').getUTCDay(),friOffset=(5-todayDow+7)%7,weekendStart=todayUTC+(todayDow===6||todayDow===0?0:friOffset)*86400000,weekendEnd=weekendStart+2*86400000;
+ const todayDow=new Date(todayStr+'T12:00:00Z').getUTCDay(),friOffset=(5-todayDow+7)%7,weekendStart=todayUTC+(todayDow===5||todayDow===6||todayDow===0?0:friOffset)*86400000,weekendDays=todayDow===5?2:todayDow===6?1:todayDow===0?0:2,weekendEnd=weekendStart+weekendDays*86400000;
  let found=0;
  list.querySelectorAll('.match-card').forEach(card=>{
   const text=card.textContent.toLocaleLowerCase('es-AR'),mod=card.dataset.modality||'',price=card.dataset.cost||'',date=card.dataset.date||'';
