@@ -33,7 +33,14 @@ El cliente usa la URL del proyecto y una **publishable key** en el frontend. Nun
 
 Las migraciones guardadas en `supabase/migrations/` deben revisarse y aplicarse en el proyecto de prueba correspondiente antes de llevar cambios de base de datos a producción. No ejecutar migraciones automáticamente desde el frontend.
 
-## Seguridad y mantenimiento\n\n- En Supabase Auth, activar la protección de contraseñas filtradas (Advisor la reporta desactivada en el proyecto de prueba).\n- Las RPC \\`SECURITY DEFINER\\` para crear, anotarse, salir, cancelar y equipar cosméticos están intencionalmente expuestas a \\`authenticated\\`; mantener sus comprobaciones de \\`auth.uid()\\` y autorización.\n- No exponer claves secretas ni conceder acceso a datos privados por conveniencia.\n- Los índices de las claves foráneas cosméticas se añadieron en la migración \\`index_cosmetic_item_fk_columns\\`.\n\n## QA rápido antes de publicar
+## Seguridad y mantenimiento
+
+- En Supabase Auth, activar la protección de contraseñas filtradas (Advisor la reporta desactivada en el proyecto de prueba).
+- Las RPC `SECURITY DEFINER` para crear, anotarse, salir, cancelar y equipar cosméticos están intencionalmente expuestas a `authenticated`; mantener sus comprobaciones de `auth.uid()` y autorización.
+- No exponer claves secretas ni conceder acceso a datos privados por conveniencia.
+- Los índices de las claves foráneas cosméticas se añadieron en la migración `index_cosmetic_item_fk_columns`.
+
+## QA rápido antes de publicar
 
 1. Revisar sintaxis de `app.js` y `matches.js`.
 2. Confirmar que cada ID usado desde JavaScript exista en el HTML o sea creado dinámicamente.
