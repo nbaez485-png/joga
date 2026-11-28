@@ -170,8 +170,8 @@ async function loadPlayers(term=''){
   if(detailsResult.error)throw detailsResult.error;if(seq!==playerSearchSeq)return;
   const details=Object.fromEntries((detailsResult.data||[]).map(x=>[x.id,x]));
   el.innerHTML=people.map(p=>{
-   const d=details[p.id]||{},avatar=avUrl(p),initial=initial(p);
-   return '<article class="player-card"><div class="player-avatar"><span>'+safeText(initial)+'</span>'+(avatar?'<img src="'+safeText(avatar)+'" alt="" loading="lazy" onerror="this.remove()">':'')+'</div><div class="player-card-info"><b>'+safeText(p.display_name||p.username)+'</b><span>@'+safeText(p.username)+'</span><small>'+safeText([d.favorite_position,d.favorite_club].filter(Boolean).join(' · ')||'Jugador JOGA')+'</small></div><span class="player-public">PÚBLICO</span></article>'
+   const d=details[p.id]||{},avatar=avUrl(p),firstLetter=initial(p);
+   return '<article class="player-card"><div class="player-avatar"><span>'+safeText(firstLetter)+'</span>'+(avatar?'<img src="'+safeText(avatar)+'" alt="" loading="lazy" onerror="this.remove()">':'')+'</div><div class="player-card-info"><b>'+safeText(p.display_name||p.username)+'</b><span>@'+safeText(p.username)+'</span><small>'+safeText([d.favorite_position,d.favorite_club].filter(Boolean).join(' · ')||'Jugador JOGA')+'</small></div><span class="player-public">PÚBLICO</span></article>'
   }).join('');
  }catch(e){if(seq!==playerSearchSeq)return;console.error('JOGA players',e);el.innerHTML='<p class="empty">No pudimos cargar jugadores. Revisá tu conexión.</p>'}
 }
