@@ -146,7 +146,53 @@ $('pfile').addEventListener('change',async ev=>{const f=ev.target.files[0];if(!f
   await loadProfile();render();toast('Foto actualizada.')}
  catch(x){console.error('foto',step,x);er.textContent=['No se pudo leer o preparar la foto','No se pudo subir la foto','No se pudo guardar la foto en tu perfil'][step]+why(x)+'.'}
  finally{$('phbtn').disabled=false;ev.target.value=''}});
-const other={play:['Jugar','Buscar y crear partidos se activa en el próximo módulo.'],street:['La calle','Publicaciones y comunidad llegan en una etapa posterior.']};
+
+const other={street:['La calle','Publicaciones y comunidad llegan en una etapa posterior.']};
+let matchTab='find';
+function matchDate(d){return new Date(d+'T12:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'short'})}
+function setMatchTab(t){matchTab=t;document.querySelectorAll('[data-match-tab]').forEach(b=>b.classList.toggle('on',b.dataset.matchTab===t));loadMatches()}
+document.querySelectorAll('[data-match-tab]').forEach(b=>b.addEventListener('click',()=>setMatchTab(b.dataset.matchTab)));
+$('match-search').addEventListener('click',loadMatches);
+$('match-area').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();loadMatches()}});
+$('new-match').addEventListener('click',()=>{$('match-modal').classList.add('on');$('match-error').textContent='';$('match-create').elements.match_date.value=new Date(Date.now()+86400000).toISOString().slice(0,10)});
+$('modal-close').addEventListener('click',()=>$('match-modal').classList.remove('on'));
+$('match-modal').addEventListener('click',e=>{if(e.target===$('match-modal'))$('match-modal').classList.remove('on')});
+$('match-create').elements.modality.addEventListener('change',e=>{$('match-create').elements.custom_modality.hidden=e.target.value!=='otro'});
+async function loadMatches(){if(!S||!sb)return;let list=$('match-list'),empty=$('match-empty');list.innerHTML='';empty.hidden=true;
+try{let q=sb.from('matches').select('*').order('match_date').order('start_time').limit(50);if(matchTab==='mine')q=q.eq('organizer_id',S.user.id);else q=q.eq('status','open').eq('is_private',false).gte('match_date',new Date().toISOString().slice(0,10));let area=$('match-area').value.trim(),mod=$('match-mod').value;if(area)q=q.ilike('area','%'+area+'%');if(mod)q=q.eq('modality',mod);let{data,error}=await q;if(error)throw error;if(!data||!data.length){empty.hidden=false;empty.textContent=matchTab==='mine'?'Todavía no organizaste partidos.':'No encontramos partidos con esos filtros.';return}
+let ids=data.map(m=>m.id),counts={};let parts=await sb.from('match_participants').select('match_id,participant_status').in('match_id',ids).neq('participant_status','left');parts.data&&parts.data.forEach(p=>counts[p.match_id]=(counts[p.match_id]||0)+1);
+data.forEach(m=>{let count=counts[m.id]||0,full=count>=m.max_players,card=document.createElement('article');card.className='match-card';card.innerHTML='<div class="match-date"><b></b><span></span></div><div class="match-info"><h3></h3><p class="area"></p><div class="capacity"><i></i></div><small></small><p class="ages"></p></div><button class="go action"></button>';card.querySelector('.match-date b').textContent=matchDate(m.match_date);card.querySelector('.match-date span').textContent=(m.start_time||'').slice(0,5);card.querySelector('h3').textContent=m.title;card.querySelector('.area').textContent=(m.area||'Zona no indicada')+' · '+m.modality;card.querySelector('.capacity i').style.width=Math.min(100,count/m.max_players*100)+'%';card.querySelector('small').textContent=count+'/'+m.max_players+' jugadores · '+(m.cost_per_player?'
+function tab(t){document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+ $('v-home').classList.toggle('on',t==='home');$('v-me').classList.toggle('on',t==='me');$('v-play').classList.toggle('on',t==='play');$('v-other').classList.toggle('on',t==='street');
+ if(other[t]){$('oT').textContent=other[t][0];$('oP').textContent=other[t][1]}if(t==='play')loadMatches();$('main').scrollTo({top:0})}
+show(0);
+if(/error_description=/.test(boot)){const m=decodeURIComponent((boot.match(/error_description=([^&]+)/)||[])[1]||'').replace(/\+/g,' ');
+ setTimeout(()=>{openAuth('f-login');setErr($('f-login'),/expired|invalid/i.test(m)?'El link venció o ya se usó. Pedí uno nuevo.':'No se pudo completar la acción. Probá de nuevo.')},50)}
+if(sb){sb.auth.onAuthStateChange((ev,session)=>{setTimeout(()=>{
+  if(ev==='PASSWORD_RECOVERY'){recovering=true;openAuth('f-reset');return}
+  if(session&&!recovering)enter(session);else if(!session&&ev==='SIGNED_OUT')leave()},0)});
+ sb.auth.getSession().then(({data})=>{if(!data.session&&!/error_description=|type=recovery/.test(boot))openAuth('f-login')})}
+else{openAuth('f-login');setErr($('f-login'),'No se pudo cargar la conexión. Revisá tu internet y recargá.')}
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
++m.cost_per_player+' c/u':'Gratis');card.querySelector('.ages').textContent=(m.min_age||m.max_age)?'Edad '+(m.min_age||'13')+'–'+(m.max_age||'99')+' años':'Sin límite de edad';card.querySelector('.action').textContent=matchTab==='mine'?'Gestionar':full?'Completo':'Ver / Unirme';card.querySelector('.action').disabled=full&&matchTab!=='mine';card.querySelector('.action').onclick=()=>matchDetails(m,count);list.append(card)})}
+catch(err){empty.hidden=false;empty.textContent='Error cargando partidos: '+msg(err)}}
+async function matchDetails(m,count){let owner=m.organizer_id===S.user.id;let mine=await sb.from('match_participants').select('participant_status').eq('match_id',m.id).eq('user_id',S.user.id).maybeSingle();let joined=mine.data&&mine.data.participant_status!=='left';let loc=null;if(owner||joined){let r=await sb.from('match_private_location').select('exact_address,location_notes').eq('match_id',m.id).maybeSingle();loc=r.data}
+let content='<button class="modal-close" id="modal-close">✕</button><h2>'+m.title+'</h2><p>'+m.area+' · '+(m.venue_name||'Lugar a confirmar')+'</p><p>'+matchDate(m.match_date)+' · '+(m.start_time||'').slice(0,5)+' hs</p><p>'+m.modality+' · '+count+'/'+m.max_players+' anotados</p><p>'+(m.cost_per_player?'
+function tab(t){document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+ $('v-home').classList.toggle('on',t==='home');$('v-me').classList.toggle('on',t==='me');$('v-other').classList.toggle('on',t==='play'||t==='street');
+ if(other[t]){$('oT').textContent=other[t][0];$('oP').textContent=other[t][1]}$('main').scrollTo({top:0})}
+show(0);
+if(/error_description=/.test(boot)){const m=decodeURIComponent((boot.match(/error_description=([^&]+)/)||[])[1]||'').replace(/\+/g,' ');
+ setTimeout(()=>{openAuth('f-login');setErr($('f-login'),/expired|invalid/i.test(m)?'El link venció o ya se usó. Pedí uno nuevo.':'No se pudo completar la acción. Probá de nuevo.')},50)}
+if(sb){sb.auth.onAuthStateChange((ev,session)=>{setTimeout(()=>{
+  if(ev==='PASSWORD_RECOVERY'){recovering=true;openAuth('f-reset');return}
+  if(session&&!recovering)enter(session);else if(!session&&ev==='SIGNED_OUT')leave()},0)});
+ sb.auth.getSession().then(({data})=>{if(!data.session&&!/error_description=|type=recovery/.test(boot))openAuth('f-login')})}
+else{openAuth('f-login');setErr($('f-login'),'No se pudo cargar la conexión. Revisá tu internet y recargá.')}
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
++m.cost_per_player+' por jugador':'Gratis')+'</p><p>'+((m.min_age||m.max_age)?'Edad '+(m.min_age||'13')+'–'+(m.max_age||'99')+' años':'Sin límite de edad')+'</p><p>'+ (m.level_hint||'Nivel libre')+'</p><p>'+ (m.description||'')+'</p>';if(loc&&loc.exact_address)content+='<p><b>Dirección:</b> '+loc.exact_address+'</p><p>'+ (loc.location_notes||'')+'</p>';let action=owner?'Cancelar partido':joined?'Salir del partido':'Unirme';if(owner||joined||(!m.is_private&&m.status==='open'))content+='<button class="btn" id="detail-action">'+action+'</button>';else content+='<p>Partido privado o cerrado.</p>';let modal=$('match-modal'),inner=modal.querySelector('.modal-inner');inner.innerHTML=content;modal.classList.add('on');$('modal-close').onclick=()=>modal.classList.remove('on');let btn=$('detail-action');if(btn)btn.onclick=async()=>{let fn=owner?'cancel_match':joined?'leave_match':'join_match',r=await sb.rpc(fn,{p_match_id:m.id});if(r.error){toast(msg(r.error));return}toast(owner?'Partido cancelado':joined?'Saliste del partido':'Te anotaste');modal.classList.remove('on');loadMatches()}}
+$('match-create').addEventListener('submit',async e=>{e.preventDefault();let f=e.target,fd=new FormData(f),er=$('match-error');er.textContent='';let min=fd.get('min_age')?Number(fd.get('min_age')):null,max=fd.get('max_age')?Number(fd.get('max_age')):null;if(min&&max&&min>max){er.textContent='La edad mínima no puede superar la máxima.';return}let modality=fd.get('modality');let args={p_title:fd.get('title').trim(),p_modality:modality,p_custom_modality:modality==='otro'?(fd.get('custom_modality')||'').trim():null,p_match_date:fd.get('match_date'),p_start_time:fd.get('start_time'),p_area:fd.get('area').trim(),p_venue_name:fd.get('venue_name')||null,p_venue_type:fd.get('venue_type'),p_max_players:Number(fd.get('max_players')),p_cost_per_player:Number(fd.get('cost_per_player')||0),p_level_hint:fd.get('level_hint')||null,p_description:fd.get('description')||null,p_is_private:fd.has('is_private'),p_allow_waitlist:fd.has('allow_waitlist'),p_exact_address:fd.get('exact_address')||null,p_location_notes:fd.get('location_notes')||null,p_min_age:min,p_max_age:max};let btn=f.querySelector('button[type=submit]');btn.disabled=true;try{let{error}=await sb.rpc('create_match',args);if(error)throw error;toast('Partido publicado');$('match-modal').classList.remove('on');f.reset();setMatchTab('mine')}catch(x){er.textContent=msg(x)}finally{btn.disabled=false}});
+
 function tab(t){document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
  $('v-home').classList.toggle('on',t==='home');$('v-me').classList.toggle('on',t==='me');$('v-other').classList.toggle('on',t==='play'||t==='street');
  if(other[t]){$('oT').textContent=other[t][0];$('oP').textContent=other[t][1]}$('main').scrollTo({top:0})}
