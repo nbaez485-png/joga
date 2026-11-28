@@ -111,7 +111,7 @@ async function loadCosmetics(){
 }
 function renderCosmetics(){
  const grid=$('cosmetic-grid');if(!grid)return;
- const rings=COS.catalog.filter(x=>x.slot==='ring');
+ const rings=COS.catalog.filter(x=>x.slot==='ring');const banners=COS.catalog.filter(x=>x.slot==='banner');
  grid.innerHTML='';
  for(const item of rings){
  const owned=COS.creator||COS.inventory.includes(item.item_key),equipped=COS.equipped.ring===item.item_key;
@@ -124,10 +124,12 @@ function renderCosmetics(){
  if(owned&&!equipped)card.addEventListener('click',()=>equipCosmetic(item.item_key));
  grid.append(card)
  }
+ 
+ const bg=$('banner-grid');if(bg){bg.innerHTML='';for(const item of banners){const owned=COS.creator||COS.inventory.includes(item.item_key),equipped=COS.equipped.banner===item.item_key;const card=document.createElement('button');card.type='button';card.className='cosmetic-card'+(equipped?' equipped':'')+(owned?' owned':' locked');card.disabled=!owned;card.innerHTML='<div class="banner-demo '+item.css_class+'"></div><h3></h3><small></small><span class="cosmetic-status"></span>';card.querySelector('h3').textContent=item.display_name;card.querySelector('small').textContent=item.animated?'Animado':'Estático';card.querySelector('.cosmetic-status').textContent=equipped?'Equipado':owned?'Tocar para equipar':'Bloqueado';if(owned&&!equipped)card.addEventListener('click',()=>equipCosmetic(item.item_key));bg.append(card)}}
  $('cosmetic-note').textContent=COS.creator?'Cuenta Creador: todos los cosméticos actuales y futuros disponibles.': 'Los cosméticos bloqueados se desbloquearán con logros, eventos o planes. Por ahora tenés el aro inicial.';
  const wrap=$('profile-home-av').parentElement;
- const ring=COS.catalog.find(x=>x.item_key===COS.equipped.ring);
- wrap.className='profile-avatar-wrap '+(ring?ring.css_class:'ring-default');
+ const ring=COS.catalog.find(x=>x.item_key===COS.equipped.ring);const banner=COS.catalog.find(x=>x.item_key===COS.equipped.banner);
+ wrap.className='profile-avatar-wrap '+(ring?ring.css_class:'ring-default');const bannerEl=$('profile-banner');bannerEl.className='profile-banner '+(banner?banner.css_class:'banner-default');
  $('creator-badge').hidden=!COS.creator;
 }
 async function equipCosmetic(key){
