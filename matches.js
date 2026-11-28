@@ -5,7 +5,7 @@ let cached=[],sheet=null;
 const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today=()=>{const d=new Date(),y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day};
 const dateFmt=d=>new Date(d+'T12:00:00').toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short'});
-const timeFmt=t=>(t||'').slice(0,5);
+const timeFmt=t=>(t||'').slice(0,5);\nconst isUpcoming=m=>m.match_date>today()||(m.match_date===today()&&timeFmt(m.start_time)>new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false}));
 const modName=m=>m.modality==='otro'?m.custom_modality:m.modality; 
 const ageLabel=m=>m.min_age&&m.max_age?'Edad '+m.min_age+'–'+m.max_age:m.min_age?'Edad '+m.min_age+'+':m.max_age?'Hasta '+m.max_age+' años':'Todas las edades (13+)'; 
 const friendlyError=e=>{const msg=String(e?.message||e||'');const map=[[/age_below_match_limit/i,'No cumplís la edad mínima de este partido.'],[/age_above_match_limit/i,'Superás la edad máxima permitida.'],[/birth_date_required/i,'Completá tu fecha de nacimiento en tu perfil.'],[/match_full/i,'El partido está completo.'],[/already_participating/i,'Ya estás anotado en este partido.'],[/private_match_requires_invitation/i,'Este partido es privado y requiere invitación.'],[/match_not_joinable|match_expired/i,'Este partido ya no acepta jugadores.'],[/auth_required/i,'Iniciá sesión para continuar.'],[/invalid_age_range/i,'El rango de edades no es válido.'],[/match_must_be_future/i,'Elegí una fecha y hora futuras.'],[/organizer_must_cancel_or_transfer/i,'Como organizador, tenés que cancelar o transferir el partido.'],[/not_participating/i,'No figurás como participante de este partido.']];for(const [rx,text] of map)if(rx.test(msg))return text;return msg||'Revisá los datos e intentá nuevamente.'};
@@ -18,7 +18,7 @@ async function loadMatches(){
  try{
   const {data,error}=await sb.from('matches').select('id,organizer_id,title,modality,custom_modality,match_date,start_time,area,venue_name,venue_type,max_players,cost_per_player,level_hint,description,is_private,allow_waitlist,status,min_age,max_age,organizer_is_minor').in('status',['open','full']).gte('match_date',today()).order('match_date').order('start_time').limit(30);
   if(error)throw error;
-  cached=data||[];
+  cached=(data||[]).filter(isUpcoming);
   if(!cached.length){list.innerHTML='<p class="empty">Todavía no hay partidos. ¡Podés crear el primero!</p>';return}
   const ids=[...new Set(cached.map(m=>m.organizer_id))];
   const [{data:people},{data:parts}]=await Promise.all([
