@@ -61,7 +61,7 @@ async function showDetails(id){
   s.querySelector('[data-close]').onclick=closeSheet;
  }catch(x){s.innerHTML='<button class="close" data-close>← Volver</button><p class="err">No pudimos mostrar los detalles: '+escapeHtml(x.message)+'</p>';s.querySelector('[data-close]').onclick=closeSheet}
 }
-async function act(name,id){try{const {data,error}=await sb.rpc(name,{p_match_id:id});if(error)throw error;notice(name==='join_match'?(data==='waitlisted'?'Entraste a la lista de espera.':'¡Ya estás anotado!'):name==='leave_match'?'Te bajaste del partido.':'Partido cancelado.');closeSheet();await loadMatches()}catch(e){notice('No se pudo completar: '+(e.message||''))}}
+async function act(name,id){try{const {data,error}=await sb.rpc(name,{p_match_id:id});if(error)throw error;notice(name==='join_match'?(data==='waitlisted'?'Entraste a la lista de espera.':'¡Ya estás anotado!'):name==='leave_match'?(data==='left_waitlist'?'Saliste de la lista de espera.':data==='left_and_promoted'?'Te bajaste y se liberó el lugar para alguien de la espera.':'Te bajaste del partido.'): 'Partido cancelado.');closeSheet();await loadMatches()}catch(e){notice('No se pudo completar: '+(e.message||''))}}
 document.addEventListener('click',e=>{
  const t=e.target.closest('[data-detail],[data-join],[data-leave],[data-cancel]');
  if(!t)return;
