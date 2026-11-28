@@ -422,7 +422,8 @@ $('pfile').addEventListener('change',async ev=>{const f=ev.target.files[0];if(!f
  finally{$('phbtn').disabled=false;ev.target.value=''}});
 function tab(t){if(t==='edit'&&P)setAv($('pav'),P);document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
  ['home','play','explore','academy','community','players','me','edit','customize','settings'].forEach(v=>{const el=$('v-'+v);if(el)el.classList.toggle('on',t===v)});
- if(t==='me'&&P){try{render()}catch(profileRenderError){console.error('JOGA Mi ID render',profileRenderError);const heading=$('profile-home-name');if(heading&&!heading.textContent)heading.textContent=P.display_name||'Jugador';const code=$('profile-home-code');if(code)code.textContent='JOGA / @'+(P.username||'jugador');}}\n if(t==='players'&&window.jogaPlayersRefresh)window.jogaPlayersRefresh();
+ if(t==='me'&&P){try{render()}catch(profileRenderError){console.error('JOGA Mi ID render',profileRenderError);const heading=$('profile-home-name');if(heading&&!heading.textContent)heading.textContent=P.display_name||'Jugador';const code=$('profile-home-code');if(code)code.textContent='JOGA / @'+(P.username||'jugador');}}
+ if(t==='players'&&window.jogaPlayersRefresh)window.jogaPlayersRefresh();
  if(t==='play'&&window.jogaMatchesRefresh)window.jogaMatchesRefresh();
  if(t==='community'&&window.jogaCommunityRefresh)window.jogaCommunityRefresh();
  $('main').scrollTo({top:0,behavior:'smooth'})}
