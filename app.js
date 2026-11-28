@@ -109,13 +109,15 @@ async function loadProfile(){
 let RANK_SPRITE_DATA='';function ringSrc(){return RANK_SPRITE_DATA;}
  let COS={catalog:[],inventory:[],equipped:{},creator:false};
 async function loadCosmetics(){
- const [cat,inv,equ,cre]=await Promise.all([
+ const [cat,inv,equ,cre,sprite]=await Promise.all([
  sb.from('cosmetic_catalog').select('item_key,slot,display_name,rarity,animated,css_class,active').eq('active',true),
  sb.from('cosmetic_inventory').select('item_key').eq('user_id',S.user.id),
  sb.from('cosmetic_equipped').select('slot,item_key').eq('user_id',S.user.id),
- sb.from('creator_entitlements').select('entitlement').eq('user_id',S.user.id).eq('entitlement','creator')
+ sb.from('creator_entitlements').select('entitlement').eq('user_id',S.user.id).eq('entitlement','creator'),
+ fetch('assets/rings/rank_frames.png.b64?v=20261128-7').then(r=>{if(!r.ok)throw new Error('Rank PNG sprite not found '+r.status);return r.text()})
  ]);
  for(const r of [cat,inv,equ,cre])if(r.error)throw r.error;
+ RANK_SPRITE_DATA='data:image/png;base64,'+sprite.trim();
  COS.catalog=cat.data||[];COS.inventory=(inv.data||[]).map(x=>x.item_key);COS.equipped=Object.fromEntries((equ.data||[]).map(x=>[x.slot,x.item_key]));COS.creator=(cre.data||[]).length>0;
 }
 async function loadPlayerStats(){
