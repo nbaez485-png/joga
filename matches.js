@@ -113,7 +113,7 @@ document.addEventListener('click',e=>{
 let searchTimer;
 $m('match-search')?.addEventListener('input',()=>{filterMatchCards();clearTimeout(searchTimer);const q=$m('match-search').value.trim().toLocaleLowerCase('es-AR').replace(/[^\p{L}\p{N}\s-]/gu,' ').replace(/\s+/g,' ').trim();searchTimer=setTimeout(()=>loadMatches(q),350)});
 $m('match-modality-filter')?.addEventListener('change',filterMatchCards);$m('match-cost-filter')?.addEventListener('change',filterMatchCards);$m('match-date-filter')?.addEventListener('change',filterMatchCards);
-$m('match-filter-clear')?.addEventListener('click',()=>{$m('match-search').value='';$m('match-modality-filter').value='';$m('match-cost-filter').value='';$m('match-date-filter').value='';loadMatches('')});
+const clearBtn=$m('match-filter-clear');const syncClear=()=>{if(clearBtn)clearBtn.hidden=!($m('match-search').value.trim()||$m('match-modality-filter').value||$m('match-cost-filter').value||$m('match-date-filter').value)};['match-search','match-modality-filter','match-cost-filter','match-date-filter'].forEach(id=>$m(id)?.addEventListener('input',syncClear));['match-modality-filter','match-cost-filter','match-date-filter'].forEach(id=>$m(id)?.addEventListener('change',syncClear));clearBtn?.addEventListener('click',()=>{$m('match-search').value='';$m('match-modality-filter').value='';$m('match-cost-filter').value='';$m('match-date-filter').value='';syncClear();loadMatches('')});
 $m('match-create').addEventListener('click',()=>{if(!S){openAuth('f-login');return}createForm()});
 // expose a refresh hook after successful sign-in
 window.jogaMatchesRefresh=loadMatches;
