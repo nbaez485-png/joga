@@ -126,14 +126,20 @@ async function loadCosmetics(){
  COS.catalog=cat.data||[];COS.inventory=(inv.data||[]).map(x=>x.item_key);COS.equipped=Object.fromEntries((equ.data||[]).map(x=>[x.slot,x.item_key]));COS.creator=(cre.data||[]).length>0;
 }
 async function loadPlayerStats(){
- const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Argentina/Buenos_Aires'});
+ const parts=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Argentina/Buenos_Aires',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).reduce((o,p)=>(o[p.type]=p.value,o),{});
+ const now=parts(),today=now.year+'-'+now.month+'-'+now.day,nowTime=now.hour+':'+now.minute;
  const [created,participations]=await Promise.all([
- sb.from('matches').select('id',{count:'exact',head:true}).eq('organizer_id',S.user.id).neq('status','cancelled'),
- sb.from('match_participants').select('match_id,participant_status').eq('user_id',S.user.id).in('participant_status',['joined','organizer'])
+  sb.from('matches').select('id',{count:'exact',head:true}).eq('organizer_id',S.user.id).neq('status','cancelled'),
+  sb.from('match_participants').select('match_id,participant_status').eq('user_id',S.user.id).in('participant_status',['joined','organizer'])
  ]);
  if(created.error)throw created.error;if(participations.error)throw participations.error;
  const ids=[...new Set((participations.data||[]).map(x=>x.match_id))];
- let upcoming=0;if(ids.length){const{data,error}=await sb.from('matches').select('id,match_date,status').in('id',ids).gte('match_date',today).in('status',['open','full']);if(error)throw error;upcoming=(data||[]).length}
+ let upcoming=0;
+ if(ids.length){
+  const{data,error}=await sb.from('matches').select('id,match_date,start_time,status').in('id',ids).gte('match_date',today).in('status',['open','full']);
+  if(error)throw error;
+  upcoming=(data||[]).filter(m=>m.match_date>today||(m.match_date===today&&(m.start_time||'').slice(0,5)>nowTime)).length;
+ }
  $('stat-created').textContent=created.count??0;$('stat-joined').textContent=ids.length;$('stat-upcoming').textContent=upcoming;
 }
 
