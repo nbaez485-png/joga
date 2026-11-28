@@ -126,9 +126,15 @@ function openCosmeticPreview(item){
  const modal=$('cosmetic-preview');if(!modal)return;
  const owned=COS.creator||COS.inventory.includes(item.item_key);
  const art=$('preview-ring-art'),name=$('preview-cosmetic-name'),desc=$('preview-cosmetic-desc'),btn=$('preview-equip');
- const ringPreview=$('preview-avatar'),bannerPreview=$('preview-banner');
- if(item.slot==='banner'){ringPreview.hidden=true;bannerPreview.hidden=false;bannerPreview.style.backgroundImage='url("assets/banners/'+item.item_key+'.svg")';}
- else{ringPreview.hidden=false;bannerPreview.hidden=true;art.src='assets/rings/'+item.item_key+'.svg';art.className='ring-art '+item.css_class;}
+ const ringPreview=$('preview-avatar'),bannerPreview=$('preview-banner'),mock=$('preview-profile');
+ const equippedRing=COS.catalog.find(x=>x.item_key===COS.equipped.ring);
+ const equippedBanner=COS.catalog.find(x=>x.item_key===COS.equipped.banner);
+ mock.hidden=false;
+ if(item.slot==='banner'){bannerPreview.style.backgroundImage='url("assets/banners/'+item.item_key+'.svg")';}
+ else{art.src='assets/rings/'+item.item_key+'.svg';art.className='ring-art '+item.css_class;}
+ if(item.slot==='ring')bannerPreview.style.backgroundImage='url("assets/banners/'+(equippedBanner?equippedBanner.item_key:'starter_banner')+'.svg")';
+ if(item.slot==='banner'){art.src=equippedRing?'assets/rings/'+equippedRing.item_key+'.svg':'';art.className='ring-art '+(equippedRing?equippedRing.css_class:'ring-none');art.hidden=!equippedRing;}
+ else art.hidden=false;
  name.textContent=item.display_name;
  desc.textContent=item.slot==='banner'?'Así se verá el banner en tu perfil.':item.animated?'Efecto animado · así se verá en tu perfil.':'Aro de rango · vista previa en el perfil.';
  btn.textContent=COS.equipped.ring===item.item_key?'Ya está equipado':owned?'Equipar en mi perfil':'Todavía bloqueado';
@@ -149,7 +155,7 @@ function renderCosmetics(){
  for(const item of rings){
  const owned=COS.creator||COS.inventory.includes(item.item_key),equipped=COS.equipped.ring===item.item_key;
  const card=document.createElement('button');card.type='button';card.className='cosmetic-card'+(equipped?' equipped':'')+(owned?' owned':' locked');
- card.disabled=!owned;
+ card.disabled=false;
  card.innerHTML='<div class="cosmetic-demo '+item.css_class+'"><img class="ring-art" alt=""><div class="cosmetic-avatar">J</div></div><h3></h3><small></small><span class="cosmetic-status"></span>';const art=card.querySelector('.ring-art');art.src='assets/rings/'+item.item_key+'.svg';art.classList.add(item.css_class);
  card.querySelector('h3').textContent=item.display_name;
  card.querySelector('small').textContent=item.animated?'Animado':'Estático';
@@ -231,7 +237,7 @@ $('pfile').addEventListener('change',async ev=>{const f=ev.target.files[0];if(!f
  catch(x){console.error('foto',step,x);er.textContent=['No se pudo leer o preparar la foto','No se pudo subir la foto','No se pudo guardar la foto en tu perfil'][step]+why(x)+'.'}
  finally{$('phbtn').disabled=false;ev.target.value=''}});
 const other={play:['Jugar','Encontrá una pichanga o armá la tuya.'],street:['La calle','Publicaciones y comunidad llegan en una etapa posterior.']};
-function tab(t){document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+function tab(t){if(t==='edit'&&P)setAv($('pav'),P);document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
  const home=t==='home'||t==='play';$('v-home').classList.toggle('on',home);['me','edit','customize','settings'].forEach(v=>{const el=$('v-'+v);if(el)el.classList.toggle('on',t===v)});$('v-other').classList.toggle('on',t==='street');
  if(t==='play'){setTimeout(()=>{const el=document.querySelector('#v-home .sec');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});if(window.jogaMatchesRefresh)window.jogaMatchesRefresh()},80)}
  if(other[t]){$('oT').textContent=other[t][0];$('oP').textContent=other[t][1]}if(t!=='play')$('main').scrollTo({top:0})}
