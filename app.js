@@ -101,6 +101,7 @@ async function loadProfile(){const{data,error}=await sb.from('profiles').select(
 const PLAN={free:'Free',premium:'Premium',elite:'Elite'};
 function render(){if(!P)return;
  $('loc').textContent='@'+P.username;
+ $('profile-home-name').textContent=P.display_name;$('profile-home-user').textContent='@'+P.username;$('profile-home-plan').textContent='Plan '+PLAN[P.plan];setAv($('profile-home-av'),P);$('settings-email').textContent=S.user.email;
  $('wc').innerHTML='<div class="av" id="wav"></div><div><b></b><span class="u"></span><span class="chip pl"></span><span class="chip"></span></div>';
  const w=$('wc');w.querySelector('b').textContent='Hola, '+P.display_name;w.querySelector('.u').textContent='@'+P.username;
  const c=w.querySelectorAll('.chip');c[0].textContent='Plan '+PLAN[P.plan];c[1].textContent=P.visibility==='public'?'Perfil público':'Perfil privado';setAv($('wav'),P);
@@ -131,7 +132,7 @@ $('pf').addEventListener('submit',async e=>{e.preventDefault();const er=$('perr'
   await loadProfile();render();toast('Perfil guardado.')}
  catch(x){er.textContent=msg(x)}
  $('psave').disabled=false});
-$('pout').addEventListener('click',()=>sb.auth.signOut());
+$('pout').addEventListener('click',()=>sb.auth.signOut());$('settings-signout').addEventListener('click',()=>sb.auth.signOut());
 $('phbtn').addEventListener('click',()=>$('pfile').click());
 async function square(file){
  const buf=await file.arrayBuffer(),blob=new Blob([buf],{type:file.type});
