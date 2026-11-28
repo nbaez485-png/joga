@@ -44,7 +44,7 @@ async function loadMatches(searchText=activeSearch){
   if(error)throw error;
   if(seq!==loadSeq)return;
   cached=(data||[]).filter(isUpcoming);
-  if(!cached.length){list.innerHTML='<p class="empty">'+(searchText?'No encontramos partidos con esa búsqueda.':'Todavía no hay partidos. ¡Podés crear el primero!')+'</p>';return}
+  if(!cached.length){list.innerHTML='<div class="empty match-filter-empty">'+(searchText?'No encontramos partidos con esa búsqueda.':'Todavía no hay partidos. ¡Podés crear el primero!')+'<br><button type="button" class="btn match-empty-create" onclick="document.getElementById(\'match-create\')?.click()">Crear una pichanga</button></div>';return}
   const ids=[...new Set(cached.map(m=>m.organizer_id))];
   const [peopleResult,partsResult]=await Promise.all([
    sb.from('profiles').select('id,display_name,username').in('id',ids),
