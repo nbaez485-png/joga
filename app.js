@@ -97,11 +97,49 @@ const initial=p=>(p.display_name||'?').trim().charAt(0).toUpperCase();
 const avUrl=p=>p.avatar_path?sb.storage.from('avatars').getPublicUrl(p.avatar_path).data.publicUrl+'?v='+encodeURIComponent(p.updated_at):'';
 const one=x=>Array.isArray(x)?x[0]:x;
 function setAv(el,p){const u=avUrl(p);el.style.backgroundImage=u?'url("'+u+'")':'';el.textContent=u?'':initial(p)}
-async function loadProfile(){const{data,error}=await sb.from('profiles').select('*, profile_details(*), profile_protected(plan)').eq('id',S.user.id).single();if(error)throw error;P=data;P.d=one(data.profile_details)||{};P.plan=(one(data.profile_protected)||{}).plan||'free'}
+async function loadProfile(){const{data,error}=await sb.from('profiles').select('*, profile_details(*), profile_protected(plan)').eq('id',S.user.id).single();if(error)throw error;P=data;P.d=one(data.profile_details)||{};P.plan=(one(data.profile_protected)||{}).plan||'free';await loadCosmetics()}
+let COS={catalog:[],inventory:[],equipped:{},creator:false};
+async function loadCosmetics(){
+ const [cat,inv,equ,cre]=await Promise.all([
+ sb.from('cosmetic_catalog').select('item_key,slot,display_name,rarity,animated,css_class,active').eq('active',true),
+ sb.from('cosmetic_inventory').select('item_key').eq('user_id',S.user.id),
+ sb.from('cosmetic_equipped').select('slot,item_key').eq('user_id',S.user.id),
+ sb.from('creator_entitlements').select('entitlement').eq('user_id',S.user.id).eq('entitlement','creator')
+ ]);
+ for(const r of [cat,inv,equ,cre])if(r.error)throw r.error;
+ COS.catalog=cat.data||[];COS.inventory=(inv.data||[]).map(x=>x.item_key);COS.equipped=Object.fromEntries((equ.data||[]).map(x=>[x.slot,x.item_key]));COS.creator=(cre.data||[]).length>0;
+}
+function renderCosmetics(){
+ const grid=$('cosmetic-grid');if(!grid)return;
+ const rings=COS.catalog.filter(x=>x.slot==='ring');
+ grid.innerHTML='';
+ for(const item of rings){
+ const owned=COS.creator||COS.inventory.includes(item.item_key),equipped=COS.equipped.ring===item.item_key;
+ const card=document.createElement('button');card.type='button';card.className='cosmetic-card'+(equipped?' equipped':'')+(owned?' owned':' locked');
+ card.disabled=!owned;
+ card.innerHTML='<div class="cosmetic-demo '+item.css_class+'"><div class="cosmetic-avatar">J</div></div><h3></h3><small></small><span class="cosmetic-status"></span>';
+ card.querySelector('h3').textContent=item.display_name;
+ card.querySelector('small').textContent=item.animated?'Animado':'Estático';
+ card.querySelector('.cosmetic-status').textContent=equipped?'Equipado':owned?'Tocar para equipar':'Bloqueado';
+ if(owned&&!equipped)card.addEventListener('click',()=>equipCosmetic(item.item_key));
+ grid.append(card)
+ }
+ $('cosmetic-note').textContent=COS.creator?'Cuenta Creador: todos los cosméticos actuales y futuros disponibles.': 'Los cosméticos bloqueados se desbloquearán con logros, eventos o planes. Por ahora tenés el aro inicial.';
+ const wrap=$('profile-home-av').parentElement;
+ const ring=COS.catalog.find(x=>x.item_key===COS.equipped.ring);
+ wrap.className='profile-avatar-wrap '+(ring?ring.css_class:'ring-default');
+ $('creator-badge').hidden=!COS.creator;
+}
+async function equipCosmetic(key){
+ const b=await sb.rpc('equip_cosmetic',{p_item_key:key});
+ if(b.error){toast('No se pudo equipar: '+msg(b.error));return}
+ await loadCosmetics();renderCosmetics();render();toast('Cosmético equipado.');
+}
+
 const PLAN={free:'Free',premium:'Premium',elite:'Elite'};
 function render(){if(!P)return;
  $('loc').textContent='@'+P.username;
- $('profile-home-name').textContent=P.display_name;$('profile-home-user').textContent='@'+P.username;$('profile-home-plan').textContent='Plan '+PLAN[P.plan];setAv($('profile-home-av'),P);$('settings-email').textContent=S.user.email;
+ $('profile-home-name').textContent=P.display_name;$('profile-home-user').textContent='@'+P.username;$('profile-home-plan').textContent='Plan '+PLAN[P.plan];setAv($('profile-home-av'),P);$('settings-email').textContent=S.user.email;renderCosmetics();
  $('wc').innerHTML='<div class="av" id="wav"></div><div><b></b><span class="u"></span><span class="chip pl"></span><span class="chip"></span></div>';
  const w=$('wc');w.querySelector('b').textContent='Hola, '+P.display_name;w.querySelector('.u').textContent='@'+P.username;
  const c=w.querySelectorAll('.chip');c[0].textContent='Plan '+PLAN[P.plan];c[1].textContent=P.visibility==='public'?'Perfil público':'Perfil privado';setAv($('wav'),P);
