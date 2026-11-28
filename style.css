@@ -752,14 +752,14 @@ img.ring-art[class*="ring-"]{background:transparent!important;border:0!important
  display:grid;place-items:center;position:relative;isolation:isolate;z-index:1;
 }
 .preview-profile-avatar .ring-art{
- position:absolute;left:50%;top:50%;
+ position:absolute;inset:auto;left:50%;top:50%;
  width:156px;height:156px;transform:translate(-50%,-50%);
  background-size:contain;background-position:center;background-repeat:no-repeat;
  object-fit:contain;pointer-events:none;z-index:1;
 }
 .preview-profile-avatar .preview-avatar-inner{
  position:relative;z-index:2;
- width:90px;height:90px;border-radius:50%;overflow:hidden;
+ width:82px;height:82px;border-radius:50%;overflow:hidden;
  background-position:center;background-size:cover;background-repeat:no-repeat;
 }
 .ring-art{
