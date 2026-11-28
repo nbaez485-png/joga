@@ -102,7 +102,7 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:112px;scrollbar-wid
 .chip{display:inline-block;padding:4px 10px;margin:4px 6px 0 0;border-radius:20px;border:1px solid var(--line);font-size:12px;font-weight:700}.chip.pl{border-color:var(--ac);color:var(--ac)}
 .seg{display:flex;gap:8px}.seg button{flex:1;padding:12px;border:1px solid var(--line);border-radius:12px;font-weight:700}.seg button.on{background:var(--tx);color:#111;border-color:var(--tx)}
 .pf small{color:var(--mu);font-size:12px;display:block;margin-top:6px}
-.wc .av{width:58px;height:58px;font-size:24px}.wc b{font:700 24px/1 var(--disp)}.empty{margin:0 18px;padding:18px;border:1px dashed var(--line);border-radius:14px;color:var(--mu)}
+.empty{margin:0 18px;padding:18px;border:1px dashed var(--line);border-radius:14px;color:var(--mu)}
 
 /* M2 matches — dev branch */
 .match-list{display:grid;gap:12px;padding:0 18px}
