@@ -148,8 +148,9 @@ $('pfile').addEventListener('change',async ev=>{const f=ev.target.files[0];if(!f
  finally{$('phbtn').disabled=false;ev.target.value=''}});
 const other={play:['Jugar','Buscar y crear partidos se activa en el próximo módulo.'],street:['La calle','Publicaciones y comunidad llegan en una etapa posterior.']};
 function tab(t){document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
- $('v-home').classList.toggle('on',t==='home');$('v-me').classList.toggle('on',t==='me');$('v-other').classList.toggle('on',t==='play'||t==='street');
- if(other[t]){$('oT').textContent=other[t][0];$('oP').textContent=other[t][1]}$('main').scrollTo({top:0})}
+ const home=t==='home'||t==='play';$('v-home').classList.toggle('on',home);$('v-me').classList.toggle('on',t==='me');$('v-other').classList.toggle('on',t==='street');
+ if(t==='play'){setTimeout(()=>{const el=document.querySelector('#v-home .sec');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});if(window.jogaMatchesRefresh)window.jogaMatchesRefresh()},80)}
+ if(other[t]){$('oT').textContent=other[t][0];$('oP').textContent=other[t][1]}if(t!=='play')$('main').scrollTo({top:0})}
 show(0);
 if(/error_description=/.test(boot)){const m=decodeURIComponent((boot.match(/error_description=([^&]+)/)||[])[1]||'').replace(/\+/g,' ');
  setTimeout(()=>{openAuth('f-login');setErr($('f-login'),/expired|invalid/i.test(m)?'El link venció o ya se usó. Pedí uno nuevo.':'No se pudo completar la acción. Probá de nuevo.')},50)}
