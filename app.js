@@ -93,6 +93,10 @@ bind('f-forgot',async f=>{const email=$('f-em').value.trim();if(!email)return se
  const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:REDIR});if(error)throw error;setErr(f,'Si ese email tiene cuenta, te mandamos el link. Lo envía Supabase, nuestro servicio de cuentas, así que va a decir “Supabase”. Buscalo también en spam.',1)});
 bind('f-reset',async f=>{const a=$('x-pw').value,b=$('x-pw2').value;if(a.length<8)return setErr(f,'Usá al menos 8 caracteres.');if(a!==b)return setErr(f,'Las contraseñas no coinciden.');
  const{error}=await sb.auth.updateUser({password:a});if(error)throw error;recovering=false;toast('Contraseña actualizada.');const{data}=await sb.auth.getSession();if(data.session)enter(data.session)});
+const safeText=x=>String(x||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const homeDate=d=>new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',weekday:'short',day:'numeric',month:'short'}).format(new Date(d+'T12:00:00-03:00'));
+const homeTips=[['Levantá la cabeza','Antes de recibir, mirá dónde están tus compañeros. Un segundo de anticipación te cambia la jugada.'],['Jugá simple','Un pase rápido puede romper más líneas que diez gambetas.'],['Hablá en la cancha','Avisá, pedí la pelota y alentá. La comunicación también juega.'],['Perdés y volvés','La primera reacción después de perder la pelota importa: recuperá posición y ayudá.'],['Perfil abierto','Orientá el cuerpo antes de recibir para tener más opciones de pase.'],['Compartí la cancha','Un buen partido se disfruta más cuando todos participan.']];
+const todayTip=homeTips[Math.floor(Date.now()/86400000)%homeTips.length];if($('home-tip-text')){$('home-tip-title').textContent=todayTip[0];$('home-tip-text').textContent=todayTip[1]}
 const initial=p=>(p.display_name||'?').trim().charAt(0).toUpperCase();
 const avUrl=p=>p.avatar_path?sb.storage.from('avatars').getPublicUrl(p.avatar_path).data.publicUrl+'?v='+encodeURIComponent(p.updated_at):'';
 const one=x=>Array.isArray(x)?x[0]:x;
@@ -136,11 +140,16 @@ async function loadPlayerStats(){
  const ids=[...new Set((participations.data||[]).map(x=>x.match_id))];
  let upcoming=0;
  if(ids.length){
-  const{data,error}=await sb.from('matches').select('id,match_date,start_time,status').in('id',ids).gte('match_date',today).in('status',['open','full']);
+  const{data,error}=await sb.from('matches').select('id,title,area,match_date,start_time,status,modality,venue_name').in('id',ids).gte('match_date',today).in('status',['open','full']).order('match_date').order('start_time');
   if(error)throw error;
-  upcoming=(data||[]).filter(m=>m.match_date>today||(m.match_date===today&&(m.start_time||'').slice(0,5)>nowTime)).length;
+  const future=(data||[]).filter(m=>m.match_date>today||(m.match_date===today&&(m.start_time||'').slice(0,5)>nowTime));
+  upcoming=future.length;
+  const next=future[0];
+  const nextEl=$('home-next-match-content');
+  if(nextEl){nextEl.innerHTML=next?'<h3>'+safeText(next.title||'Partido')+'</h3><p>'+safeText(next.area||'')+' · '+safeText(homeDate(next.match_date))+' · '+safeText(String(next.start_time||'').slice(0,5))+'</p><button class="home-next-match-btn" type="button" onclick="tab(\'play\')">Ver partidos <span>→</span></button>':'<h3>Sin partidos por ahora.</h3><p>La próxima pichanga que te anotes aparece acá.</p><button class="home-next-match-btn" type="button" onclick="tab(\'play\')">Buscar partido <span>→</span></button>'}
  }
  $('stat-created').textContent=created.count??0;$('stat-joined').textContent=ids.length;$('stat-upcoming').textContent=upcoming;
+ $('home-stat-created').textContent=created.count??0;$('home-stat-joined').textContent=ids.length;$('home-stat-upcoming').textContent=upcoming;
 }
 
 
