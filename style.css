@@ -242,3 +242,5 @@ body{font-size:14px;line-height:1.5;font-weight:500;letter-spacing:0;-webkit-fon
 .banner-premium{background:linear-gradient(120deg,#3b2c12,#b99732,#423015);border-color:#a98832}
 .banner-elite{background:linear-gradient(120deg,#102a19,#37a84c,#163d20);border-color:#39d85b;animation:neonPulse 1.7s ease-in-out infinite}
 .banner-creator{background:linear-gradient(120deg,#172f24,#baff27,#194a29,#172f24);border-color:#c9ff1f;animation:neonPulse 2s ease-in-out infinite}
+
+.creator-badge[hidden]{display:none!important}
