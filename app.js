@@ -146,7 +146,7 @@ $('pfile').addEventListener('change',async ev=>{const f=ev.target.files[0];if(!f
   await loadProfile();render();toast('Foto actualizada.')}
  catch(x){console.error('foto',step,x);er.textContent=['No se pudo leer o preparar la foto','No se pudo subir la foto','No se pudo guardar la foto en tu perfil'][step]+why(x)+'.'}
  finally{$('phbtn').disabled=false;ev.target.value=''}});
-const other={play:['Jugar','Buscar y crear partidos se activa en el próximo módulo.'],street:['La calle','Publicaciones y comunidad llegan en una etapa posterior.']};
+const other={play:['Jugar','Encontrá una pichanga o armá la tuya.'],street:['La calle','Publicaciones y comunidad llegan en una etapa posterior.']};
 function tab(t){document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
  const home=t==='home'||t==='play';$('v-home').classList.toggle('on',home);$('v-me').classList.toggle('on',t==='me');$('v-other').classList.toggle('on',t==='street');
  if(t==='play'){setTimeout(()=>{const el=document.querySelector('#v-home .sec');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});if(window.jogaMatchesRefresh)window.jogaMatchesRefresh()},80)}
