@@ -67,7 +67,8 @@ Las migraciones guardadas en `supabase/migrations/` deben revisarse y aplicarse 
 ## Pendientes conocidos
 
 - **Avatar rings:** pausar los cambios de diseño/recorte; verificar el resultado visual en un dispositivo antes de continuar.
-- **Calle/comunidad:** vista placeholder para una futura etapa.
+- **Comunidad:** chat general conectado a Supabase Realtime; falta completar moderación, controles anti-spam y pruebas con varias cuentas.
+- **Academia:** estructura visual lista, pero el contenido formativo todavía es placeholder.
 - **Privados/invitaciones:** todavía no habilitados.
 - **Cosméticos animados:** postergados; primero terminar bien los frames estáticos.
 
