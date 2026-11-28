@@ -2,12 +2,12 @@ const SB_URL='https://quiwqzxjltpyhcyccnsy.supabase.co',SB_KEY='sb_publishable_r
 const boot=location.hash+location.search;
 const $=id=>document.getElementById(id);
 const legends=[
- {n:'Primer paso',s:'Ambición',q:'«No naciste para mirar cómo otros hacen historia.»',by:'',cr:'',t:'#b7d66b'},
+ {n:'Primer paso',s:'Ambición',q:'«No naciste para mirar cómo otros hacen historia.»',by:'',cr:'',t:'#c8e68b'},
  {n:'Creé',s:'Orígenes',q:'«Mientras haya una pelota, siempre habrá una razón para creer.»',by:'',cr:'',t:'#ffb347'},
  {n:'Dejalo todo',s:'Determinación',q:'«Jugá cada partido como si fuera el que te va a cambiar la vida.»',by:'',cr:'',t:'#ff7a45'},
  {n:'Seguí',s:'Resistencia',q:'«No viniste hasta acá para dejar de creer ahora.»',by:'',cr:'',t:'#74b9e8'},
  {n:'Recordá',s:'Disciplina',q:'«Cuando todo te diga que pares, recordá por qué empezaste.»',by:'',cr:'',t:'#7be0a0'},
- {n:'Lo mejor',s:'Futuro',q:'«Tu historia todavía no llegó a la mejor parte.»',by:'',cr:'',t:'#b7d66b'}
+ {n:'Lo mejor',s:'Futuro',q:'«Tu historia todavía no llegó a la mejor parte.»',by:'',cr:'',t:'#c8e68b'}
 ];
 const ball=(x,y,r)=>`<g transform="translate(${x} ${y})"><circle r="${r}" fill="#f2f3ef"/><path d="M0 ${-r*.38}l${r*.36} ${r*.27}-${r*.14} ${r*.43}h-${r*.44}l-${r*.14}-${r*.43}z" fill="#101110"/><path d="M0 ${-r*.38}V${-r}M${r*.36} ${-r*.11}L${r*.95} ${-r*.31}M${r*.22} ${r*.32}L${r*.58} ${r*.8}M-${r*.22} ${r*.32}L-${r*.58} ${r*.8}M-${r*.36} ${-r*.11}L-${r*.95} ${-r*.31}" stroke="#101110" stroke-width="${r*.05}" fill="none"/><circle r="${r}" fill="none" stroke="#000" stroke-opacity=".25" stroke-width="2"/></g>`;
 const man=(x,y,k,r=0,extra='')=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${k})" fill="#080a07"><circle cy="-70" r="13"/><path d="M-16 -54h32l8 52-12 4-6 62h-12l-4-48-4 48h-12l-6-62-12-4z"/>${extra}</g>`;
