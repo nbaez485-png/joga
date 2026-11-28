@@ -153,6 +153,30 @@ async function loadPlayerStats(){
 }
 
 
+let playerSearchSeq=0,playerSearchTimer;
+const playerClean=s=>String(s||'').toLocaleLowerCase('es-AR').replace(/[^\p{L}\p{N}\s_-]/gu,' ').replace(/\s+/g,' ').trim();
+async function loadPlayers(term=''){
+ const el=$('players-results');if(!el)return;
+ if(!S){el.innerHTML='<p class="empty">Iniciá sesión para explorar jugadores.</p>';return}
+ const q=playerClean(term),seq=++playerSearchSeq;
+ el.innerHTML='<p class="empty">Buscando jugadores…</p>';
+ try{
+  let query=sb.from('profiles').select('id,username,display_name,avatar_path,updated_at,visibility').eq('visibility','public').neq('id',S.user.id).order('username').limit(30);
+  if(q)query=query.or('username.ilike.%'+q+'%,display_name.ilike.%'+q+'%');
+  const{data,error}=await query;if(error)throw error;if(seq!==playerSearchSeq)return;
+  const people=data||[];
+  if(!people.length){el.innerHTML='<p class="empty">'+(q?'No encontramos jugadores con esa búsqueda.':'Todavía no hay otros perfiles públicos.')+'</p>';return}
+  const detailsResult=await sb.from('profile_details').select('id,favorite_position,favorite_club').in('id',people.map(x=>x.id));
+  if(detailsResult.error)throw detailsResult.error;if(seq!==playerSearchSeq)return;
+  const details=Object.fromEntries((detailsResult.data||[]).map(x=>[x.id,x]));
+  el.innerHTML=people.map(p=>{
+   const d=details[p.id]||{},avatar=avUrl(p),initial=initial(p);
+   return '<article class="player-card"><div class="player-avatar"><span>'+safeText(initial)+'</span>'+(avatar?'<img src="'+safeText(avatar)+'" alt="" loading="lazy" onerror="this.remove()">':'')+'</div><div class="player-card-info"><b>'+safeText(p.display_name||p.username)+'</b><span>@'+safeText(p.username)+'</span><small>'+safeText([d.favorite_position,d.favorite_club].filter(Boolean).join(' · ')||'Jugador JOGA')+'</small></div><span class="player-public">PÚBLICO</span></article>'
+  }).join('');
+ }catch(e){if(seq!==playerSearchSeq)return;console.error('JOGA players',e);el.innerHTML='<p class="empty">No pudimos cargar jugadores. Revisá tu conexión.</p>'}
+}
+window.jogaPlayersRefresh=loadPlayers;
+$('players-search')?.addEventListener('input',()=>{clearTimeout(playerSearchTimer);playerSearchTimer=setTimeout(()=>loadPlayers($('players-search').value),250)});
 function openCosmeticPreview(item){
  const modal=$('cosmetic-preview');if(!modal)return;
  const owned=COS.creator||COS.inventory.includes(item.item_key);
@@ -280,7 +304,8 @@ $('pfile').addEventListener('change',async ev=>{const f=ev.target.files[0];if(!f
  catch(x){console.error('foto',step,x);er.textContent=['No se pudo leer o preparar la foto','No se pudo subir la foto','No se pudo guardar la foto en tu perfil'][step]+why(x)+'.'}
  finally{$('phbtn').disabled=false;ev.target.value=''}});
 function tab(t){if(t==='edit'&&P)setAv($('pav'),P);document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
- ['home','play','me','edit','customize','settings'].forEach(v=>{const el=$('v-'+v);if(el)el.classList.toggle('on',t===v)});
+ ['home','play','players','me','edit','customize','settings'].forEach(v=>{const el=$('v-'+v);if(el)el.classList.toggle('on',t===v)});
+ if(t==='players'&&window.jogaPlayersRefresh)window.jogaPlayersRefresh();
  if(t==='play'&&window.jogaMatchesRefresh)window.jogaMatchesRefresh();
  $('main').scrollTo({top:0,behavior:'smooth'})}
 show(0);
