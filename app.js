@@ -158,7 +158,7 @@ $('pfile').addEventListener('change',async ev=>{const f=ev.target.files[0];if(!f
  finally{$('phbtn').disabled=false;ev.target.value=''}});
 const other={play:['Jugar','Encontrá una pichanga o armá la tuya.'],street:['La calle','Publicaciones y comunidad llegan en una etapa posterior.']};
 function tab(t){document.querySelectorAll('.dock .t').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
- const home=t==='home'||t==='play';$('v-home').classList.toggle('on',home);$('v-me').classList.toggle('on',t==='me');$('v-other').classList.toggle('on',t==='street');
+ const home=t==='home'||t==='play';$('v-home').classList.toggle('on',home);['me','edit','customize','settings'].forEach(v=>{const el=$('v-'+v);if(el)el.classList.toggle('on',t===v)});$('v-other').classList.toggle('on',t==='street');
  if(t==='play'){setTimeout(()=>{const el=document.querySelector('#v-home .sec');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});if(window.jogaMatchesRefresh)window.jogaMatchesRefresh()},80)}
  if(other[t]){$('oT').textContent=other[t][0];$('oP').textContent=other[t][1]}if(t!=='play')$('main').scrollTo({top:0})}
 show(0);
