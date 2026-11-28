@@ -128,7 +128,7 @@ async function buildRingFrames(){
   ctx.drawImage(atlas,x,y,cell,cell,pad,pad,cell,cell);
   RING_FRAME_DATA[keys[i]]=canvas.toDataURL('image/png');
  }
-}}
+}
  let COS={catalog:[],inventory:[],equipped:{},creator:false};
 async function loadCosmetics(){
  const [cat,inv,equ,cre,sprite1,sprite2,sprite3,sprite4]=await Promise.all([
