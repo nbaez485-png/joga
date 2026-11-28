@@ -407,7 +407,7 @@ img.ring-art.ring-elite,img.ring-art.ring-creator{
 }
 .cosmetic-demo{background:transparent!important;border:0!important;box-shadow:none!important}
 .profile-avatar-wrap{background:transparent!important;border:0!important;box-shadow:none!important}
-.profile-avatar-wrap .av{background-color:#17191c!important;background-image:var(--avatar-image,none)!important}
+.profile-avatar-wrap .av{background-color:#17191c!important;}
 .preview-profile-avatar-inner{background-position:center;background-size:cover;background-repeat:no-repeat}
 #preview-profile-avatar-inner{background-position:center;background-size:cover;background-repeat:no-repeat}
 #pav{background-position:center!important;background-size:cover!important}
