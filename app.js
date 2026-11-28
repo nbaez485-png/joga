@@ -111,7 +111,24 @@ async function loadProfile(){
  
 }
 let RANK_SPRITE_DATA='';const RING_FRAME_DATA={};function ringSrc(key){return RING_FRAME_DATA[key]||RANK_SPRITE_DATA;}
-async function buildRingFrames(){const atlas=new Image();atlas.src=RANK_SPRITE_DATA;await atlas.decode();if(atlas.naturalWidth!==384||atlas.naturalHeight!==384)throw new Error('Unexpected ring atlas size '+atlas.naturalWidth+'x'+atlas.naturalHeight);const keys=['bronze_ring','silver_ring','gold_ring','platinum_ring','diamond_ring','elite_ring','creator_ring','epic_ring','legendary_ring'];for(let i=0;i<keys.length;i++){const x=(i%3)*128,y=Math.floor(i/3)*128,canvas=document.createElement('canvas');canvas.width=144;canvas.height=144;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,144,144);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(atlas,x,y,128,128,8,8,128,128);RING_FRAME_DATA[keys[i]]=canvas.toDataURL('image/png');}}
+async function buildRingFrames(){
+ const atlas=new Image();
+ atlas.src=RANK_SPRITE_DATA;
+ await atlas.decode();
+ if(atlas.naturalWidth!==384||atlas.naturalHeight!==384)throw new Error('Unexpected ring atlas size '+atlas.naturalWidth+'x'+atlas.naturalHeight);
+ const keys=['bronze_ring','silver_ring','gold_ring','platinum_ring','diamond_ring','elite_ring','creator_ring','epic_ring','legendary_ring'];
+ const cell=128,pad=16,size=cell+pad*2;
+ for(let i=0;i<keys.length;i++){
+  const x=(i%3)*cell,y=Math.floor(i/3)*cell,canvas=document.createElement('canvas');
+  canvas.width=size;canvas.height=size;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,size,size);
+  ctx.imageSmoothingEnabled=true;
+  ctx.imageSmoothingQuality='high';
+  ctx.drawImage(atlas,x,y,cell,cell,pad,pad,cell,cell);
+  RING_FRAME_DATA[keys[i]]=canvas.toDataURL('image/png');
+ }
+}}
  let COS={catalog:[],inventory:[],equipped:{},creator:false};
 async function loadCosmetics(){
  const [cat,inv,equ,cre,sprite1,sprite2,sprite3,sprite4]=await Promise.all([
